@@ -1,4 +1,5 @@
 import { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
+import { prisma } from "./lib/prisma";
 
 interface IParams {
   name: string;
@@ -18,7 +19,8 @@ const schemaForPost = {
 
 const routes: FastifyPluginAsync = async (fastify, options) => {
   fastify.get("/", async (request: FastifyRequest, reply: FastifyReply) => {
-    return { hello: "world" };
+    const user = await prisma.suppliers.fin;
+    return { hello: "world", user };
   });
 
   fastify.get(

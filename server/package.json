@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "pnpm dlx tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },
@@ -14,11 +14,15 @@
   "license": "ISC",
   "packageManager": "pnpm@10.30.3",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
-    "fastify": "^5.8.2"
+    "dotenv": "^17.3.1",
+    "fastify": "^5.8.2",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "@types/pg": "^8.11.11",
     "prisma": "^7.5.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
