@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "lint": "eslint . --ext .ts",
     "dev": "pnpm dlx tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
@@ -21,10 +22,16 @@
     "pg": "^8.20.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.5.0",
     "@types/pg": "^8.11.11",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.4.0",
+    "prettier": "3.8.1",
     "prisma": "^7.5.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.1"
   }
 }
