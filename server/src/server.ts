@@ -10,7 +10,6 @@ import {
 import { prisma } from './lib/prisma.js';
 import { AppError } from './errors/appError.js';
 import { appRoutes } from './routes/index.js';
-import { ZodError } from 'zod';
 
 const PORT = 3000;
 
@@ -24,7 +23,7 @@ server.setValidatorCompiler(validatorCompiler);
 server.setErrorHandler((err, req, reply) => {
   if (hasZodFastifySchemaValidationErrors(err)) {
     return reply.status(400).send({
-      name: 'error_validation',
+      status: 'error_validation',
       message: 'Data validation error: ' + err.validation[0].message,
       issues: err.validation,
     });

@@ -23,18 +23,27 @@ enum MovementType {
 model Category {
   id       String    @id @default(uuid())
   name     String
-  
+
   products Product[]
 
-  @@map("categories") 
+  @@map("categories")
+}
+
+model Brand {
+  id        String @id @default(uuid())
+  name String
+
+  products Product[]
+
+  @@map("brands")
 }
 
 model Supplier {
   id       String   @id @default(uuid())
   name     String
   company  String
-  address  String?           
-  
+  address  String?
+
   products ProductSupplier[]
 
   @@map("suppliers")
@@ -43,12 +52,15 @@ model Supplier {
 model Product {
   id          String    @id @default(uuid())
   name        String
-  price       Decimal    @db.Decimal(10, 2) 
+  price       Decimal    @db.Decimal(10, 2)
   description String?    @db.Text
-  
+
   categoryId  String
   category    Category          @relation(fields: [categoryId], references: [id])
-  
+
+  brandId String
+  brand     Brand       @relation(fields: [brandId], references: [id])
+
   suppliers   ProductSupplier[]
   movements   StockMovement[]
 
@@ -57,10 +69,10 @@ model Product {
 
 model ProductSupplier {
   id         String   @id @default(uuid())
-  
+
   productId  String
   product    Product  @relation(fields: [productId], references: [id])
-  
+
   supplierId String
   supplier   Supplier @relation(fields: [supplierId], references: [id])
 
@@ -71,8 +83,8 @@ model StockMovement {
   id        String       @id @default(uuid())
   quantity  Int
   type      MovementType
-  createdAt DateTime     @default(now()) 
-  
+  createdAt DateTime     @default(now())
+
   productId String
   product   Product      @relation(fields: [productId], references: [id])
 
