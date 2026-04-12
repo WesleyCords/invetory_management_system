@@ -1,32 +1,79 @@
 import { prisma } from '../lib/prisma';
 import { AppError } from '../errors/appError';
 
-interface IProductRequest {
+export interface IProductRequest {
+  sku: string;
   name: string;
   price: number;
+  description?: string;
+  brandId: string;
   categoryId: string;
+  supplierIds: string[];
 }
 
 class CreateProductService {
-  async execute({ name, price, categoryId }: IProductRequest) {
-    if (price < 0) {
-      throw new AppError('price cannot be negative', 400);
-    }
+  async execute(infos: IProductRequest) {
+    if (infos.price < 0) throw new AppError('Price cannot be negative', 400);
 
-    const existCategory = await prisma.category.findUnique({
-      where: { id: categoryId },
+    const [existCategory, existBrand] = await Promise.all([
+      prisma.category.findUnique({ where: { id: infos.categoryId } }),
+      prisma.brand.findUnique({ where: { id: infos.brandId } }),
+    ]);
+
+    if (!existCategory) throw new AppError('Category not found', 404);
+    if (!existBrand) throw new AppError('Brand not found', 404);
+
+    const existSuppliers = await Promise.all(
+      infos.supplierIds.map((id) =>
+        prisma.supplier.findUnique({ where: { id } }),
+      ),
+    );
+
+    if (existSuppliers.includes(null))
+      throw new AppError('One or more suppliers not found', 404);
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { sku: infos.sku },
     });
 
-    if (!existCategory) {
-      throw new AppError('Category not found', 404);
+    if (existingProduct) {
+      if (existingProduct.isActive) {
+        throw new AppError(
+          'A product with this SKU already exists and is active.',
+          409,
+        );
+      }
+
+      const restoredProduct = await prisma.product.update({
+        where: { id: existingProduct.id },
+        data: {
+          name: infos.name,
+          price: infos.price,
+          description: infos.description,
+          brandId: infos.brandId,
+          categoryId: infos.categoryId,
+          isActive: true,
+          suppliers: {
+            deleteMany: {},
+            create: infos.supplierIds.map((id) => ({ supplierId: id })),
+          },
+        },
+        include: { suppliers: true },
+      });
+
+      return restoredProduct;
     }
+
+    const { supplierIds, ...dataProduct } = infos;
 
     const product = await prisma.product.create({
       data: {
-        name,
-        price,
-        categoryId,
+        ...dataProduct,
+        suppliers: {
+          create: supplierIds.map((id) => ({ supplierId: id })),
+        },
       },
+      include: { suppliers: true },
     });
 
     return product;

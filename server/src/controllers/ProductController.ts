@@ -1,22 +1,22 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import CreateProductService from '../services/CreateProductService';
-
-interface IParams {
-  name: string;
-  categoryId: string;
-  price: number;
-}
+import CreateProductService, {
+  IProductRequest,
+} from '../services/CreateProductService';
 
 class ProductController {
-  async create(req: FastifyRequest, reply: FastifyReply) {
-    // VOu melhorar com zod
-    const { name, categoryId, price } = req.body as IParams;
-
+  async create(
+    req: FastifyRequest<{ Body: IProductRequest }>,
+    reply: FastifyReply,
+  ) {
+    const data = req.body;
     const createProduct = new CreateProductService();
 
-    const product = await createProduct.execute({ name, categoryId, price });
+    const product = await createProduct.execute(data);
 
-    reply.status(201).send(product);
+    return reply.status(201).send({
+      message: 'Product created with success!',
+      data: product,
+    });
   }
 }
 

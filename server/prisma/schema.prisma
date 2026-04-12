@@ -12,54 +12,51 @@ datasource db {
 }
 
 // ENUMS
-
 enum MovementType {
   IN
   OUT
 }
 
-// ENTITY
-
+// ENTITIES
 model Category {
   id       String    @id @default(uuid())
   name     String
-
   products Product[]
 
   @@map("categories")
 }
 
 model Brand {
-  id        String @id @default(uuid())
-  name String
-
+  id       String    @id @default(uuid())
+  name     String    @unique
   products Product[]
 
   @@map("brands")
 }
 
 model Supplier {
-  id       String   @id @default(uuid())
+  id       String            @id @default(uuid())
   name     String
   company  String
   address  String?
-
   products ProductSupplier[]
 
   @@map("suppliers")
 }
 
 model Product {
-  id          String    @id @default(uuid())
+  id          String            @id @default(uuid())
+  sku         String            @unique
   name        String
-  price       Decimal    @db.Decimal(10, 2)
-  description String?    @db.Text
+  price       Decimal           @db.Decimal(10, 2)
+  description String?           @db.Text
+  isActive    Boolean           @default(true)
 
   categoryId  String
   category    Category          @relation(fields: [categoryId], references: [id])
 
-  brandId String
-  brand     Brand       @relation(fields: [brandId], references: [id])
+  brandId     String
+  brand       Brand             @relation(fields: [brandId], references: [id])
 
   suppliers   ProductSupplier[]
   movements   StockMovement[]
@@ -71,10 +68,10 @@ model ProductSupplier {
   id         String   @id @default(uuid())
 
   productId  String
-  product    Product  @relation(fields: [productId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   supplierId String
-  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
   @@map("product_suppliers")
 }
@@ -86,7 +83,7 @@ model StockMovement {
   createdAt DateTime     @default(now())
 
   productId String
-  product   Product      @relation(fields: [productId], references: [id])
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("stock_movements")
 }

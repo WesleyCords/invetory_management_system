@@ -1,10 +1,17 @@
-import { prisma } from '../src/lib/prisma.js';
+import { prisma } from '../src/lib/prisma'; // Ajuste o caminho se sua config for diferente
 
-const main = async () => {
-  console.log('Populando o DB.');
+async function main() {
+  console.log('Iniciando o Seed do Banco de Dados...');
 
+  // 1. Limpa os filhos primeiro
+  await prisma.productSupplier.deleteMany();
+  await prisma.stockMovement.deleteMany();
+  await prisma.product.deleteMany();
+
+  // 2. Limpa os pais
   await prisma.category.deleteMany();
   await prisma.brand.deleteMany();
+  await prisma.supplier.deleteMany();
 
   console.log('Criando Categorias...');
   await prisma.category.createMany({
@@ -29,8 +36,24 @@ const main = async () => {
     ],
   });
 
-  console.log('✅ Banco populado com sucesso!');
-};
+  console.log('Criando Fornecedores...');
+  await prisma.supplier.createMany({
+    data: [
+      {
+        name: 'TechMart Distribuidora',
+        company: 'TechMart Importação e Exportação LTDA',
+        address: 'Av. das Placas Mãe, 1024 - São Paulo, SP',
+      },
+      {
+        name: 'Global Atacado IT',
+        company: 'Global Information Technology S.A.',
+        address: 'Rua dos Servidores, 404 - Campinas, SP',
+      },
+    ],
+  });
+
+  console.log('Banco populado com sucesso!');
+}
 
 main()
   .catch((e) => {
