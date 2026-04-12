@@ -20,7 +20,11 @@ export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
           brandId: z.string().uuid('Invalid brandId format'),
           supplierIds: z
             .array(z.string().uuid('Invalid supplierId format'))
-            .min(1, 'The product requires at least one supplier'),
+            .min(1, 'The product requires at least one supplier')
+            .refine(
+              (ids) => new Set(ids).size === ids.length,
+              'Duplicate suppliers are not allowed',
+            ),
         }),
       },
     },

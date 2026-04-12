@@ -13,6 +13,7 @@ export interface IProductRequest {
 
 class CreateProductService {
   async execute(infos: IProductRequest) {
+    const uniqueSuppliersIds = Array.from(new Set(infos.supplierIds));
     if (infos.price < 0) throw new AppError('Price cannot be negative', 400);
 
     const [existCategory, existBrand] = await Promise.all([
@@ -24,7 +25,7 @@ class CreateProductService {
     if (!existBrand) throw new AppError('Brand not found', 404);
 
     const existSuppliers = await Promise.all(
-      infos.supplierIds.map((id) =>
+      uniqueSuppliersIds.map((id) =>
         prisma.supplier.findUnique({ where: { id } }),
       ),
     );
@@ -55,7 +56,7 @@ class CreateProductService {
           isActive: true,
           suppliers: {
             deleteMany: {},
-            create: infos.supplierIds.map((id) => ({ supplierId: id })),
+            create: uniqueSuppliersIds.map((id) => ({ supplierId: id })),
           },
         },
         include: { suppliers: true },
