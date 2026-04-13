@@ -5,8 +5,10 @@ import {
   validatorCompiler,
   ZodTypeProvider,
   hasZodFastifySchemaValidationErrors,
+  jsonSchemaTransform,
 } from 'fastify-type-provider-zod';
-
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 import { prisma } from './lib/prisma.js';
 import { AppError } from './errors/appError.js';
 import { appRoutes } from './routes/index.js';
@@ -19,6 +21,20 @@ const server = Fastify({
 
 server.setSerializerCompiler(serializerCompiler);
 server.setValidatorCompiler(validatorCompiler);
+
+server.register(swagger, {
+  openapi: {
+    info: {
+      title: 'Inventory Management API',
+      description: 'API documentation built with Fastify, Prisma, and Zod',
+      version: '1.0.0',
+    },
+  },
+  transform: jsonSchemaTransform,
+});
+server.register(swaggerUi, {
+  routePrefix: '/docs',
+});
 
 server.setErrorHandler((err, req, reply) => {
   if (hasZodFastifySchemaValidationErrors(err)) {
@@ -53,6 +69,7 @@ const start = async () => {
 
     await server.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`SERVIDOR SUBIU: http://localhost:${PORT}/api/v1`);
+    console.log(`DOC DO SERVIDOR : http://localhost:${PORT}/docs`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
