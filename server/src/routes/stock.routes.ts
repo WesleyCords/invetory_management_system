@@ -20,4 +20,16 @@ export const stockRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     stockController.register,
   );
+
+  fastify.get(
+    '/product/:id/balance',
+    {
+      schema: {
+        params: z.object({
+          id: z.string().uuid('Format Invalid ID'),
+        }),
+      },
+    },
+    stockController.getBalance,
+  );
 };
