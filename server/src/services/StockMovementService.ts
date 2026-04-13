@@ -1,6 +1,7 @@
 import { AppError } from '../errors/appError';
 import { prisma } from '../lib/prisma';
 import { MovementType } from '@prisma/client';
+import GetProductBalanceService from './GetProductBalance';
 
 export interface IStockRequest {
   productId: string;
@@ -21,22 +22,9 @@ class StockMovementService {
       throw new AppError('Product does not exist or is inactive.', 404);
 
     if (type === MovementType.OUT) {
-      const groupMovements = await prisma.stockMovement.groupBy({
-        by: ['type'],
-        where: { productId },
-        _sum: {
-          quantity: true,
-        },
-      });
-
-      const totalIN =
-        groupMovements.find((m) => m.type === MovementType.IN)?._sum.quantity ||
-        0;
-      const totalOUT =
-        groupMovements.find((m) => m.type === MovementType.OUT)?._sum
-          .quantity || 0;
-
-      const currentBalance = totalIN - totalOUT;
+      const currentBalance = await new GetProductBalanceService().execute(
+        productId,
+      );
 
       if (quantity > currentBalance)
         throw new AppError(

@@ -1,5 +1,6 @@
 import { AppError } from '../errors/appError';
 import { prisma } from '../lib/prisma';
+import GetProductBalanceService from './GetProductBalance';
 
 class DeleteProductService {
   async execute(id: string) {
@@ -12,6 +13,14 @@ class DeleteProductService {
 
     if (!existingProduct.isActive)
       throw new AppError('The product is already been deleted', 400);
+
+    const currentBalance = await new GetProductBalanceService().execute(id);
+
+    if (currentBalance > 0)
+      throw new AppError(
+        `Cannot delete product. It still has ${currentBalance} items in stock.`,
+        400,
+      );
 
     const productDeleted = await prisma.product.update({
       where: { id },
