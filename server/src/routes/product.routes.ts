@@ -30,4 +30,18 @@ export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     productController.create,
   );
+
+  fastify.get('/products', productController.getAllIsActive);
+
+  fastify.delete(
+    '/product/:id',
+    {
+      schema: {
+        params: z.object({
+          id: z.string().uuid('Invalid product ID format'),
+        }),
+      },
+    },
+    productController.delete,
+  );
 };
