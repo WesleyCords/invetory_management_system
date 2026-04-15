@@ -1,6 +1,11 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import StockMovementController from '../controllers/StockMovementController';
-import z from 'zod';
+import {
+  getProductBalanceResponseSchema,
+  getProductBalanceSchema,
+  registerStockMovementResponseSchema,
+  registerStockMovementSchema,
+} from '../schemas/stockMovement.schema';
 
 export const stockRoutes: FastifyPluginAsyncZod = async (fastify) => {
   const stockController = new StockMovementController();
@@ -9,13 +14,10 @@ export const stockRoutes: FastifyPluginAsyncZod = async (fastify) => {
     '/movements',
     {
       schema: {
-        body: z.object({
-          productId: z.string().uuid('Format invalid'),
-          type: z.enum(['IN', 'OUT'], {
-            message: 'Type must be either IN or OUT',
-          }),
-          quantity: z.number().positive('Quantity must be greater than zero'),
-        }),
+        body: registerStockMovementSchema,
+        response: {
+          201: registerStockMovementResponseSchema,
+        },
       },
     },
     stockController.register,
@@ -25,9 +27,10 @@ export const stockRoutes: FastifyPluginAsyncZod = async (fastify) => {
     '/product/:id/balance',
     {
       schema: {
-        params: z.object({
-          id: z.string().uuid('Format Invalid ID'),
-        }),
+        params: getProductBalanceSchema,
+        response: {
+          200: getProductBalanceResponseSchema,
+        },
       },
     },
     stockController.getBalance,

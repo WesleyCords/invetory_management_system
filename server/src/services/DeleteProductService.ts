@@ -29,7 +29,12 @@ class DeleteProductService {
       },
     });
 
-    return productDeleted;
+    const productFormated = {
+      ...productDeleted,
+      price: Number(productDeleted.price),
+    };
+
+    return productFormated;
   }
 }
 

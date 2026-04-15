@@ -1,6 +1,13 @@
-import * as z from 'zod';
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import ProductController from '../controllers/ProductController';
+
+import {
+  createProductSchema,
+  deleteProductResponse,
+  deleteProductSchema,
+  getAllProductsResponseSchema,
+  productResponseSchema,
+} from '../schemas/product.schema';
 
 export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
   const productController = new ProductController();
@@ -9,37 +16,35 @@ export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
     '/product',
     {
       schema: {
-        body: z.object({
-          sku: z.string().min(3, 'SKU is required').toUpperCase(),
-          name: z
-            .string()
-            .max(100, 'The product name must be no longer than 100 characters'),
-          price: z.number().positive('A price cannot be negative'),
-          description: z.string().optional(),
-          categoryId: z.string().uuid('Invalid categoryId format'),
-          brandId: z.string().uuid('Invalid brandId format'),
-          supplierIds: z
-            .array(z.string().uuid('Invalid supplierId format'))
-            .min(1, 'The product requires at least one supplier')
-            .refine(
-              (ids) => new Set(ids).size === ids.length,
-              'Duplicate suppliers are not allowed',
-            ),
-        }),
+        body: createProductSchema,
+        response: {
+          201: productResponseSchema,
+        },
       },
     },
     productController.create,
   );
 
-  fastify.get('/products', productController.getAllIsActive);
+  fastify.get(
+    '/products',
+    {
+      schema: {
+        response: {
+          200: getAllProductsResponseSchema,
+        },
+      },
+    },
+    productController.getAllIsActive,
+  );
 
   fastify.delete(
     '/product/:id',
     {
       schema: {
-        params: z.object({
-          id: z.string().uuid('Invalid product ID format'),
-        }),
+        params: deleteProductSchema,
+        response: {
+          200: deleteProductResponse,
+        },
       },
     },
     productController.delete,

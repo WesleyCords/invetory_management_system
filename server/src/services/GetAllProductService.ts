@@ -21,12 +21,11 @@ class GetAllProductService {
     });
 
     const productsFormatted = productsIsActive.map((product) => {
-      const { suppliers, ...dataProduct } = product;
-
-      console.log(suppliers);
+      const { suppliers, price, ...dataProduct } = product;
 
       return {
         ...dataProduct,
+        price: Number(price),
         suppliers: suppliers.map((pivot) => pivot.supplier),
       };
     });

@@ -62,7 +62,7 @@ class CreateProductService {
         include: { suppliers: true },
       });
 
-      return restoredProduct;
+      return { ...restoredProduct, price: Number(restoredProduct.price) };
     }
 
     const { supplierIds, ...dataProduct } = infos;

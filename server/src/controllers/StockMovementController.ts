@@ -13,6 +13,8 @@ class StockMovementController {
 
     const movement = await registerStock.execute(req.body);
 
+    console.log('Stock movement registered successfully', movement);
+
     reply.status(201).send({
       message: 'Stock movement registered successfully',
       data: movement,
