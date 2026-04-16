@@ -1,4 +1,3 @@
-- (BACKEND) Criar o arquivo dos SCHEMAS dos body, params e response dos dominios do projeto
 - (FRONTEND) Iniciar e configurar o setup
 - (FRONTEND) Configurar o prettier, eslint e TSconfig 
 - (FRONTEND) Desenhar de comos será o desing do projeto
