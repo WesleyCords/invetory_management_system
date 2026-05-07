@@ -1,7 +1,7 @@
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1>Inventory System - Redirecionando...</h1>
-    </main>
+    <div className="bg-red-600 w-screen h-screen">
+      <h1 className="text-background">Projeto iniciado</h1>
+    </div>
   );
 }
