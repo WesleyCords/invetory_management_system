@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 // O Analytics serve para coletar dados de uso da aplicação e aqui so ativa se for produção.
 import { Analytics } from "@vercel/analytics/next";
+import "./global.css";
 
 interface PropsRootLayout {
   children: React.ReactNode;
