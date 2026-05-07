@@ -1,7 +1,5 @@
+import { AuthPage } from "@/components/auth/auth-page";
+
 export default function Home() {
-  return (
-    <div className="bg-red-600 w-screen h-screen">
-      <h1 className="text-background">Projeto iniciado</h1>
-    </div>
-  );
+  return <AuthPage />;
 }

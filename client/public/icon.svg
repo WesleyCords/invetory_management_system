@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Trilha do Circuito (Letra S) -->
+  <path d="M 46 16 L 18 16 L 18 32 L 46 32 L 46 48 L 18 48" 
+        stroke="#475569" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Nós da Rede (Pontos de Conexão) -->
+  <circle cx="46" cy="16" r="6" fill="#3b82f6" />
+  <circle cx="18" cy="16" r="6" fill="#3b82f6" />
+  <circle cx="18" cy="32" r="4" fill="#475569" />
+  <circle cx="46" cy="32" r="4" fill="#475569" />
+  <circle cx="46" cy="48" r="6" fill="#3b82f6" />
+  <circle cx="18" cy="48" r="6" fill="#3b82f6" />
+</svg>
