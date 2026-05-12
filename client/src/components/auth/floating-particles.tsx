@@ -60,7 +60,7 @@ export function FloatingParticles() {
       {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute h-1 w-1 rounded-full bg-primary"
+          className="absolute h-1 w-1 rounded-full bg-primary/50"
           style={{
             left: `${p.left}%`,
             top: `${p.top}%`,
