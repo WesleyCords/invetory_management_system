@@ -3,6 +3,7 @@
 //import { useState } from "react";
 import { motion } from "framer-motion";
 import { FloatingParticles } from "./floating-particles";
+import { FeatureShowcase } from "./feature-showcase";
 
 export function AuthPage() {
   //const [isLogin, setIsLogin] = useState(true);
@@ -12,7 +13,7 @@ export function AuthPage() {
       <FloatingParticles />
       <div className="relative z-10 flex min-h-screen">
         <motion.div
-          className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 bg-accent-foreground"
+          className="hidden lg:flex lg:w-1/2 items-center justify-center p-12"
           initial={{
             opacity: 0,
             x: -50,
@@ -25,7 +26,9 @@ export function AuthPage() {
             duration: 0.8,
             ease: "easeOut",
           }}
-        ></motion.div>
+        >
+          <FeatureShowcase isLogin={true} />
+        </motion.div>
       </div>
     </div>
   );
