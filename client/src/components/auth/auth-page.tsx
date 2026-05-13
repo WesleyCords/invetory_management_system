@@ -5,6 +5,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FloatingParticles } from "./floating-particles";
 import { FeatureShowcase } from "./feature-showcase";
+import { LoginForm } from "./login-form";
 
 export function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -32,7 +33,7 @@ export function AuthPage() {
           <FeatureShowcase isLogin={isLogin} />
         </motion.div>
 
-        <div className="flex w-full items-center lg:w-1/2 bg-muted-foreground justify-center p-6 lg:p-12">
+        <div className="flex w-full items-center lg:w-1/2 justify-center p-6 lg:p-12">
           <motion.div
             className="w-full max-w-md"
             initial={{ opacity: 0, y: 20 }}
@@ -45,17 +46,19 @@ export function AuthPage() {
                 className="inline-flex items-center gap-2 mb-4"
                 whileHover={{ scale: 1.02 }}
               >
-                <svg
-                  className="h-6 w-6 text-primary-foreground"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                </svg>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
+                  <svg
+                    className="h-6 w-6 bg-primary text-primary-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                  </svg>
+                </div>
                 <span className="text-2xl font-bold text-foreground pointer-events-none">
                   System Inventory
                 </span>
@@ -67,7 +70,7 @@ export function AuthPage() {
               <div className="flex rounded-xl p-1 bg-secondary">
                 <button
                   onClick={() => setIsLogin(true)}
-                  className={`relative flex-1 rounded-lg py-2.5 text-sm font-medium transition-all duration-300 ${
+                  className={`relative flex-1 cursor-pointer rounded-lg py-2.5 text-sm font-medium transition-all duration-300 ${
                     isLogin
                       ? "text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -88,7 +91,7 @@ export function AuthPage() {
                 </button>
                 <button
                   onClick={() => setIsLogin(false)}
-                  className={`relative flex-1 rounded-lg py-2.5 text-sm font-medium transition-all duration-300 ${
+                  className={`relative cursor-pointer flex-1 rounded-lg py-2.5 text-sm font-medium transition-all duration-300 ${
                     !isLogin
                       ? "text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -119,7 +122,9 @@ export function AuthPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
-                ></motion.div>
+                >
+                  <LoginForm />
+                </motion.div>
               ) : (
                 <motion.div
                   key="register"
@@ -127,7 +132,9 @@ export function AuthPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
-                ></motion.div>
+                >
+                  // Form de register
+                </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
