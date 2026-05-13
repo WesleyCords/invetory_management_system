@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FloatingParticles } from "./floating-particles";
 import { FeatureShowcase } from "./feature-showcase";
 import { LoginForm } from "./login-form";
+import { RegisterForm } from "./register-form";
 
 export function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -133,7 +134,7 @@ export function AuthPage() {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  // Form de register
+                  <RegisterForm />
                 </motion.div>
               )}
             </AnimatePresence>
