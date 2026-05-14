@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FloatingParticles } from "./floating-particles";
@@ -17,7 +16,7 @@ export function AuthPage() {
 
       <div className="relative z-10 flex min-h-screen">
         <motion.div
-          className="hidden lg:flex lg:w-1/2 items-center justify-center p-12"
+          className="lg:flex lg:w-1/2 items-center justify-center p-12"
           initial={{
             opacity: 0,
             x: -50,
