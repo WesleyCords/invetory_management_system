@@ -1,8 +1,9 @@
 import z from 'zod';
+import { MovementType } from '@prisma/client';
 
 export const registerStockMovementSchema = z.object({
   productId: z.string().uuid('Format invalid ID'),
-  type: z.enum(['IN', 'OUT'], {
+  type: z.enum(MovementType, {
     message: 'Type must be either IN or OUT',
   }),
   quantity: z.number().positive('Quantity must be greater than zero'),
@@ -13,7 +14,7 @@ export const registerStockMovementResponseSchema = z.object({
   data: z.object({
     id: z.string().uuid(),
     productId: z.string().uuid(),
-    type: z.enum(['IN', 'OUT']),
+    type: z.enum(MovementType),
     quantity: z.number().positive(),
     createdAt: z.date(),
   }),
