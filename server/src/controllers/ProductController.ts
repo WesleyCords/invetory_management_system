@@ -26,8 +26,6 @@ class ProductController {
 
     const products = await getAllProducts.execute();
 
-    console.log('PRODUTOS', products);
-
     return reply.status(200).send({
       message: 'Get all producst is ACTIVE',
       data: products,

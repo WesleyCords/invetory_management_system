@@ -17,7 +17,25 @@ enum MovementType {
   OUT
 }
 
+enum RolesProfile {
+  EMPLOYEE
+  ADMIN
+}
+
 // ENTITIES
+model User {
+  id          String        @id @default(@uuid)
+  name        String
+  username    String        @unique
+  role        RolesProfile  @default(EMPLOYEE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  moviment    MovementType[]
+
+  @@map("users")
+}
+
 model Category {
   id       String    @id @default(uuid())
   name     String
@@ -81,6 +99,9 @@ model StockMovement {
   quantity  Int
   type      MovementType
   createdAt DateTime     @default(now())
+
+  userId    String
+  user      User         @relation(fildes: [userId], references: [id])
 
   productId String
   product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)

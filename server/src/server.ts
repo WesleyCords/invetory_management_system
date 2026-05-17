@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import 'dotenv/config';
 
 import {
   serializerCompiler,
@@ -13,10 +14,27 @@ import { prisma } from './lib/prisma.js';
 import { AppError } from './errors/appError.js';
 import { appRoutes } from './routes/index.js';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'production';
+const env = NODE_ENV as keyof typeof envConfig;
+
+const envConfig = {
+  production: true,
+  development: {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'SYS:standard',
+        ignore: 'pid,hostname',
+      },
+    },
+  },
+  test: false,
+} as const;
 
 const server = Fastify({
-  logger: true,
+  logger: envConfig[env] ?? true,
 }).withTypeProvider<ZodTypeProvider>(); // the type is now of ZOD
 
 server.setSerializerCompiler(serializerCompiler);
