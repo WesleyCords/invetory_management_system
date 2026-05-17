@@ -13,6 +13,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import { prisma } from './lib/prisma.js';
 import { AppError } from './errors/appError.js';
 import { appRoutes } from './routes/index.js';
+import rateLimit from '@fastify/rate-limit';
 
 const PORT = Number(process.env.PORT) || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'production';
@@ -36,6 +37,18 @@ const envConfig = {
 const server = Fastify({
   logger: envConfig[env] ?? true,
 }).withTypeProvider<ZodTypeProvider>(); // the type is now of ZOD
+
+server.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+  errorResponseBuilder: function (request, context) {
+    return {
+      status: 'error',
+      apiLimit: context.max,
+      message: `Hold on! Request limit exceeded. Please try again in 1 minute.`,
+    };
+  },
+});
 
 server.setSerializerCompiler(serializerCompiler);
 server.setValidatorCompiler(validatorCompiler);

@@ -1,3 +1,4 @@
+import argon2 from 'argon2';
 import { prisma } from '../src/lib/prisma'; // Ajuste o caminho se sua config for diferente
 
 async function main() {
@@ -12,6 +13,8 @@ async function main() {
   await prisma.category.deleteMany();
   await prisma.brand.deleteMany();
   await prisma.supplier.deleteMany();
+
+  console.log('Tabelas limpas. Populando o banco de dados...');
 
   console.log('Criando Categorias...');
   await prisma.category.createMany({
@@ -51,6 +54,21 @@ async function main() {
       },
     ],
   });
+
+  const passwordHash = await argon2.hash('admin1234');
+
+  const user = await prisma.user.upsert({
+    where: { username: 'nexus.admin' },
+    update: {},
+    create: {
+      name: 'Administrador do Sistema',
+      username: 'nexus.admin',
+      password: passwordHash,
+      role: 'MANAGER',
+    },
+  });
+
+  console.log(`Usuário criado: ${user.username} (Role: ${user.role})`);
 
   console.log('Banco populado com sucesso!');
 }
