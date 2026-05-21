@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Mail, User, Lock, EyeOff, Eye, Check, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +25,10 @@ export function RegisterForm() {
     setIsLoading(true);
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    toast.success("Conta criada com sucesso!", {
+      description: "Bem-vindo ao Nexus Dashboard. Agora é só fazer o login.",
+    });
 
     setIsLoading(false);
     // Add registration logic here
