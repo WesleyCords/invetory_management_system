@@ -90,7 +90,9 @@ export function LoginForm() {
         <Button
           type="submit"
           className="w-full h-12 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
-          disabled={isLoading}
+          disabled={
+            isLoading || !(password.length >= 6 && password.length <= 8)
+          }
         >
           {isLoading ? (
             <motion.div

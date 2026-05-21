@@ -33,7 +33,7 @@ export function AuthPage() {
           <FeatureShowcase isLogin={isLogin} />
         </motion.div>
 
-        <div className="flex w-full items-center lg:w-1/2 justify-center p-6 lg:p-12">
+        <div className="flex w-full items-center lg:w-1/2 justify-center p-6 lg:p-10">
           <motion.div
             className="w-full max-w-md"
             initial={{ opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ export function AuthPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             {/* Logo */}
-            <div className="mb-6 text-center lg:text-left">
+            <div className="mb-4 text-center lg:text-left">
               <motion.div
                 className="inline-flex items-center gap-2 mb-4"
                 whileHover={{ scale: 1.02 }}

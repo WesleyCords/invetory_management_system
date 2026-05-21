@@ -112,27 +112,10 @@ export function RegisterForm() {
             animate={{ opacity: 1, height: "auto" }}
             className="space-y-2 pt-2"
           >
-            <div className="flex gap-1.5">
-              {[1, 2, 3].map((level) => (
-                <div
-                  key={level}
-                  className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                    level <= strengthCount
-                      ? strengthCount === 1
-                        ? "bg-destructive"
-                        : strengthCount === 2
-                          ? "bg-amber-500"
-                          : "bg-primary"
-                      : "bg-secondary"
-                  }`}
-                />
-              ))}
-            </div>
             <div className="space-y-1">
               {[
                 { key: "hasMinLength", label: "Entre  6 a 8 digitos" },
-                { key: "hasUppercase", label: "Uma letra maiuscula" },
-                { key: "hasNumber", label: "Um numero" },
+                { key: "containLetter", label: "Deve conter apenas numeros" },
               ].map(({ key, label }) => (
                 <div key={key} className="flex items-center gap-2 text-xs">
                   <div
@@ -167,7 +150,7 @@ export function RegisterForm() {
         <Button
           type="submit"
           className="w-full cursor-pointer h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
-          disabled={isLoading || strengthCount < 3}
+          disabled={isLoading || strengthCount < 2}
         >
           {isLoading ? (
             <motion.div
