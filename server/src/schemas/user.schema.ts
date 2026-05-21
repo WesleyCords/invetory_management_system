@@ -16,7 +16,7 @@ export const registerUserSchema = z.object({
     .trim()
     .toLowerCase()
     .regex(
-      /^[a-z-.]+$/,
+      /^[a-z0-9.-]+$/,
       'Invalid username format (use only lowercase letters, dots, or hyphens)',
     )
     .min(5, 'The username must be more than 5 characters long'),

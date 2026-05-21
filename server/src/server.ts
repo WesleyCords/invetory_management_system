@@ -16,6 +16,7 @@ import { appRoutes } from './routes/index.js';
 import rateLimit from '@fastify/rate-limit';
 import fastifyJwt from '@fastify/jwt';
 import z from 'zod';
+import cors from '@fastify/cors';
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
@@ -99,6 +100,10 @@ server.setErrorHandler((err, req, reply) => {
 
 server.register(fastifyJwt, {
   secret: _env.KEY_JWT,
+});
+
+server.register(cors, {
+  origin: true,
 });
 
 server.register(appRoutes, { prefix: '/api/v1' });

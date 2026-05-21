@@ -36,7 +36,7 @@ class UserController {
       {
         sign: {
           sub: user.id,
-          expiresIn: '7d',
+          expiresIn: '1d',
         },
       },
     );
