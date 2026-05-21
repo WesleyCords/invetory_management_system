@@ -13,6 +13,14 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = event.target.value;
+    const numericValue = rawValue.replace(/\D/g, "");
+    if (numericValue.length <= 8) {
+      setPassword(numericValue);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -57,9 +65,12 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             placeholder="Digite sua senha"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             className="pl-10 pr-10 h-12 bg-secondary border-border focus:border-primary focus:ring-primary"
             required
+            maxLength={8}
+            pattern="[0-9]*"
+            inputMode="numeric"
           />
           <button
             type="button"

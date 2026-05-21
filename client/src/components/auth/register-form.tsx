@@ -1,11 +1,13 @@
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { Mail, User, Lock, EyeOff, Eye, Check, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import useApi from "@/hooks/useApi";
 
 export function RegisterForm() {
+  const api = useApi();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -13,12 +15,19 @@ export function RegisterForm() {
   const [password, setPassword] = useState("");
 
   const passwordStrength = {
-    hasMinLength: password.length >= 8,
-    hasUppercase: /[A-Z]/.test(password),
-    hasNumber: /[0-9]/.test(password),
+    hasMinLength: password.length >= 6 && password.length <= 8,
+    containLetter: /^\d+$/.test(password),
   };
 
   const strengthCount = Object.values(passwordStrength).filter(Boolean).length;
+
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const rawValue = event.target.value;
+    const numericValue = rawValue.replace(/\D/g, "");
+    if (numericValue.length <= 8) {
+      setPassword(numericValue);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +42,7 @@ export function RegisterForm() {
     setIsLoading(false);
     // Add registration logic here
   };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
@@ -73,11 +83,14 @@ export function RegisterForm() {
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type={showPassword ? "text" : "password"}
-            placeholder="Crie uma senha forte"
+            placeholder="Crie uma senha forte com apenas números"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             className="pl-10 pr-10 h-12 bg-secondary border-border focus:border-primary focus:ring-primary"
             required
+            maxLength={8}
+            pattern="[0-9]*"
+            inputMode="numeric"
           />
           <button
             type="button"
@@ -117,7 +130,7 @@ export function RegisterForm() {
             </div>
             <div className="space-y-1">
               {[
-                { key: "hasMinLength", label: "Pelo menos 8 caracteres" },
+                { key: "hasMinLength", label: "Entre  6 a 8 digitos" },
                 { key: "hasUppercase", label: "Uma letra maiuscula" },
                 { key: "hasNumber", label: "Um numero" },
               ].map(({ key, label }) => (
