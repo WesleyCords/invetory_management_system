@@ -2,15 +2,15 @@ import { AppError } from '../errors/appError';
 import { prisma } from '../lib/prisma';
 import { MovementType } from '@prisma/client';
 import GetProductBalanceService from './GetProductBalance';
-
 export interface IStockRequest {
   productId: string;
   quantity: number;
   type: MovementType;
+  userId: string;
 }
 
 class StockMovementService {
-  async execute({ productId, quantity, type }: IStockRequest) {
+  async execute({ productId, quantity, type, userId }: IStockRequest) {
     if (quantity <= 0)
       throw new AppError('The quantity must be greater than zero', 400);
 
@@ -38,6 +38,7 @@ class StockMovementService {
         quantity,
         type,
         productId,
+        userId,
       },
     });
 

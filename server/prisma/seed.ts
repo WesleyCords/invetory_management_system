@@ -55,7 +55,7 @@ async function main() {
     ],
   });
 
-  const passwordHash = await argon2.hash('admin1234');
+  const passwordHash = await argon2.hash('200305');
 
   const user = await prisma.user.upsert({
     where: { username: 'nexus.admin' },

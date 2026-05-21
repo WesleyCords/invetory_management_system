@@ -1,5 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import CreateUserService, { IUserRequest } from '../services/CreateUserService';
+import AuthenticateUserService, {
+  ILoginUserRequest,
+} from '../services/AuthenticateUserService';
 
 class UserController {
   async register(
@@ -14,6 +17,34 @@ class UserController {
     reply.status(201).send({
       message: 'User registered successfully',
       data: user,
+    });
+  }
+
+  async login(
+    req: FastifyRequest<{ Body: ILoginUserRequest }>,
+    reply: FastifyReply,
+  ) {
+    const { username, password } = req.body;
+    const authUser = new AuthenticateUserService();
+
+    const user = await authUser.execute({ username, password });
+
+    const token = await reply.jwtSign(
+      {
+        role: user.role,
+      },
+      {
+        sign: {
+          sub: user.id,
+          expiresIn: '7d',
+        },
+      },
+    );
+
+    reply.status(200).send({
+      token,
+      user,
+      message: 'Login successful',
     });
   }
 }

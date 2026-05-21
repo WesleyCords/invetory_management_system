@@ -14,10 +14,16 @@ import { prisma } from './lib/prisma.js';
 import { AppError } from './errors/appError.js';
 import { appRoutes } from './routes/index.js';
 import rateLimit from '@fastify/rate-limit';
+import fastifyJwt from '@fastify/jwt';
+import z from 'zod';
 
-const PORT = Number(process.env.PORT) || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'production';
-const env = NODE_ENV as keyof typeof envConfig;
+const envSchema = z.object({
+  PORT: z.coerce.number().default(3000),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
+  KEY_JWT: z.string().min(1, 'A chave JWT não pode ser vazia'),
+});
+
+const _env = envSchema.parse(process.env);
 
 const envConfig = {
   production: true,
@@ -35,7 +41,7 @@ const envConfig = {
 } as const;
 
 const server = Fastify({
-  logger: envConfig[env] ?? true,
+  logger: envConfig[_env.NODE_ENV] ?? true,
 }).withTypeProvider<ZodTypeProvider>(); // the type is now of ZOD
 
 server.register(rateLimit, {
@@ -91,6 +97,10 @@ server.setErrorHandler((err, req, reply) => {
   });
 });
 
+server.register(fastifyJwt, {
+  secret: _env.KEY_JWT,
+});
+
 server.register(appRoutes, { prefix: '/api/v1' });
 
 const start = async () => {
@@ -98,9 +108,9 @@ const start = async () => {
     await prisma.$connect();
     console.log('BANCO DE DADOS CONECTADO COM SUCESSO!');
 
-    await server.listen({ port: PORT, host: '0.0.0.0' });
-    console.log(`SERVIDOR SUBIU: http://localhost:${PORT}/api/v1`);
-    console.log(`DOC DO SERVIDOR : http://localhost:${PORT}/docs`);
+    await server.listen({ port: _env.PORT, host: '0.0.0.0' });
+    console.log(`SERVIDOR SUBIU: http://localhost:${_env.PORT}/api/v1`);
+    console.log(`DOC DO SERVIDOR : http://localhost:${_env.PORT}/docs`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
