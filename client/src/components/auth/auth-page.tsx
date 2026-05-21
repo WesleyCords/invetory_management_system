@@ -133,7 +133,7 @@ export function AuthPage() {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <RegisterForm />
+                  <RegisterForm onRegistered={() => setIsLogin(true)} />
                 </motion.div>
               )}
             </AnimatePresence>

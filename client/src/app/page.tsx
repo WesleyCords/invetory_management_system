@@ -1,5 +1,6 @@
-import { AuthPage } from "@/components/auth/auth-page";
+// Sem "use client"! Este é um Server Component poderoso.
 import { cookies } from "next/headers";
+import { AuthPage } from "@/components/auth/auth-page";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -7,8 +8,8 @@ export default async function Home() {
 
   if (token) {
     return (
-      <div>
-        <h1>Dashboard</h1>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
       </div>
     );
   }

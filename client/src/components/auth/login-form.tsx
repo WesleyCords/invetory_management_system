@@ -3,14 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Lock, User } from "lucide-react";
 import { useState } from "react";
+import { isAxiosError } from "axios";
+import { useAuth } from "@/providers/AuthContext";
+import { toast } from "sonner";
 
 export function LoginForm() {
+  const { signIn } = useAuth();
   // Logica totalmente para desing e depois vou atualizar isso
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,30 +25,54 @@ export function LoginForm() {
     }
   };
 
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let rawValue = event.target.value.toLowerCase();
+    const cleanValue = rawValue.replace(/[^a-z0-9.\-]/g, "");
+    setUsername(cleanValue);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsLoading(false);
-    // Add authentication logic here
+    try {
+      await signIn({
+        username,
+        password,
+      });
+    } catch (err) {
+      if (isAxiosError(err) && err.response) {
+        toast.error("Falha no Login", {
+          description:
+            err.response.data.message || "Usuário ou senha incorretos.",
+        });
+      } else {
+        toast.error("Erro de Rede", {
+          description:
+            "Não foi possível conectar ao servidor. Tente novamente.",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 ">
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">Email</label>
+        <label className="text-sm font-medium text-foreground">
+          Nome de Usuário
+        </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            type="email"
-            placeholder="seu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Digite seu nome de usuário"
+            value={username}
+            onChange={handleUsernameChange}
             className="pl-10 h-12 bg-secondary border-border focus:border-primary focus:ring-primary"
             required
+            maxLength={20}
           />
         </div>
       </div>
@@ -91,7 +119,12 @@ export function LoginForm() {
           type="submit"
           className="w-full h-12 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
           disabled={
-            isLoading || !(password.length >= 6 && password.length <= 8)
+            isLoading ||
+            !(
+              password.length >= 6 &&
+              password.length <= 8 &&
+              username.length >= 5
+            )
           }
         >
           {isLoading ? (

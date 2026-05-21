@@ -1,17 +1,30 @@
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { Mail, User, Lock, EyeOff, Eye, Check, ArrowRight } from "lucide-react";
+import {
+  User,
+  Lock,
+  EyeOff,
+  Eye,
+  Check,
+  ArrowRight,
+  UserLock,
+} from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import useApi from "@/hooks/useApi";
+import { isAxiosError } from "axios";
 
-export function RegisterForm() {
+type RegisterFormProps = {
+  onRegistered: () => void;
+};
+
+export function RegisterForm({ onRegistered }: RegisterFormProps) {
   const api = useApi();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const passwordStrength = {
@@ -29,18 +42,43 @@ export function RegisterForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let rawValue = event.target.value.toLowerCase();
+    const cleanValue = rawValue.replace(/[^a-z0-9.\-]/g, "");
+    setUsername(cleanValue);
+  };
+
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      await api.post("/register", {
+        name,
+        username,
+        password,
+      });
 
-    toast.success("Conta criada com sucesso!", {
-      description: "Bem-vindo ao Nexus Dashboard. Agora é só fazer o login.",
-    });
+      toast.success("Account created successfully!", {
+        description: "Welcome to System Inventory. You can now log in.",
+      });
 
-    setIsLoading(false);
-    // Add registration logic here
+      onRegistered();
+    } catch (err) {
+      if (isAxiosError(err) && err.response) {
+        toast.error("Falha no Login", {
+          description:
+            err.response.data.message || "Usuário ou senha incorretos.",
+        });
+      } else {
+        toast.error("Erro de Rede", {
+          description:
+            "Não foi possível conectar ao servidor. Tente novamente.",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -63,16 +101,19 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">Email</label>
+        <label className="text-sm font-medium text-foreground">
+          Nome de Usuário
+        </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <UserLock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            type="email"
-            placeholder="seu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Digite seu nome de usuário"
+            value={username}
+            onChange={handleUsernameChange}
             className="pl-10 h-12 bg-secondary border-border focus:border-primary focus:ring-primary"
             required
+            maxLength={20}
           />
         </div>
       </div>
