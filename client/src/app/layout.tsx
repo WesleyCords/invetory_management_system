@@ -4,7 +4,8 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./global.css";
 import { Toaster } from "sonner";
-import { AuthProvider } from "@/providers/AuthContext";
+import { AuthProvider } from "@/providers/auth-provider";
+import { QueryProvider } from "@/providers/query-provider";
 
 interface PropsRootLayout {
   children: React.ReactNode;
@@ -29,7 +30,9 @@ export default function RootLayout({ children }: PropsRootLayout) {
   return (
     <html lang="pt-BR" className="bg-background">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
         <Toaster
           richColors

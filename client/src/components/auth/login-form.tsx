@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Eye, EyeOff, Lock, User } from "lucide-react";
 import { useState } from "react";
 import { isAxiosError } from "axios";
-import { useAuth } from "@/providers/AuthContext";
+import { useAuth } from "@/providers/auth-provider";
 import { toast } from "sonner";
 
 export function LoginForm() {
