@@ -4,7 +4,7 @@ declare module '@fastify/jwt' {
   interface FastifyJWT {
     // O que vai no token quando geramos no Login
     payload: {
-      sub: string; // O ID do usuário no banco (Subject)
+      sub: string;
       name: string;
       username: string;
       role: 'MANAGER' | 'EMPLOYEE';
