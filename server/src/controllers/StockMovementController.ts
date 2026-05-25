@@ -6,12 +6,16 @@ import GetProductBalanceService from '../services/GetProductBalance';
 
 class StockMovementController {
   async register(
-    req: FastifyRequest<{ Body: IStockRequest }>,
+    req: FastifyRequest<{ Body: Omit<IStockRequest, 'userId'> }>,
     reply: FastifyReply,
   ) {
     const registerStock = new StockMovementService();
+    const idUser = req.user.sub; // Pegando o ID do usuário logado a partir do token
 
-    const movement = await registerStock.execute(req.body);
+    const movement = await registerStock.execute({
+      ...req.body,
+      userId: idUser,
+    });
 
     console.log('Stock movement registered successfully', movement);
 

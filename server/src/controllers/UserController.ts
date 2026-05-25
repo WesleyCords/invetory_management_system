@@ -29,17 +29,18 @@ class UserController {
 
     const user = await authUser.execute({ username, password });
 
-    const token = await reply.jwtSign(
-      {
-        role: user.role,
+    const userPayloadToken = {
+      sub: user.id,
+      name: user.name,
+      username: user.username,
+      role: user.role,
+    };
+
+    const token = await reply.jwtSign(userPayloadToken, {
+      sign: {
+        expiresIn: '1d',
       },
-      {
-        sign: {
-          sub: user.id,
-          expiresIn: '1d',
-        },
-      },
-    );
+    });
 
     reply.status(200).send({
       token,
