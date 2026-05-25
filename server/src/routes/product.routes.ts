@@ -1,5 +1,6 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import ProductController from '../controllers/ProductController';
+import verifyJWT from '../middleware/verify-jwt';
 
 import {
   createProductSchema,
@@ -11,6 +12,8 @@ import {
 
 export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
   const productController = new ProductController();
+
+  fastify.addHook('preHandler', verifyJWT);
 
   fastify.post(
     '/product',

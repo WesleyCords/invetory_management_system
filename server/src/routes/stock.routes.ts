@@ -1,5 +1,6 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import StockMovementController from '../controllers/StockMovementController';
+import verifyJWT from '../middleware/verify-jwt';
 import {
   getProductBalanceResponseSchema,
   getProductBalanceSchema,
@@ -9,6 +10,8 @@ import {
 
 export const stockRoutes: FastifyPluginAsyncZod = async (fastify) => {
   const stockController = new StockMovementController();
+
+  fastify.addHook('preHandler', verifyJWT);
 
   fastify.post(
     '/movements',

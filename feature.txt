@@ -1,0 +1,3 @@
+- Corrigir a rota de criar movimentação, pois agora ela precisa do UserId para aceitar. (server)
+- Colocar verificação de token JWT nas rotas do backend para se tornar private - 401 Unauthorized - request.jwtVerify() (server)
+- Configurar o Zustand e o React Query no projeto (client)

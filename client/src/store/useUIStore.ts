@@ -12,7 +12,7 @@ export const useUIStore = create<UIState>((set) => ({
   // Estado Inicial
   isSidebarOpen: true,
 
-  // Ações (Actions) - As únicas funções autorizadas a mexer no estado
+  // Actions as únicas funções autorizadas a mexer no estado
   toggleSidebar: () =>
     set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
