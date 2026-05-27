@@ -113,7 +113,7 @@ function SidebarItem({ item, isOpen, isActive }: SidebarItemProps) {
     <button
       onClick={teste}
       className={cn(
-        "relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+        "relative flex w-full items-center gap-3 rounded-lg cursor-pointer px-3 py-2.5 text-sm font-medium transition-all duration-200",
         isActive
           ? "bg-primary/10 text-primary"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground",
