@@ -1,13 +1,33 @@
 "use client";
 import { motion } from "framer-motion";
+import { DashboardSideBar } from "./dashboard-siderbar";
+import { DashboardHeader } from "./dashboard-header";
+import { DashboardContent } from "./dashboard-content";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { DashboardMobile } from "../test-mobile";
 
 export function Dashboard() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <DashboardMobile />;
+  }
+
   return (
-    <motion.div className="flex w-min-screen h-screen items-center">
-      <div className="flex w-75 bg-red-500 h-screen ">menu</div>
-      <div className="flex-1 bg-green-500 h-screen ">
-        <div>header</div>
-        <main className="flex-1 bg-blue-500 h-screen ">Content</main>
+    <motion.div
+      className="flex min-h-screen bg-background"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <DashboardSideBar />
+
+      <div className="flex flex-1 flex-col">
+        <DashboardHeader />
+
+        <main className="flex-1 overflow-auto bg-red-500 p-6">
+          <DashboardContent />
+        </main>
       </div>
     </motion.div>
   );

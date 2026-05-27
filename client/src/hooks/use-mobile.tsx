@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 
 // Criei esse hook para não usar a props do CSS para gerenciar tamanho da tela,

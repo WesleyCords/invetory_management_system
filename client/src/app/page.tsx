@@ -7,7 +7,7 @@ export default async function Home() {
   const cookieStore = await cookies();
   const token = cookieStore.get("nexus.token")?.value;
 
-  if (token) {
+  if (!token) {
     return <Dashboard />;
   }
 
