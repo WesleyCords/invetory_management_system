@@ -25,7 +25,7 @@ export function Dashboard() {
       <div className="flex flex-1 flex-col">
         <DashboardHeader />
 
-        <main className="flex-1 overflow-auto bg-red-500 p-6">
+        <main className="flex-1 overflow-aut p-6">
           <DashboardContent />
         </main>
       </div>

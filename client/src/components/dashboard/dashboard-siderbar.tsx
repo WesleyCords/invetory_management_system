@@ -28,6 +28,7 @@ const bottomItems = [
 
 export function DashboardSideBar() {
   const isOpen = useUIStore((state) => state.isSidebarOpen);
+  const aba = useUIStore((state) => state.abartOpen);
 
   return (
     <motion.aside
@@ -60,14 +61,24 @@ export function DashboardSideBar() {
       <nav className="flex-1 space-y-1 p-3">
         <div className="space-y-1">
           {menuItems.map((item) => (
-            <SidebarItem key={item.id} item={item} isOpen={isOpen} />
+            <SidebarItem
+              key={item.id}
+              item={item}
+              isOpen={isOpen}
+              isActive={aba == item.id}
+            />
           ))}
         </div>
       </nav>
 
       <div className="border-t border-border p-3 space-y-1">
         {bottomItems.map((item) => (
-          <SidebarItem key={item.id} item={item} isOpen={isOpen} />
+          <SidebarItem
+            key={item.id}
+            item={item}
+            isOpen={isOpen}
+            isActive={aba == item.id}
+          />
         ))}
 
         <button
@@ -101,17 +112,14 @@ interface SidebarItemProps {
     icon: React.ComponentType<{ className?: string }>;
   };
   isOpen: boolean;
-  isActive?: boolean;
+  isActive: boolean;
 }
 
 function SidebarItem({ item, isOpen, isActive }: SidebarItemProps) {
-  const teste = () => {
-    alert(`Button: ${item.label}`);
-    isActive = true;
-  };
+  const setAbartOpen = useUIStore((state) => state.setAbartOpen);
   return (
     <button
-      onClick={teste}
+      onClick={() => setAbartOpen(item.id)}
       className={cn(
         "relative flex w-full items-center gap-3 rounded-lg cursor-pointer px-3 py-2.5 text-sm font-medium transition-all duration-200",
         isActive
