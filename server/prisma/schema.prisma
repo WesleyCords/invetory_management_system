@@ -68,6 +68,7 @@ model Product {
   sku         String            @unique
   name        String
   price       Decimal           @db.Decimal(10, 2)
+  costPrice   Decimal           @db.Decimal(10, 2)
   description String?           @db.Text
   isActive    Boolean           @default(true)
 

@@ -5,10 +5,10 @@ class MetricsController {
   async search(req: FastifyRequest, reply: FastifyReply) {
     const calcMetrics = new MetricsDahboardService();
 
-    const metrics = calcMetrics.execute();
+    const metrics = await calcMetrics.execute();
 
     reply.status(200).send({
-      message: 'Deu certo',
+      message: 'Dashboard data fetched successfully',
       data: metrics,
     });
   }
