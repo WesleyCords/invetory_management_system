@@ -15,17 +15,17 @@ export function Dashboard() {
 
   return (
     <motion.div
-      className="flex min-h-screen bg-background"
+      className="flex h-screen w-full overflow-hidden bg-background"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
       <DashboardSideBar />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardHeader />
 
-        <main className="flex-1 overflow-aut p-6">
+        <main className="flex-1 overflow-y-auto p-6 custom-scroll">
           <DashboardContent />
         </main>
       </div>

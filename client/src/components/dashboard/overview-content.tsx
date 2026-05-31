@@ -1,20 +1,301 @@
-export function OverviewContent() {
-  return (
-    <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-      <h2 className="text-xl font-bold text-foreground">Visão Geral</h2>
-      <p className="text-muted-foreground mt-2">
-        Bem-vindo ao seu sistema de inventário! Aqui você pode acompanhar o
-        status dos seus produtos, movimentações recentes e análises detalhadas.
-      </p>
+import {
+  mockProducts,
+  mockMovements,
+  mockLogs,
+  calculateStats,
+} from "@/lib/state-mock";
+import { useUIStore } from "@/store/useUIStore";
+import { motion } from "framer-motion";
+import {
+  AlertTriangle,
+  ArrowDownCircle,
+  ArrowRight,
+  ArrowUpCircle,
+  DollarSign,
+  Package,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
-      <div className="mt-6 flex gap-4">
-        <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition">
-          Ver Produtos
-        </button>
-        <button className="rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-white hover:bg-secondary/90 transition">
-          Ver Movimentações
-        </button>
+export function OverviewContent() {
+  const stats = calculateStats(mockProducts, mockMovements);
+  const lowStockProducts = mockProducts.filter((p) => p.quantity <= p.minStock);
+  const recentMovements = mockMovements.slice(0, 5);
+  const recentLogs = mockLogs.slice(0, 4);
+
+  const statCards = [
+    {
+      title: "Total de Produtos",
+      value: stats.totalProducts.toString(),
+      subtitle: "SKUs cadastrados",
+      icon: Package,
+      color: "bg-primary/10 text-primary",
+    },
+    {
+      title: "Valor em Estoque",
+      value: new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(stats.totalValue),
+      subtitle: "Preço de venda",
+      icon: DollarSign,
+      color: "bg-emerald-500/10 text-emerald-500",
+    },
+    {
+      title: "Estoque Baixo",
+      value: stats.lowStockItems.toString(),
+      subtitle: "Itens para repor",
+      icon: AlertTriangle,
+      color:
+        stats.lowStockItems > 0
+          ? "bg-amber-500/10 text-amber-500"
+          : "bg-muted text-muted-foreground",
+    },
+    {
+      title: "Movimentações Hoje",
+      value: stats.movementsToday.toString(),
+      subtitle: `${stats.entriesThisMonth} entradas / ${stats.exitsThisMonth} saídas (mês)`,
+      icon: ArrowDownCircle,
+      color: "bg-blue-500/10 text-blue-500",
+    },
+  ];
+
+  const toggleTab = useUIStore((state) => state.setAbartOpen);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <div className="flex items-center justify-between">
+        <div className="">
+          <h1 className="text-2xl font-bold text-foreground">
+            Visao Geral do Estoque
+          </h1>
+          <p className="text-muted-foreground">
+            Acompanhe as metricas e movimentacoes recentes do seu estoque
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => toggleTab("movements")}
+            className="hover:bg-muted border border-border text-foreground bg-card"
+          >
+            <ArrowUpCircle className="h-4 w-4" />
+            Nova Movimentação
+          </Button>
+          <Button onClick={() => toggleTab("products")}>
+            <Package className="h-4 w-4" />
+            Ver Produtos
+          </Button>
+        </div>
       </div>
-    </div>
+
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        {statCards.map((card, index) => (
+          <motion.div
+            key={card.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="bg-card text-muted-foreground hover:border-border hover:border-primary/50 transition-colors border">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {card.title}
+                </CardTitle>
+                <div className={`rounded-lg p-2 ${card.color}`}>
+                  <card.icon className="h-4 w-4" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">
+                  {card.value}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {card.subtitle}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="col-span-2"
+        >
+          <Card className="border-border border">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div className="flex gap-2 items-center">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                <CardTitle className="text-foreground">
+                  Produtos com Estoque Baixo
+                </CardTitle>
+              </div>
+              <Button
+                onClick={() => toggleTab("movements")}
+                className="bg-muted"
+              >
+                Ver todos
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {lowStockProducts.length === 0 ? (
+                <p className="text-muted-foreground text-sm py-4 text-center">
+                  Nenhum produto com estoque baixo
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {lowStockProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + index * 0.05 }}
+                      className="flex items-center justify-between rounded-lg p-3 bg-secondary/50 hover:bg-secondary transition-colors"
+                    >
+                      <div className="flex gap-3 items-center">
+                        <div className="flex items-center justify-center h-10 w-10 rounded-md bg-amber-500/10">
+                          <Package className="text-amber-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            {product.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {product.sku}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div
+                          className={`mb-1 inline-block px-2 py-1 rounded-sm text-xs font-medium ${
+                            product.quantity === 0
+                              ? "bg-destructive text-destructive-foreground"
+                              : "bg-secondary text-secondary-foreground"
+                          }`}
+                        >
+                          {product.quantity} em estoque
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Min: {product.minStock}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <Card className="border-border border">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-foreground">
+                Ultimas Movimentacoes
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleTab("movements")}
+              >
+                Ver todas
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {recentMovements.map((movement, index) => (
+                <motion.div
+                  key={movement.id}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.05 }}
+                  className="flex items-center gap-3"
+                >
+                  <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                      movement.type === "entrada"
+                        ? "bg-emerald-500/10"
+                        : "bg-rose-500/10"
+                    }`}
+                  >
+                    {movement.type === "entrada" ? (
+                      <TrendingUp className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                      <TrendingDown className="h-4 w-4 text-rose-500" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {movement.productName}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {movement.type === "entrada" ? "+" : "-"}
+                      {movement.quantity} un
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+      >
+        <Card className="bg-card border-border">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle>Atividade Recente</CardTitle>
+            <Button variant="ghost">
+              Ver historico completo
+              <ArrowRight />
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {recentLogs.map((log, index) => (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.6 }}
+                className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  {log.userName
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-foreground">
+                    <span className="font-medium">{log.userName}</span>{" "}
+                    <span className="text-muted-foreground">{log.action}</span>
+                  </p>
+                  <p className="text-sm text-muted-foreground">{log.details}</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">
+                    {new Date(log.createdAt).toLocaleString("pt-BR")}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
