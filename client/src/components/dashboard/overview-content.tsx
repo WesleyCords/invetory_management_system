@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { useProducts } from "@/hooks/querys/useProducts";
 
 export function OverviewContent() {
+  const { data: products, isLoading } = useProducts();
   const stats = calculateStats(mockProducts, mockMovements);
   const lowStockProducts = mockProducts.filter((p) => p.quantity <= p.minStock);
   const recentMovements = mockMovements.slice(0, 5);
@@ -28,7 +30,7 @@ export function OverviewContent() {
   const statCards = [
     {
       title: "Total de Produtos",
-      value: stats.totalProducts.toString(),
+      value: isLoading ? "Carregando..." : products?.length.toString(),
       subtitle: "SKUs cadastrados",
       icon: Package,
       color: "bg-primary/10 text-primary",
@@ -102,7 +104,7 @@ export function OverviewContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="bg-card text-muted-foreground hover:border-border hover:border-primary/50 transition-colors border">
+            <Card className="bg-card text-muted-foreground hover:border-accent transition-colors border">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {card.title}
@@ -270,6 +272,7 @@ export function OverviewContent() {
           <CardContent className="space-y-4">
             {recentLogs.map((log, index) => (
               <motion.div
+                key={log.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.6 }}

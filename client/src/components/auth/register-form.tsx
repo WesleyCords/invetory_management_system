@@ -9,10 +9,10 @@ import {
   ArrowRight,
   UserLock,
 } from "lucide-react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import useApi from "@/hooks/useApi";
+import { api } from "@/lib/api";
 import { isAxiosError } from "axios";
 
 type RegisterFormProps = {
@@ -20,7 +20,6 @@ type RegisterFormProps = {
 };
 
 export function RegisterForm({ onRegistered }: RegisterFormProps) {
-  const api = useApi();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -42,13 +41,13 @@ export function RegisterForm({ onRegistered }: RegisterFormProps) {
     }
   };
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     let rawValue = event.target.value.toLowerCase();
     const cleanValue = rawValue.replace(/[^a-z0-9.\-]/g, "");
     setUsername(cleanValue);
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -59,16 +58,17 @@ export function RegisterForm({ onRegistered }: RegisterFormProps) {
         password,
       });
 
-      toast.success("Account created successfully!", {
-        description: "Welcome to System Inventory. You can now log in.",
+      toast.success("Conta criada com sucesso!", {
+        description:
+          "Bem-vindo ao System Inventory. Você pode agora fazer login.",
       });
 
       onRegistered();
     } catch (err) {
       if (isAxiosError(err) && err.response) {
-        toast.error("Falha no Login", {
+        toast.error("Falha ao tentar se registrar", {
           description:
-            err.response.data.message || "Usuário ou senha incorretos.",
+            err.response.data.message || "Tente novamente mais tarde.",
         });
       } else {
         toast.error("Erro de Rede", {
