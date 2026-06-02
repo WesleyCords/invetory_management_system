@@ -21,16 +21,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useProducts } from "@/hooks/querys/useProducts";
 
 export function OverviewContent() {
-  const { data: products, isLoading } = useProducts();
+  const { data: products, isLoading, isError } = useProducts();
   const stats = calculateStats(mockProducts, mockMovements);
   const lowStockProducts = mockProducts.filter((p) => p.quantity <= p.minStock);
   const recentMovements = mockMovements.slice(0, 5);
   const recentLogs = mockLogs.slice(0, 4);
 
+  const stateProducts = () => {
+    if (isLoading) {
+      return "Carregando...";
+    } else if (isError) {
+      return "Erro ao carregar";
+    } else {
+      return products?.length.toString() || "0";
+    }
+  };
+
   const statCards = [
     {
       title: "Total de Produtos",
-      value: isLoading ? "Carregando..." : products?.length.toString(),
+      value: stateProducts(),
       subtitle: "SKUs cadastrados",
       icon: Package,
       color: "bg-primary/10 text-primary",
