@@ -10,6 +10,7 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -54,23 +55,13 @@ export function ProductDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-1 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-foreground">
                   Nome
                 </Label>
                 <Input
                   id="name"
-                  className="bg-secondary border-border"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="sku" className="text-foreground">
-                  SKU
-                </Label>
-                <Input
-                  id="sku"
                   className="bg-secondary border-border"
                   required
                 />
@@ -86,21 +77,27 @@ export function ProductDialog({
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories
-                      .filter((c) => c !== "Todos")
-                      .map((cat) => (
-                        <SelectItem key={cat} value={cat}>
-                          {cat}
-                        </SelectItem>
-                      ))}
+                    <SelectGroup>
+                      {categories
+                        .filter((c) => c !== "Todos")
+                        .map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="supplier" className="text-foreground">
-                  Fornecedor
+                <Label htmlFor="sku" className="text-foreground">
+                  SKU
                 </Label>
-                <Input id="supplier" className="bg-secondary border-border" />
+                <Input
+                  id="sku"
+                  className="bg-secondary border-border"
+                  required
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -115,14 +112,10 @@ export function ProductDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="minStock" className="text-foreground">
-                  Estoque Minimo
+                <Label htmlFor="supplier" className="text-foreground">
+                  Fornecedor
                 </Label>
-                <Input
-                  id="minStock"
-                  type="number"
-                  className="bg-secondary border-border"
-                />
+                <Input id="supplier" className="bg-secondary border-border" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -148,6 +141,13 @@ export function ProductDialog({
                   className="bg-secondary border-border"
                 />
               </div>
+            </div>
+            <div>
+              <textarea
+                id="description"
+                placeholder="Descricao do produto"
+                className="w-full h-24 p-2 bg-secondary focus:outline-none focus:ring-2 focus:ring-border border rounded-md resize-none text-sm text-foreground"
+              />
             </div>
           </div>
           <DialogFooter>

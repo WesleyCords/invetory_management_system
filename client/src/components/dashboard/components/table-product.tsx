@@ -59,12 +59,12 @@ export function TableProduct() {
 
   return (
     <>
-      <Card className="border border-border">
+      <Card>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-muted-foreground">
+                <TableHead>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -74,11 +74,9 @@ export function TableProduct() {
                     <ArrowUpDown className="ml-2 h-3 w-3" />
                   </Button>
                 </TableHead>
-                <TableHead className="text-muted-foreground">SKU</TableHead>
-                <TableHead className="text-muted-foreground">
-                  Categoria
-                </TableHead>
-                <TableHead className="text-right text-muted-foreground">
+                <TableHead>SKU</TableHead>
+                <TableHead>Categoria</TableHead>
+                <TableHead className="text-right">
                   <Button variant="ghost" size="sm" className="-mr-3">
                     Quantidade
                     <ArrowUpDown className="ml-2 h-3 w-3" />
@@ -94,8 +92,8 @@ export function TableProduct() {
                     Preço <ArrowUpDown className="ml-2 h-3 w-3" />
                   </Button>
                 </TableHead>
-                <TableHead className="text-muted-foreground">Status</TableHead>
-                <TableHead className="text-muted-foreground">Ações</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -92,10 +92,7 @@ export function OverviewContent() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button
-            onClick={() => toggleTab("movements")}
-            className="hover:bg-muted border border-border text-foreground bg-card"
-          >
+          <Button onClick={() => toggleTab("movements")} variant="outline">
             <ArrowUpCircle className="h-4 w-4" />
             Nova Movimentação
           </Button>
@@ -114,11 +111,9 @@ export function OverviewContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="bg-card text-muted-foreground hover:border-accent transition-colors border">
+            <Card className="hover:border-accent">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {card.title}
-                </CardTitle>
+                <CardTitle>{card.title}</CardTitle>
                 <div className={`rounded-lg p-2 ${card.color}`}>
                   <card.icon className="h-4 w-4" />
                 </div>

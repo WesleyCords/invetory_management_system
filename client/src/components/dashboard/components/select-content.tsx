@@ -20,11 +20,11 @@ export function SelectComponent({ list, title }: SelectProps) {
 
   return (
     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-      <SelectTrigger className="w-45 bg-secondary border-border">
+      <SelectTrigger className="w-45">
         <Filter className="mr-2 h-4 w-4" />
         <SelectValue />
       </SelectTrigger>
-      <SelectContent className="border rounded-sm">
+      <SelectContent>
         <SelectGroup>
           {title && <SelectLabel>{title}</SelectLabel>}
           {list.map((cat) => (
