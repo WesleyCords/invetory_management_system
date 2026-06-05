@@ -1,16 +1,26 @@
 import { motion } from "framer-motion";
 import { HeaderContent } from "./components/header-content";
-import { ArrowUpCircle, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { SelectComponent } from "./components/select-content";
+import { TableProduct } from "./components/table-product";
+import { useUIProducts } from "@/store/useUIProduct";
+import { ProductDialog } from "./components/dialog-product";
 
 export function ProductsContent() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const categories = ["Todos", "Vestuário", "Calçados", "Acessórios"];
+  const { onChangeSearch, search } = useUIProducts();
+  const categories = [
+    "Todos",
+    "Vestuário",
+    "Calçados",
+    "Acessórios",
+    "Smartphones",
+  ];
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
 
   return (
     <motion.div
@@ -23,9 +33,12 @@ export function ProductsContent() {
         title="Produtos"
         subtitle="Gerencie seu catalogo de produtos"
       >
-        <Button className="hover:bg-muted border border-border text-foreground bg-card">
-          <ArrowUpCircle className="h-4 w-4" />
-          Nova Movimentação
+        <Button
+          className="hover:bg-muted border border-border text-foreground bg-card"
+          onClick={() => setIsAddDialogOpen(true)}
+        >
+          <Plus className="h-4 w-4" />
+          Novo Produto
         </Button>
       </HeaderContent>
 
@@ -36,8 +49,8 @@ export function ProductsContent() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por nome ou SKU..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={search}
+                onChange={(e) => onChangeSearch(e.target.value)}
                 className="pl-9 bg-secondary border-border"
               />
             </div>
@@ -47,6 +60,17 @@ export function ProductsContent() {
           </div>
         </CardContent>
       </Card>
+
+      <TableProduct />
+
+      <ProductDialog
+        open={isAddDialogOpen}
+        onOpenChange={(open) => {
+          setIsAddDialogOpen(open);
+          if (!open) setEditingProduct(null);
+        }}
+        product={editingProduct}
+      />
     </motion.div>
   );
 }

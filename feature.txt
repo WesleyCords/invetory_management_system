@@ -1,3 +1,10 @@
-- Corrigir a rota de criar movimentação, pois agora ela precisa do UserId para aceitar. (server)
-- Colocar verificação de token JWT nas rotas do backend para se tornar private - 401 Unauthorized - request.jwtVerify() (server)
-- Configurar o Zustand e o React Query no projeto (client)
+- Ajeitar o UI do Dialog
+- Analisar como esta sendo feita a divisão de trabalho de cada componente do produtos 
+e desenvolver para ficar mais fluido em um todo
+- Buscar as categorias e fazer uma lista delas
+- Corrigir o select das categorias
+- Conectar com a quantity de cada produto
+- Conectar com as rotas de deletar e criar produto
+- Review em tudo que eu alterei e deixar fluido e limpo
+- Resolver a questão dos varios suppliers para colocar nos detalhes do produto
+- Conectar a rota de metrics com a aba overview (As 4 tabelas)

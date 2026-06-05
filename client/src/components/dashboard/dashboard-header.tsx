@@ -85,10 +85,7 @@ export function DashboardHeader() {
               </Button>
             }
           ></DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-56 bg-card rounded-md border-border"
-            align="end"
-          >
+          <DropdownMenuContent className="w-56" align="end">
             <DropdownMenuGroup className="text-muted-foreground">
               <DropdownMenuLabel className="text-sm font-semibold text-foreground">
                 Minha Conta
