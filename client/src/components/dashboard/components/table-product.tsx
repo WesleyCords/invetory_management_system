@@ -14,6 +14,7 @@ import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { ArrowUpDown, Package } from "lucide-react";
 import { ProductsList } from "./productsList";
 import { Pagination } from "./Pagination";
+import { ArrowTableHeader } from "./arrow-table-header";
 
 export function TableProduct() {
   const { categorySelected, sortField, handleSortChange, sortOrder, search } =
@@ -67,7 +68,7 @@ export function TableProduct() {
                     onClick={() => handleSort("name")}
                   >
                     Produtos
-                    <ArrowUpDown className="ml-2 h-3 w-3" />
+                    <ArrowTableHeader field="name" />
                   </Button>
                 </TableHead>
 
@@ -83,7 +84,7 @@ export function TableProduct() {
                       className="pr-0 focus-visible:ring-0 focus-visible:ring-offset-0 hover:bg-transparent"
                     >
                       Quantidade
-                      <ArrowUpDown className="ml-2 h-3 w-3" />
+                      <ArrowTableHeader field="quantity" />
                     </Button>
                   </div>
                 </TableHead>
@@ -97,7 +98,7 @@ export function TableProduct() {
                       onClick={() => handleSort("price")}
                     >
                       Preço
-                      <ArrowUpDown className="ml-2 h-3 w-3" />
+                      <ArrowTableHeader field="price" />
                     </Button>
                   </div>
                 </TableHead>
