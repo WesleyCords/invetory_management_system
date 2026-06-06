@@ -61,29 +61,31 @@ export const getAllProductsResponseSchema = z.object({
   message: z.string(),
   data: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       sku: z.string(),
       name: z.string(),
       price: z.number().positive(),
       description: z.string().optional(),
       isActive: z.boolean(),
-      categoryId: z.string().uuid(),
-      brandId: z.string().uuid(),
+      categoryId: z.uuid(),
+      brandId: z.uuid(),
       brand: z.object({
         name: z.string(),
       }),
       category: z.object({
-        id: z.string().uuid(),
+        id: z.uuid(),
         name: z.string(),
       }),
       suppliers: z.array(
         z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           name: z.string(),
           company: z.string(),
           address: z.string(),
         }),
       ),
+      quantity: z.number(),
+      isLowStock: z.boolean(),
     }),
   ),
 });
