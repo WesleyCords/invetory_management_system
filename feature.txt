@@ -1,5 +1,3 @@
-- Buscar as categorias e fazer uma lista delas
-- Corrigir o select das categorias
 - Conectar com a quantity de cada produto
 - Conectar com as rotas de deletar e criar produto
 - Review em tudo que eu alterei e deixar fluido e limpo
@@ -9,3 +7,5 @@
 - Validação de campo no Dialog do SKU
 - Elaborar o fluxo no front dos fornecedores, brands e categorias
 - Colocar o campo de costPrice na criação do produto la na rota como req.body
+
+- Criar a logica de sair, aparecer um modal e confirmar a saida e excluir o token

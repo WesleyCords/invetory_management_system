@@ -19,17 +19,20 @@ import { Label } from "../../ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUIProducts } from "@/store/useUIProduct";
+import { useCategories } from "@/hooks/querys/useCategories";
 
 export function ProductDialog() {
-  const [formData, setFormData] = useState<Partial<IProduct>>();
-
+  const [valueSelectTemp, setValueSelectTemp] = useState<string>("");
+  const { data: categories = [] } = useCategories();
   const { dialogOpen, closeDialog, productToEdit } = useUIProducts();
-
-  const categories = ["Todos", "Vestuário", "Calçados", "Acessórios"];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
+
+  const selectedCategoryName = categories.find(
+    (cat) => String(cat.id) === valueSelectTemp,
+  )?.name;
 
   return (
     <Dialog open={dialogOpen} onOpenChange={closeDialog}>
@@ -63,19 +66,25 @@ export function ProductDialog() {
                 <Label htmlFor="category" className="text-foreground">
                   Categoria
                 </Label>
-                <Select>
+                <Select
+                  value={selectedCategoryName}
+                  onValueChange={(valorSelecionado) => {
+                    setValueSelectTemp(valorSelecionado);
+                    console.log("Valor selecionado:", valorSelecionado);
+                  }}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma categoria" />
+                    <SelectValue placeholder="Selecione uma categoria">
+                      {selectedCategoryName}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {categories
-                        .filter((c) => c !== "Todos")
-                        .map((cat) => (
-                          <SelectItem key={cat} value={cat}>
-                            {cat}
-                          </SelectItem>
-                        ))}
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={String(cat.id)}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>

@@ -9,17 +9,12 @@ import { SelectComponent } from "./components/select-content";
 import { TableProduct } from "./components/table-product";
 import { useUIProducts } from "@/store/useUIProduct";
 import { ProductDialog } from "./components/dialog-product";
+import { useCategories } from "@/hooks/querys/useCategories";
 
 export function ProductsContent() {
   const { onChangeSearch, search, openNewProductDialog } = useUIProducts();
-  const categories = [
-    "Todos",
-    "Vestuário",
-    "Calçados",
-    "Acessórios",
-    "Smartphones",
-  ];
-
+  const { data: dbCategories = [], isLoading } = useCategories();
+  const categories = ["Todos", ...dbCategories.map((cat) => cat.name)];
   return (
     <>
       <motion.div
@@ -51,7 +46,10 @@ export function ProductsContent() {
                 />
               </div>
               <div className="flex gap-2">
-                <SelectComponent list={categories} title="Categoria" />
+                <SelectComponent
+                  list={categories}
+                  title={isLoading ? "Carregando..." : "Categorias"}
+                />
               </div>
             </div>
           </CardContent>

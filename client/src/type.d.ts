@@ -24,3 +24,8 @@ interface ISuppliers {
   company: string;
   address: string;
 }
+
+interface ICategories {
+  id: string;
+  name: string;
+}
