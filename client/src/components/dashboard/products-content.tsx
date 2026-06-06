@@ -11,7 +11,7 @@ import { useUIProducts } from "@/store/useUIProduct";
 import { ProductDialog } from "./components/dialog-product";
 
 export function ProductsContent() {
-  const { onChangeSearch, search } = useUIProducts();
+  const { onChangeSearch, search, openNewProductDialog } = useUIProducts();
   const categories = [
     "Todos",
     "Vestuário",
@@ -19,8 +19,6 @@ export function ProductsContent() {
     "Acessórios",
     "Smartphones",
   ];
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
 
   return (
     <>
@@ -34,7 +32,7 @@ export function ProductsContent() {
           title="Produtos"
           subtitle="Gerencie seu catalogo de produtos"
         >
-          <Button variant="outline" onClick={() => setIsAddDialogOpen(true)}>
+          <Button variant="outline" onClick={openNewProductDialog}>
             <Plus className="h-4 w-4" />
             Novo Produto
           </Button>
@@ -61,14 +59,7 @@ export function ProductsContent() {
 
         <TableProduct />
       </motion.div>
-      <ProductDialog
-        open={isAddDialogOpen}
-        onOpenChange={(open) => {
-          setIsAddDialogOpen(open);
-          if (!open) setEditingProduct(null);
-        }}
-        product={editingProduct}
-      />
+      <ProductDialog />
     </>
   );
 }

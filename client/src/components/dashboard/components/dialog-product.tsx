@@ -18,37 +18,28 @@ import {
 import { Label } from "../../ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useUIProducts } from "@/store/useUIProduct";
 
-interface ProductDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  product: IProduct | null;
-  // onSave: (product: Partial<IProduct>) => void;
-}
-
-export function ProductDialog({
-  open,
-  onOpenChange,
-  product,
-}: ProductDialogProps) {
+export function ProductDialog() {
   const [formData, setFormData] = useState<Partial<IProduct>>();
+
+  const { dialogOpen, closeDialog, productToEdit } = useUIProducts();
 
   const categories = ["Todos", "Vestuário", "Calçados", "Acessórios"];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={dialogOpen} onOpenChange={closeDialog}>
       <DialogContent className="max-w-130">
         <DialogHeader>
           <DialogTitle>
-            {product ? "Editar Produto" : "Novo Produto"}
+            {productToEdit ? "Editar Produto" : "Novo Produto"}
           </DialogTitle>
           <DialogDescription>
-            {product
+            {productToEdit
               ? "Atualize as informacoes do produto"
               : "Preencha as informacoes do novo produto"}
           </DialogDescription>
@@ -151,15 +142,11 @@ export function ProductDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={closeDialog}>
               Cancelar
             </Button>
             <Button type="submit">
-              {product ? "Salvar Alteracoes" : "Cadastrar Produto"}
+              {productToEdit ? "Salvar Alteracoes" : "Cadastrar Produto"}
             </Button>
           </DialogFooter>
         </form>

@@ -1,5 +1,3 @@
-- Analisar como esta sendo feita a divisão de trabalho de cada componente do produtos 
-e desenvolver para ficar mais fluido em um todo
 - Buscar as categorias e fazer uma lista delas
 - Corrigir o select das categorias
 - Conectar com a quantity de cada produto
