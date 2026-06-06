@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useUIProducts } from "@/store/useUIProduct";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -22,7 +22,7 @@ interface ProductsListProps {
 }
 
 export function ProductsList({ products }: ProductsListProps) {
-  const { currentPage } = useUIProducts();
+  const { currentPage } = useUISectionProducts();
   const ITEMS_PER_PAGE = 10;
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -31,18 +31,15 @@ export function ProductsList({ products }: ProductsListProps) {
   const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence>
       {currentItems.map((product, index) => {
-        const mockQuantity = Math.floor(Math.random() * 10);
-        const isLowStock = mockQuantity <= 5;
-
         return (
           <motion.tr
             key={product.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ delay: index * 0.03, duration: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="border-border hover:bg-secondary/50"
           >
             <TableCell>
@@ -72,7 +69,7 @@ export function ProductsList({ products }: ProductsListProps) {
             </TableCell>
 
             <TableCell className="text-right font-medium text-foreground">
-              {mockQuantity}
+              {product.quantity}
             </TableCell>
 
             <TableCell className="text-right text-foreground">
@@ -83,7 +80,7 @@ export function ProductsList({ products }: ProductsListProps) {
             </TableCell>
 
             <TableCell>
-              {isLowStock ? (
+              {product.isLowStock ? (
                 <Badge variant="destructive" className="gap-1">
                   <AlertTriangle className="h-3 w-3" />
                   Baixo

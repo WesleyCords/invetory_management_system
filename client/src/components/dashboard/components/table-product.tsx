@@ -10,18 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useProducts } from "@/hooks/querys/useProducts";
-import { useUIProducts } from "@/store/useUIProduct";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { ArrowUpDown, Package } from "lucide-react";
-import { useState } from "react";
 import { ProductsList } from "./productsList";
 import { Pagination } from "./Pagination";
 
 export function TableProduct() {
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [sortField, setSortField] = useState<keyof IProduct>("name");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const { search } = useUIProducts();
+  const { categorySelected, sortField, handleSortChange, sortOrder, search } =
+    useUISectionProducts();
   const { data: products } = useProducts();
 
   const filteredProducts = products
@@ -30,7 +26,7 @@ export function TableProduct() {
         p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.sku.toLowerCase().includes(search.toLowerCase());
       const matchesCategory =
-        selectedCategory === "Todos" || p.category.name === selectedCategory;
+        categorySelected === "Todos" || p.category.name === categorySelected;
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
@@ -50,17 +46,16 @@ export function TableProduct() {
 
   const handleSort = (field: keyof IProduct) => {
     if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      handleSortChange(field);
     } else {
-      setSortField(field);
-      setSortOrder("asc");
+      handleSortChange(field);
     }
   };
 
   return (
     <>
       <Card>
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
@@ -68,30 +63,45 @@ export function TableProduct() {
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="focus-visible:ring-0 focus-visible:ring-offset-0 px-0 hover:bg-transparent"
                     onClick={() => handleSort("name")}
                   >
                     Produtos
                     <ArrowUpDown className="ml-2 h-3 w-3" />
                   </Button>
                 </TableHead>
+
                 <TableHead>SKU</TableHead>
                 <TableHead>Categoria</TableHead>
+
                 <TableHead className="text-right">
-                  <Button variant="ghost" size="sm" className="-mr-3">
-                    Quantidade
-                    <ArrowUpDown className="ml-2 h-3 w-3" />
-                  </Button>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => handleSort("quantity")}
+                      variant="ghost"
+                      size="sm"
+                      className="pr-0 focus-visible:ring-0 focus-visible:ring-offset-0 hover:bg-transparent"
+                    >
+                      Quantidade
+                      <ArrowUpDown className="ml-2 h-3 w-3" />
+                    </Button>
+                  </div>
                 </TableHead>
+
                 <TableHead className="text-right text-muted-foreground">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="-mr-3"
-                    onClick={() => handleSort("price")}
-                  >
-                    Preço <ArrowUpDown className="ml-2 h-3 w-3" />
-                  </Button>
+                  <div className="flex justify-end">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="pr-0 focus-visible:ring-0 focus-visible:ring-offset-0 hover:bg-transparent"
+                      onClick={() => handleSort("price")}
+                    >
+                      Preço
+                      <ArrowUpDown className="ml-2 h-3 w-3" />
+                    </Button>
+                  </div>
                 </TableHead>
+
                 <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>

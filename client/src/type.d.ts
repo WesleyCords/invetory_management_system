@@ -16,6 +16,8 @@ interface IProduct {
     name: string;
   };
   suppliers: ISuppliers[];
+  quantity: number;
+  isLowStock: boolean;
 }
 
 interface ISuppliers {

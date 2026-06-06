@@ -7,24 +7,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
 import { Label } from "../../ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useUIProducts } from "@/store/useUIProduct";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { useCategories } from "@/hooks/querys/useCategories";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 
 export function ProductDialog() {
   const [valueSelectTemp, setValueSelectTemp] = useState<string>("");
   const { data: categories = [] } = useCategories();
-  const { dialogOpen, closeDialog, productToEdit } = useUIProducts();
+  const { dialogOpen, closeDialog, productToEdit } = useUISectionProducts();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,28 +66,19 @@ export function ProductDialog() {
                 <Label htmlFor="category" className="text-foreground">
                   Categoria
                 </Label>
-                <Select
-                  value={selectedCategoryName}
-                  onValueChange={(valorSelecionado) => {
-                    setValueSelectTemp(valorSelecionado);
-                    console.log("Valor selecionado:", valorSelecionado);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma categoria">
-                      {selectedCategoryName}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={String(cat.id)}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <Combobox items={categories}>
+                  <ComboboxInput placeholder="Seleciona a categoria" />
+                  <ComboboxContent>
+                    <ComboboxEmpty>Item não encontrado</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item) => (
+                        <ComboboxItem key={item.id} value={item.id}>
+                          {item.name}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="sku" className="text-foreground">

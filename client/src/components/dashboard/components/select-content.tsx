@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { useState } from "react";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
 
 interface SelectProps {
   title?: string;
@@ -16,10 +17,10 @@ interface SelectProps {
 }
 
 export function SelectComponent({ list, title }: SelectProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>(list[0]);
+  const { handleCategoryChange, categorySelected } = useUISectionProducts();
 
   return (
-    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+    <Select value={categorySelected} onValueChange={handleCategoryChange}>
       <SelectTrigger className="w-45">
         <Filter className="mr-2 h-4 w-4" />
         <SelectValue />

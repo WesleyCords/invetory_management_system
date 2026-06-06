@@ -7,12 +7,13 @@ import { Input } from "../ui/input";
 import { useState } from "react";
 import { SelectComponent } from "./components/select-content";
 import { TableProduct } from "./components/table-product";
-import { useUIProducts } from "@/store/useUIProduct";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { ProductDialog } from "./components/dialog-product";
 import { useCategories } from "@/hooks/querys/useCategories";
 
 export function ProductsContent() {
-  const { onChangeSearch, search, openNewProductDialog } = useUIProducts();
+  const { onChangeSearch, search, openNewProductDialog } =
+    useUISectionProducts();
   const { data: dbCategories = [], isLoading } = useCategories();
   const categories = ["Todos", ...dbCategories.map((cat) => cat.name)];
   return (
