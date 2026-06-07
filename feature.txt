@@ -1,9 +1,9 @@
-- Conectar com as rotas de deletar e criar produto
-- Review em tudo que eu alterei e deixar fluido e limpo
+- Refinar o modal de criar o produto
+- Conectar com as rotas de deletar e editar produto
 - Resolver a questão dos varios suppliers para colocar nos detalhes do produto
 - Conectar a rota de metrics com a aba overview (As 4 tabelas)
 - Validação de campo no Dialog do SKU
-- Elaborar o fluxo no front dos fornecedores, brands e categorias
-- Colocar o campo de costPrice na criação do produto la na rota como req.body
 
 - Criar a logica de sair, aparecer um modal e confirmar a saida e excluir o token
+- Uma rota para mudar o produto vai pedir o id do produto e os campos que irá mudar. A logica vai ser no service/controller 
+- Analisar o que esta sendo retornado na rota metric/dashboard

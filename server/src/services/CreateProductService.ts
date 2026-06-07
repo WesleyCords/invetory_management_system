@@ -156,8 +156,11 @@ class CreateProductService {
       },
       include: { suppliers: true },
     });
-
-    return product;
+    return {
+      ...product,
+      price: Number(product.price),
+      costPrice: Number(product.costPrice),
+    };
   }
 }
 

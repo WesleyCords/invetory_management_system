@@ -24,21 +24,22 @@ export const createProductSchema = z.object({
 export const productResponseSchema = z.object({
   message: z.string(),
   data: z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     sku: z.string(),
     name: z.string(),
     price: z.number().positive(),
-    description: z.string().optional(),
+    description: z.string().nullable(),
     isActive: z.boolean(),
-    categoryId: z.string().uuid(),
-    brandId: z.string().uuid(),
+    categoryId: z.uuid(),
+    brandId: z.uuid(),
     suppliers: z.array(
       z.object({
-        id: z.string().uuid(),
-        productId: z.string().uuid(),
-        supplierId: z.string().uuid(),
+        id: z.uuid(),
+        productId: z.uuid(),
+        supplierId: z.uuid(),
       }),
     ),
+    costPrice: z.number().positive(),
   }),
 });
 
@@ -68,7 +69,7 @@ export const getAllProductsResponseSchema = z.object({
       sku: z.string(),
       name: z.string(),
       price: z.number().positive(),
-      description: z.string().optional(),
+      description: z.string().nullable(),
       isActive: z.boolean(),
       categoryId: z.uuid(),
       brandId: z.uuid(),

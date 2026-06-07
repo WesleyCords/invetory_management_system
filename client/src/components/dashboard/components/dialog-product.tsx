@@ -20,29 +20,29 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox";
+import { useProductForm } from "@/store/useProductForm";
 
 export function ProductDialog() {
-  const [valueSelectTemp, setValueSelectTemp] = useState<string>("");
+  const [categoryNameView, setCategoryNameView] = useState<string>(""); // Controla o visual
+  const [categoryIdToSave, setCategoryIdToSave] = useState<string>(""); // O que vai pro Fastify
   const { data: categories = [] } = useCategories();
-  const { dialogOpen, closeDialog, productToEdit } = useUISectionProducts();
+  const { dialogOpen, closeDialog } = useUISectionProducts();
+  const { productForm, setFormField } = useProductForm();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(productForm);
   };
-
-  const selectedCategoryName = categories.find(
-    (cat) => String(cat.id) === valueSelectTemp,
-  )?.name;
 
   return (
     <Dialog open={dialogOpen} onOpenChange={closeDialog}>
       <DialogContent className="max-w-130">
         <DialogHeader>
           <DialogTitle>
-            {productToEdit ? "Editar Produto" : "Novo Produto"}
+            {productForm ? "Editar Produto" : "Novo Produto"}
           </DialogTitle>
           <DialogDescription>
-            {productToEdit
+            {productForm
               ? "Atualize as informacoes do produto"
               : "Preencha as informacoes do novo produto"}
           </DialogDescription>
@@ -56,8 +56,7 @@ export function ProductDialog() {
                 </Label>
                 <Input
                   id="name"
-                  className="bg-secondary border-border"
-                  required
+                  onChange={(e) => setFormField("name", e.target.value)}
                 />
               </div>
             </div>
@@ -66,13 +65,39 @@ export function ProductDialog() {
                 <Label htmlFor="category" className="text-foreground">
                   Categoria
                 </Label>
-                <Combobox items={categories}>
-                  <ComboboxInput placeholder="Seleciona a categoria" />
+                <Combobox
+                  items={categories}
+                  value={categoryNameView}
+                  onValueChange={(nomeSelecionado) => {
+                    setFormField("categoryId", nomeSelecionado);
+                    const categoriaEncontrada = categories.find(
+                      (cat) => cat.name === nomeSelecionado,
+                    );
+
+                    if (categoriaEncontrada) {
+                      setFormField(
+                        "categoryId",
+                        String(categoriaEncontrada.id),
+                      );
+                    }
+                  }}
+                >
+                  <ComboboxInput
+                    placeholder="Selecione a categoria"
+                    onChange={(e) => {
+                      const textoDigitado = e.target.value;
+                      setCategoryNameView(textoDigitado);
+
+                      if (textoDigitado === "") {
+                        setCategoryIdToSave("");
+                      }
+                    }}
+                  />
                   <ComboboxContent>
                     <ComboboxEmpty>Item não encontrado</ComboboxEmpty>
                     <ComboboxList>
                       {(item) => (
-                        <ComboboxItem key={item.id} value={item.id}>
+                        <ComboboxItem key={item.id} value={item.name}>
                           {item.name}
                         </ComboboxItem>
                       )}
@@ -86,39 +111,18 @@ export function ProductDialog() {
                 </Label>
                 <Input
                   id="sku"
-                  className="bg-secondary border-border"
-                  required
+                  onChange={(e) => setFormField("sku", e.target.value)}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="quantity" className="text-foreground">
-                  Quantidade
-                </Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  className="bg-secondary border-border"
-                />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="supplier" className="text-foreground">
                   Fornecedor
                 </Label>
-                <Input id="supplier" className="bg-secondary border-border" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-foreground">
-                  Preco de Venda (R$)
-                </Label>
                 <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  className="bg-secondary border-border"
+                  id="supplier"
+                  onChange={(e) => setFormField("suppliers", [e.target.value])}
                 />
               </div>
               <div className="space-y-2">
@@ -129,7 +133,9 @@ export function ProductDialog() {
                   id="costPrice"
                   type="number"
                   step="0.01"
-                  className="bg-secondary border-border"
+                  onChange={(e) =>
+                    setFormField("price", parseFloat(e.target.value) || 0)
+                  }
                 />
               </div>
             </div>
@@ -137,6 +143,7 @@ export function ProductDialog() {
               <textarea
                 id="description"
                 placeholder="Descricao do produto"
+                onChange={(e) => setFormField("description", e.target.value)}
                 className="w-full h-24 p-2 bg-secondary focus:outline-none focus:ring-2 focus:ring-border border rounded-md resize-none text-sm text-foreground"
               />
             </div>
@@ -146,7 +153,7 @@ export function ProductDialog() {
               Cancelar
             </Button>
             <Button type="submit">
-              {productToEdit ? "Salvar Alteracoes" : "Cadastrar Produto"}
+              {productForm ? "Salvar Alteracoes" : "Cadastrar Produto"}
             </Button>
           </DialogFooter>
         </form>

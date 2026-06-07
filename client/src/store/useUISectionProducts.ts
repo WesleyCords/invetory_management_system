@@ -1,9 +1,8 @@
 import { create } from "zustand";
 
-interface Products {
+interface ProductsUIState {
   currentPage: number;
   itemsPerPages: number;
-  productToEdit: IProduct | null;
   search: string;
   dialogOpen: boolean;
   categorySelected: string;
@@ -14,31 +13,27 @@ interface Products {
   nextPage: () => void;
   onChangeSearch: (text: string) => void;
   openNewProductDialog: () => void;
-  openEditProductDialog: (product: IProduct) => void;
+  openEditProductDialog: () => void;
   closeDialog: () => void;
   handleCategoryChange: (category: string) => void;
   handleSortChange: (field: keyof IProduct) => void;
 }
 
-export const useUISectionProducts = create<Products>((set) => ({
-  // Estado Inicial
+export const useUISectionProducts = create<ProductsUIState>((set) => ({
   search: "",
   currentPage: 1,
   itemsPerPages: 10,
-  productToEdit: null,
   dialogOpen: false,
   categorySelected: "Todos",
   sortField: "name",
   sortOrder: "asc",
 
-  // Actions as únicas funções autorizadas a mexer no estado
   onChangeSearch: (text) => set({ search: text }),
   previusPage: () => set((state) => ({ currentPage: state.currentPage - 1 })),
   nextPage: () => set((state) => ({ currentPage: state.currentPage + 1 })),
-  openNewProductDialog: () => set({ dialogOpen: true, productToEdit: null }),
-  openEditProductDialog: (product) =>
-    set({ dialogOpen: true, productToEdit: product }),
-  closeDialog: () => set({ dialogOpen: false, productToEdit: null }),
+  openNewProductDialog: () => set({ dialogOpen: true }),
+  openEditProductDialog: () => set({ dialogOpen: true }),
+  closeDialog: () => set({ dialogOpen: false }),
   handleCategoryChange: (category) => set({ categorySelected: category }),
   handleSortChange: (field) =>
     set((state) => ({

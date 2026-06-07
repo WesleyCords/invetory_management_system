@@ -31,3 +31,8 @@ interface ICategories {
   id: string;
   name: string;
 }
+
+interface IBrands {
+  id: string;
+  name: string;
+}

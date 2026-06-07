@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { setCookie } from "nookies";
 import { api } from "@/lib/api";
-import { UserRole } from "@/type";
+type UserRole = "EMPLOYEE" | "MANAGER";
 
 interface User {
   id: string;

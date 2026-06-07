@@ -22,7 +22,7 @@ interface ProductsListProps {
 }
 
 export function ProductsList({ products }: ProductsListProps) {
-  const { currentPage } = useUISectionProducts();
+  const { currentPage, openEditProductDialog } = useUISectionProducts();
   const ITEMS_PER_PAGE = 10;
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -106,7 +106,7 @@ export function ProductsList({ products }: ProductsListProps) {
                   }
                 />
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => openEditProductDialog()}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Editar
                   </DropdownMenuItem>
