@@ -7,15 +7,18 @@ export const createProductSchema = z.object({
     .max(100, 'The product name must be no longer than 100 characters'),
   price: z.number().positive('A price cannot be negative'),
   description: z.string().optional(),
-  categoryId: z.string().uuid('Invalid categoryId format'),
-  brandId: z.string().uuid('Invalid brandId format'),
+  categoryId: z.uuid('Invalid categoryId format').optional(),
+  brandId: z.uuid('Invalid brandId format').optional(),
+  brandName: z.string().optional(),
+  categoryName: z.string().optional(),
   supplierIds: z
-    .array(z.string().uuid('Invalid supplierId format'))
+    .array(z.uuid('Invalid supplierId format'))
     .min(1, 'The product requires at least one supplier')
     .refine(
       (ids) => new Set(ids).size === ids.length,
       'Duplicate suppliers are not allowed',
     ),
+  costPrice: z.number().positive('A cost price cannot be negative'),
 });
 
 export const productResponseSchema = z.object({
