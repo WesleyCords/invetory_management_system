@@ -11,6 +11,7 @@ class ProductController {
     reply: FastifyReply,
   ) {
     const data = req.body;
+    console.log('Received product data:', data); // Log para verificar os dados recebidos
     const createProduct = new CreateProductService();
 
     const product = await createProduct.execute(data);

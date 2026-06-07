@@ -25,18 +25,31 @@ class CreateProductService {
       );
     }
 
-    const finalCategoryId = infos.categoryId;
+    let finalCategoryId = infos.categoryId;
 
     if (!finalCategoryId && infos.categoryName) {
-      // Criar uma nova categoria se o nome for fornecido e a categoriaId não for
-    } else if (finalCategoryId) {
-      const existingCategory = await prisma.category.findUnique({
-        where: { id: finalCategoryId },
+      const existingCategoryByName = await prisma.category.findFirst({
+        where: {
+          name: {
+            equals: infos.categoryName,
+            mode: 'insensitive',
+          },
+        },
       });
 
-      if (!existingCategory) {
-        throw new AppError('Category not found', 404);
+      if (existingCategoryByName) {
+        finalCategoryId = existingCategoryByName.id;
+      } else {
+        const newCategory = await prisma.category.create({
+          data: { name: infos.categoryName },
+        });
+        finalCategoryId = newCategory.id;
       }
+    } else if (finalCategoryId) {
+      const existCategory = await prisma.category.findUnique({
+        where: { id: finalCategoryId },
+      });
+      if (!existCategory) throw new AppError('Category not found', 404);
     } else {
       throw new AppError(
         'Either categoryId or categoryName must be provided',
@@ -44,10 +57,26 @@ class CreateProductService {
       );
     }
 
-    const finalBrandId = infos.brandId;
+    let finalBrandId = infos.brandId;
 
     if (!finalBrandId && infos.brandName) {
-      // Criar uma nova marca se o nome for fornecido e a brandId não for
+      const existingBrandByName = await prisma.brand.findFirst({
+        where: {
+          name: {
+            equals: infos.brandName,
+            mode: 'insensitive',
+          },
+        },
+      });
+
+      if (existingBrandByName) {
+        finalBrandId = existingBrandByName.id;
+      } else {
+        const newBrand = await prisma.brand.create({
+          data: { name: infos.brandName },
+        });
+        finalBrandId = newBrand.id;
+      }
     } else if (finalBrandId) {
       const existingBrand = await prisma.brand.findUnique({
         where: { id: finalBrandId },
@@ -122,7 +151,7 @@ class CreateProductService {
         brandId: finalBrandId as string,
         costPrice: infos.costPrice,
         suppliers: {
-          create: supplierIds.map((id) => ({ supplierId: id })),
+          create: uniqueSuppliersIds.map((id) => ({ supplierId: id })),
         },
       },
       include: { suppliers: true },
