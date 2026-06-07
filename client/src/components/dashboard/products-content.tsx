@@ -4,11 +4,9 @@ import { Plus, Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
-import { useState } from "react";
 import { SelectComponent } from "./components/select-content";
 import { TableProduct } from "./components/table-product";
 import { useUISectionProducts } from "@/store/useUISectionProducts";
-import { ProductDialog } from "./components/dialog-product";
 import { useCategories } from "@/hooks/querys/useCategories";
 import { CreateProductDialog } from "./components/create-product-dialog";
 

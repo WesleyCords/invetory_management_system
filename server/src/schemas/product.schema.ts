@@ -1,7 +1,15 @@
 import z from 'zod';
 
 export const createProductSchema = z.object({
-  sku: z.string().min(3, 'SKU is required').toUpperCase(),
+  sku: z
+    .string()
+    .min(8, 'SKU must be at least 8 characters long')
+    .max(18, 'SKU must be between 8 and 18 characters')
+    .toUpperCase()
+    .regex(
+      /^[A-Z0-9]+(-[A-Z0-9]+)*$/,
+      'SKU must contain only uppercase letters, numbers, and hyphens',
+    ),
   name: z
     .string()
     .max(100, 'The product name must be no longer than 100 characters'),

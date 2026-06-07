@@ -2,7 +2,6 @@
 - Conectar com as rotas de deletar e editar produto
 - Resolver a questão dos varios suppliers para colocar nos detalhes do produto
 - Conectar a rota de metrics com a aba overview (As 4 tabelas)
-- Validação de campo no Dialog do SKU
 
 - Criar a logica de sair, aparecer um modal e confirmar a saida e excluir o token
 - Uma rota para mudar o produto vai pedir o id do produto e os campos que irá mudar. A logica vai ser no service/controller 

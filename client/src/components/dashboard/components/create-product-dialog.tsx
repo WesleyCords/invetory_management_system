@@ -64,8 +64,6 @@ export function CreateProductDialog() {
       description: description || undefined,
     } as CreateProductDTO;
 
-    console.log("Payload being sent to create product:", payloadToCreate); // Log para verificar o payload
-
     mutate(payloadToCreate, {
       onSuccess: () => {
         closeDialog();
@@ -76,7 +74,7 @@ export function CreateProductDialog() {
 
   return (
     <Dialog open={dialogOpen} onOpenChange={closeDialog}>
-      <DialogContent className="max-w-130 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-130 max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>Novo Produto</DialogTitle>
           <DialogDescription>
@@ -237,14 +235,21 @@ export function CreateProductDialog() {
                 <Input
                   id="sku"
                   type="text"
-                  onChange={(e) => setFormField("sku", e.target.value)}
+                  value={productForm.sku}
+                  maxLength={18}
+                  onChange={(e) => {
+                    let value = e.target.value.toUpperCase();
+                    value = value.replace(/\s+/g, "-");
+                    value = value.replace(/[^A-Z0-9-]/g, "");
+                    setFormField("sku", value);
+                  }}
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label className="text-foreground">Fornecedores</Label>
 
-                <div className="h-32 overflow-y-auto rounded-md border border-border bg-secondary p-3 space-y-3">
+                <div className="h-auto overflow-y-auto rounded-md border border-border bg-secondary p-3 space-y-3">
                   {suppliers.length === 0 && (
                     <p className="text-sm text-muted-foreground">
                       Nenhum fornecedor encontrado.
