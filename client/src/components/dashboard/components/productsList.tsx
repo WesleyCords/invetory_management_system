@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useProductForm } from "@/store/useProductForm";
 import { useDeleteProduct } from "@/hooks/querys/useDeleteProduct";
+import { ChipsSuppliers } from "./chips-suppliers";
 
 interface ProductsListProps {
   products: IProduct[];
@@ -54,11 +55,9 @@ export function ProductsList({ products }: ProductsListProps) {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">{product.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {!product.suppliers || product.suppliers.length < 1
-                      ? "Vários"
-                      : product.suppliers[0].name}
-                  </p>
+                  <ChipsSuppliers
+                    suppliers={product.suppliers.map((s) => s.name)}
+                  />
                 </div>
               </div>
             </TableCell>
