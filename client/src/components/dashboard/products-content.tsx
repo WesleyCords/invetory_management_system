@@ -4,24 +4,16 @@ import { Plus, Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
-import { useState } from "react";
 import { SelectComponent } from "./components/select-content";
 import { TableProduct } from "./components/table-product";
-import { useUIProducts } from "@/store/useUIProduct";
-import { ProductDialog } from "./components/dialog-product";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
+import { useCategories } from "@/hooks/querys/useCategories";
+import { ProductDialog } from "./components/product-dialog";
 
 export function ProductsContent() {
-  const { onChangeSearch, search } = useUIProducts();
-  const categories = [
-    "Todos",
-    "Vestuário",
-    "Calçados",
-    "Acessórios",
-    "Smartphones",
-  ];
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
-
+  const { onChangeSearch, search, openDialog } = useUISectionProducts();
+  const { data: dbCategories = [], isLoading } = useCategories();
+  const categories = ["Todos", ...dbCategories.map((cat) => cat.name)];
   return (
     <>
       <motion.div
@@ -34,7 +26,7 @@ export function ProductsContent() {
           title="Produtos"
           subtitle="Gerencie seu catalogo de produtos"
         >
-          <Button variant="outline" onClick={() => setIsAddDialogOpen(true)}>
+          <Button variant="outline" onClick={openDialog}>
             <Plus className="h-4 w-4" />
             Novo Produto
           </Button>
@@ -53,7 +45,10 @@ export function ProductsContent() {
                 />
               </div>
               <div className="flex gap-2">
-                <SelectComponent list={categories} title="Categoria" />
+                <SelectComponent
+                  list={categories}
+                  title={isLoading ? "Carregando..." : "Categorias"}
+                />
               </div>
             </div>
           </CardContent>
@@ -61,14 +56,7 @@ export function ProductsContent() {
 
         <TableProduct />
       </motion.div>
-      <ProductDialog
-        open={isAddDialogOpen}
-        onOpenChange={(open) => {
-          setIsAddDialogOpen(open);
-          if (!open) setEditingProduct(null);
-        }}
-        product={editingProduct}
-      />
+      <ProductDialog />
     </>
   );
 }

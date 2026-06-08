@@ -16,6 +16,8 @@ interface IProduct {
     name: string;
   };
   suppliers: ISuppliers[];
+  quantity: number;
+  isLowStock: boolean;
 }
 
 interface ISuppliers {
@@ -23,4 +25,14 @@ interface ISuppliers {
   name: string;
   company: string;
   address: string;
+}
+
+interface ICategories {
+  id: string;
+  name: string;
+}
+
+interface IBrands {
+  id: string;
+  name: string;
 }

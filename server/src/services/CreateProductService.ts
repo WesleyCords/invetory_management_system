@@ -6,32 +6,101 @@ export interface IProductRequest {
   name: string;
   price: number;
   description?: string;
-  brandId: string;
-  categoryId: string;
+  brandId?: string;
+  brandName?: string;
+  categoryId?: string;
+  categoryName?: string;
   supplierIds: string[];
+  costPrice: number;
 }
 
 class CreateProductService {
   async execute(infos: IProductRequest) {
-    const uniqueSuppliersIds = Array.from(new Set(infos.supplierIds));
     if (infos.price < 0) throw new AppError('Price cannot be negative', 400);
 
-    const [existCategory, existBrand] = await Promise.all([
-      prisma.category.findUnique({ where: { id: infos.categoryId } }),
-      prisma.brand.findUnique({ where: { id: infos.brandId } }),
-    ]);
+    if (infos.costPrice < 0 || infos.costPrice > infos.price) {
+      throw new AppError(
+        'Cost price cannot be negative and cannot be greater than the selling price',
+        400,
+      );
+    }
 
-    if (!existCategory) throw new AppError('Category not found', 404);
-    if (!existBrand) throw new AppError('Brand not found', 404);
+    let finalCategoryId = infos.categoryId;
 
-    const existSuppliers = await Promise.all(
-      uniqueSuppliersIds.map((id) =>
-        prisma.supplier.findUnique({ where: { id } }),
-      ),
-    );
+    if (!finalCategoryId && infos.categoryName) {
+      const existingCategoryByName = await prisma.category.findFirst({
+        where: {
+          name: {
+            equals: infos.categoryName,
+            mode: 'insensitive',
+          },
+        },
+      });
 
-    if (existSuppliers.includes(null))
-      throw new AppError('One or more suppliers not found', 404);
+      if (existingCategoryByName) {
+        finalCategoryId = existingCategoryByName.id;
+      } else {
+        const newCategory = await prisma.category.create({
+          data: { name: infos.categoryName },
+        });
+        finalCategoryId = newCategory.id;
+      }
+    } else if (finalCategoryId) {
+      const existCategory = await prisma.category.findUnique({
+        where: { id: finalCategoryId },
+      });
+      if (!existCategory) throw new AppError('Category not found', 404);
+    } else {
+      throw new AppError(
+        'Either categoryId or categoryName must be provided',
+        400,
+      );
+    }
+
+    let finalBrandId = infos.brandId;
+
+    if (!finalBrandId && infos.brandName) {
+      const existingBrandByName = await prisma.brand.findFirst({
+        where: {
+          name: {
+            equals: infos.brandName,
+            mode: 'insensitive',
+          },
+        },
+      });
+
+      if (existingBrandByName) {
+        finalBrandId = existingBrandByName.id;
+      } else {
+        const newBrand = await prisma.brand.create({
+          data: { name: infos.brandName },
+        });
+        finalBrandId = newBrand.id;
+      }
+    } else if (finalBrandId) {
+      const existingBrand = await prisma.brand.findUnique({
+        where: { id: finalBrandId },
+      });
+
+      if (!existingBrand) {
+        throw new AppError('Brand not found', 404);
+      }
+    } else {
+      throw new AppError('Either brandId or brandName must be provided', 400);
+    }
+
+    const uniqueSuppliersIds = Array.from(new Set(infos.supplierIds));
+
+    if (uniqueSuppliersIds.length > 0) {
+      const existSuppliers = await prisma.supplier.findMany({
+        where: { id: { in: uniqueSuppliersIds } },
+      });
+
+      // Se o banco retornou menos fornecedores do que pedimos, algum ID é inválido
+      if (existSuppliers.length !== uniqueSuppliersIds.length) {
+        throw new AppError('One or more suppliers not found', 404);
+      }
+    }
 
     const existingProduct = await prisma.product.findUnique({
       where: { sku: infos.sku },
@@ -50,9 +119,10 @@ class CreateProductService {
         data: {
           name: infos.name,
           price: infos.price,
+          costPrice: infos.costPrice,
           description: infos.description,
-          brandId: infos.brandId,
-          categoryId: infos.categoryId,
+          brandId: finalBrandId,
+          categoryId: finalCategoryId,
           isActive: true,
           suppliers: {
             deleteMany: {},
@@ -65,19 +135,32 @@ class CreateProductService {
       return { ...restoredProduct, price: Number(restoredProduct.price) };
     }
 
-    const { supplierIds, ...dataProduct } = infos;
+    const {
+      supplierIds,
+      categoryName,
+      brandName,
+      categoryId,
+      brandId,
+      ...safeDataProduct
+    } = infos;
 
     const product = await prisma.product.create({
       data: {
-        ...dataProduct,
+        ...safeDataProduct,
+        categoryId: finalCategoryId as string,
+        brandId: finalBrandId as string,
+        costPrice: infos.costPrice,
         suppliers: {
-          create: supplierIds.map((id) => ({ supplierId: id })),
+          create: uniqueSuppliersIds.map((id) => ({ supplierId: id })),
         },
       },
       include: { suppliers: true },
     });
-
-    return product;
+    return {
+      ...product,
+      price: Number(product.price),
+      costPrice: Number(product.costPrice),
+    };
   }
 }
 

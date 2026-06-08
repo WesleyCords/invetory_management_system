@@ -1,17 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/querys/useProducts";
-import { useUIProducts } from "@/store/useUIProduct";
+import { cn } from "@/lib/utils";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function Pagination() {
-  const { currentPage, previusPage, nextPage, itemsPerPages } = useUIProducts();
+  const { currentPage, previusPage, nextPage, itemsPerPages } =
+    useUISectionProducts();
   const { data: products } = useProducts();
   const totalPages = Math.ceil(products.length / itemsPerPages);
 
   const numberPages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="flex items-center justify-center mt-6 gap-2">
+    <div
+      className={cn(
+        "items-center justify-center mt-6 gap-2",
+        numberPages.length > 1 ? "flex" : "hidden",
+      )}
+    >
       <Button
         variant="outline"
         size="icon"

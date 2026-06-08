@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useUIProducts } from "@/store/useUIProduct";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,13 +16,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useProductForm } from "@/store/useProductForm";
+import { useDeleteProduct } from "@/hooks/querys/useDeleteProduct";
+import { ChipsSuppliers } from "./chips-suppliers";
 
 interface ProductsListProps {
   products: IProduct[];
 }
 
 export function ProductsList({ products }: ProductsListProps) {
-  const { currentPage } = useUIProducts();
+  const { currentPage, openDialog } = useUISectionProducts();
+  const { loadProductForEdit } = useProductForm();
+  const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
+
   const ITEMS_PER_PAGE = 10;
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -31,18 +37,15 @@ export function ProductsList({ products }: ProductsListProps) {
   const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence>
       {currentItems.map((product, index) => {
-        const mockQuantity = Math.floor(Math.random() * 10);
-        const isLowStock = mockQuantity <= 5;
-
         return (
           <motion.tr
             key={product.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ delay: index * 0.03, duration: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
             className="border-border hover:bg-secondary/50"
           >
             <TableCell>
@@ -52,11 +55,9 @@ export function ProductsList({ products }: ProductsListProps) {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">{product.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {!product.suppliers || product.suppliers.length < 1
-                      ? "Vários"
-                      : product.suppliers[0].name}
-                  </p>
+                  <ChipsSuppliers
+                    suppliers={product.suppliers.map((s) => s.name)}
+                  />
                 </div>
               </div>
             </TableCell>
@@ -72,7 +73,7 @@ export function ProductsList({ products }: ProductsListProps) {
             </TableCell>
 
             <TableCell className="text-right font-medium text-foreground">
-              {mockQuantity}
+              {product.quantity}
             </TableCell>
 
             <TableCell className="text-right text-foreground">
@@ -83,7 +84,7 @@ export function ProductsList({ products }: ProductsListProps) {
             </TableCell>
 
             <TableCell>
-              {isLowStock ? (
+              {product.isLowStock ? (
                 <Badge variant="destructive" className="gap-1">
                   <AlertTriangle className="h-3 w-3" />
                   Baixo
@@ -109,11 +110,28 @@ export function ProductsList({ products }: ProductsListProps) {
                   }
                 />
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      loadProductForEdit(product);
+                      openDialog();
+                    }}
+                  >
                     <Pencil className="mr-2 h-4 w-4" />
                     Editar
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem
+                    disabled={isDeleting}
+                    className="text-destructive focus:text-destructive"
+                    onClick={() => {
+                      const confirmDelete = window.confirm(
+                        "Tem certeza que deseja excluir este produto?",
+                      );
+
+                      if (confirmDelete) {
+                        deleteProduct(product.id);
+                      }
+                    }}
+                  >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Excluir
                   </DropdownMenuItem>

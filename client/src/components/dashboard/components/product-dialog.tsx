@@ -1,0 +1,379 @@
+import { useState } from "react";
+import { useProductForm } from "@/store/useProductForm";
+import { useUISectionProducts } from "@/store/useUISectionProducts";
+import { useCategories } from "@/hooks/querys/useCategories";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useCreateProduct } from "@/hooks/querys/useCreateProduct";
+import { Loader2 } from "lucide-react";
+import { CreateProductDTO, UpdateProductDTO } from "@/dtos";
+import { useSuppliers } from "@/hooks/querys/useSuppliers";
+import { useBrands } from "@/hooks/querys/useBrands";
+import { useUpdateProduct } from "@/hooks/querys/useUpdateProduct";
+
+export function ProductDialog() {
+  const [categoryNameView, setCategoryNameView] = useState<string>("");
+  const [brandViewName, setBrandViewName] = useState<string>("");
+
+  const { data: categories = [] } = useCategories();
+  const { data: suppliers = [] } = useSuppliers();
+  const { data: brands = [] } = useBrands();
+
+  const { dialogOpen, closeDialog } = useUISectionProducts();
+  const { productForm, setFormField, resetForm } = useProductForm();
+
+  const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
+  const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
+
+  const isEditMode = !!productForm.id;
+  const isPending = isCreating || isUpdating;
+
+  const handleClose = () => {
+    closeDialog();
+    setTimeout(() => {
+      resetForm();
+    }, 300);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const {
+      id,
+      suppliers,
+      categoryId,
+      categoryName,
+      brandId,
+      brandName,
+      description,
+      ...dataRequired
+    } = productForm;
+
+    const basePayload = {
+      ...dataRequired,
+      supplierIds: suppliers,
+      categoryId: categoryId || undefined,
+      categoryName: categoryName || undefined,
+      brandId: brandId || undefined,
+      brandName: brandName || undefined,
+      description: description || undefined,
+    } as CreateProductDTO;
+
+    if (isEditMode) {
+      const { sku, ...payloadWithoutSku } = basePayload;
+
+      const updatePayload: UpdateProductDTO = {
+        id: String(id),
+        ...payloadWithoutSku,
+      };
+
+      updateProduct(updatePayload, { onSuccess: handleClose });
+    } else {
+      const createPayload = basePayload as CreateProductDTO;
+      createProduct(createPayload, { onSuccess: handleClose });
+    }
+  };
+
+  const derivedCategoryName =
+    categories.find((c) => String(c.id) === productForm.categoryId)?.name ||
+    productForm.categoryName ||
+    categoryNameView;
+
+  const derivedBrandName =
+    brands.find((b) => String(b.id) === productForm.brandId)?.name ||
+    productForm.brandName ||
+    brandViewName;
+
+  return (
+    <Dialog
+      open={dialogOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          handleClose();
+        }
+      }}
+    >
+      <DialogContent className="max-w-130 max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {isEditMode ? "Editar Produto" : "Novo Produto"}
+          </DialogTitle>
+          <DialogDescription>
+            {isEditMode
+              ? "Modifique os dados do produto abaixo."
+              : "Preencha as informações para cadastrar um novo produto no estoque."}
+          </DialogDescription>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4 py-2">
+            <div className="grid grid-1 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-foreground">
+                  Nome
+                </Label>
+                <Input
+                  id="name"
+                  value={productForm.name}
+                  onChange={(e) => setFormField("name", e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-foreground">
+                  Categoria
+                </Label>
+                <Combobox
+                  items={categories}
+                  value={derivedCategoryName}
+                  onValueChange={(selectedName) => {
+                    setCategoryNameView(selectedName);
+
+                    const categorySelected = categories.find(
+                      (cat) => cat.name === selectedName,
+                    );
+
+                    if (categorySelected) {
+                      setFormField("categoryId", String(categorySelected.id));
+                      setFormField("categoryName", "");
+                    } else {
+                      setFormField("categoryName", selectedName);
+                      setFormField("categoryId", "");
+                    }
+                  }}
+                >
+                  <ComboboxInput
+                    placeholder="Selecione a categoria"
+                    value={derivedCategoryName}
+                    onChange={(e) => {
+                      const text = e.target.value;
+                      setCategoryNameView(text);
+
+                      setFormField("categoryName", text);
+                      setFormField("categoryId", "");
+                    }}
+                    required
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>
+                      Categoria {categoryNameView} não encontrada
+                    </ComboboxEmpty>
+                    <ComboboxList>
+                      {(item) => (
+                        <ComboboxItem key={item.id} value={item.name}>
+                          {item.name}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="brand" className="text-foreground">
+                  Marca
+                </Label>
+                <Combobox
+                  items={brands}
+                  value={derivedBrandName}
+                  onValueChange={(selectedName) => {
+                    setBrandViewName(selectedName);
+
+                    const brandSelected = brands.find(
+                      (brand) => brand.name === selectedName,
+                    );
+
+                    if (brandSelected) {
+                      setFormField("brandId", String(brandSelected.id));
+                      setFormField("brandName", "");
+                    } else {
+                      setFormField("brandName", selectedName);
+                      setFormField("brandId", "");
+                    }
+                  }}
+                >
+                  <ComboboxInput
+                    placeholder="Selecione a marca"
+                    value={derivedBrandName}
+                    onChange={(e) => {
+                      const text = e.target.value;
+                      setBrandViewName(text);
+
+                      setFormField("brandName", text);
+                      setFormField("brandId", "");
+                    }}
+                    required
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>
+                      Marca {brandViewName} não encontrado
+                    </ComboboxEmpty>
+                    <ComboboxList>
+                      {(item) => (
+                        <ComboboxItem key={item.id} value={item.name}>
+                          {item.name}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="costPrice" className="text-foreground">
+                  Preço de Custo (R$)
+                </Label>
+                <Input
+                  id="costPrice"
+                  type="number"
+                  step="0.01"
+                  value={productForm.costPrice}
+                  onChange={(e) =>
+                    setFormField("costPrice", parseFloat(e.target.value) || 0)
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="price" className="text-foreground">
+                  Preço de Venda (R$)
+                </Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  value={productForm.price}
+                  onChange={(e) =>
+                    setFormField("price", parseFloat(e.target.value) || 0)
+                  }
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 items-center">
+              <div className="space-y-2">
+                <Label htmlFor="sku" className="text-foreground">
+                  SKU
+                </Label>
+                <Input
+                  id="sku"
+                  type="text"
+                  value={productForm.sku}
+                  maxLength={18}
+                  onChange={(e) => {
+                    let value = e.target.value.toUpperCase();
+                    value = value.replace(/\s+/g, "-");
+                    value = value.replace(/[^A-Z0-9-]/g, "");
+                    setFormField("sku", value);
+                  }}
+                  disabled={isEditMode}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-foreground">Fornecedores</Label>
+
+                <div className="h-32 overflow-y-auto rounded-md border border-border bg-secondary p-3 space-y-3">
+                  {suppliers.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      Nenhum fornecedor encontrado.
+                    </p>
+                  )}
+
+                  {suppliers.map((supplier) => {
+                    const isChecked = productForm.suppliers.includes(
+                      String(supplier.id),
+                    );
+
+                    return (
+                      <div
+                        key={supplier.id}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={`supplier-${supplier.id}`}
+                          checked={isChecked}
+                          onCheckedChange={(checked) => {
+                            const currentSuppliers = productForm.suppliers;
+
+                            if (checked) {
+                              setFormField("suppliers", [
+                                ...currentSuppliers,
+                                String(supplier.id),
+                              ]);
+                            } else {
+                              setFormField(
+                                "suppliers",
+                                currentSuppliers.filter(
+                                  (id) => id !== String(supplier.id),
+                                ),
+                              );
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`supplier-${supplier.id}`}>
+                          {supplier.name}
+                        </Label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            <div>
+              <textarea
+                id="description"
+                placeholder="Descrição do produto"
+                value={productForm.description}
+                onChange={(e) => setFormField("description", e.target.value)}
+                className="w-full h-12 p-2 bg-secondary focus:outline-none focus:ring-2 focus:ring-border border rounded-md resize-none text-sm text-foreground"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+              disabled={isPending}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : isEditMode ? (
+                "Salvar Alterações"
+              ) : (
+                "Cadastrar Produto"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

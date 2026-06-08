@@ -11,8 +11,14 @@ export const MetricsDashboardResponse = z.object({
     }),
     inventory: z.object({
       totalProducts: z.number(),
+      totalProductsDeleted: z.number(),
       totalItems: z.number(),
       lowStockItems: z.number(),
+    }),
+    movements: z.object({
+      todayTotal: z.number(),
+      todayEntries: z.number(),
+      todayExits: z.number(),
     }),
   }),
 });

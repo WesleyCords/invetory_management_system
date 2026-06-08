@@ -19,28 +19,47 @@ import {
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useProducts } from "@/hooks/querys/useProducts";
+import { useMetrics } from "@/hooks/querys/useMetrics";
 
 export function OverviewContent() {
-  const { data: products, isLoading, isError } = useProducts();
-  const stats = calculateStats(mockProducts, mockMovements);
-  const lowStockProducts = mockProducts.filter((p) => p.quantity <= p.minStock);
+  const {
+    data: products,
+    isLoading: isProductsLoading,
+    isError: isProductsError,
+  } = useProducts();
+  const {
+    data: metrics,
+    isLoading: isMetricsLoading,
+    isError: isMetricsError,
+  } = useMetrics();
+  const toggleTab = useUIStore((state) => state.setAbartOpen);
+
   const recentMovements = mockMovements.slice(0, 5);
   const recentLogs = mockLogs.slice(0, 4);
 
-  const stateProducts = () => {
-    if (isLoading) {
-      return "Carregando...";
-    } else if (isError) {
-      return "Erro ao carregar";
-    } else {
-      return products?.length.toString() || "0";
-    }
-  };
+  if (isProductsLoading || isMetricsLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-100">
+        <p className="text-muted-foreground animate-pulse">
+          Carregando métricas do dashboard...
+        </p>
+      </div>
+    );
+  }
+
+  if (isProductsError || isMetricsError || !products || !metrics) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-100 text-destructive">
+        <AlertTriangle className="h-8 w-8 mb-2 mx-auto" />
+        <p>Erro ao carregar os dados do painel. Tente novamente.</p>
+      </div>
+    );
+  }
 
   const statCards = [
     {
       title: "Total de Produtos",
-      value: stateProducts(),
+      value: products.length.toString(),
       subtitle: "SKUs cadastrados",
       icon: Package,
       color: "bg-primary/10 text-primary",
@@ -50,31 +69,32 @@ export function OverviewContent() {
       value: new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL",
-      }).format(stats.totalValue),
+      }).format(metrics.data.financial.patrimony),
       subtitle: "Preço de venda",
       icon: DollarSign,
       color: "bg-emerald-500/10 text-emerald-500",
     },
     {
       title: "Estoque Baixo",
-      value: stats.lowStockItems.toString(),
+      value: metrics.data.inventory.lowStockItems.toString(),
       subtitle: "Itens para repor",
       icon: AlertTriangle,
       color:
-        stats.lowStockItems > 0
+        metrics.data.inventory.lowStockItems > 0
           ? "bg-amber-500/10 text-amber-500"
           : "bg-muted text-muted-foreground",
     },
     {
       title: "Movimentações Hoje",
-      value: stats.movementsToday.toString(),
-      subtitle: `${stats.entriesThisMonth} entradas / ${stats.exitsThisMonth} saídas (mês)`,
+      value: metrics.data.movements.todayTotal.toString(),
+      subtitle: `${metrics.data.movements.todayEntries} entradas / ${metrics.data.movements.todayExits} saídas (mês)`,
       icon: ArrowDownCircle,
       color: "bg-blue-500/10 text-blue-500",
     },
   ];
 
-  const toggleTab = useUIStore((state) => state.setAbartOpen);
+  const productsLowStock = products.filter((p) => p.isLowStock).slice(0, 3);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -147,7 +167,7 @@ export function OverviewContent() {
                 </CardTitle>
               </div>
               <Button
-                onClick={() => toggleTab("movements")}
+                onClick={() => toggleTab("products")}
                 className="bg-muted"
               >
                 Ver todos
@@ -155,13 +175,13 @@ export function OverviewContent() {
               </Button>
             </CardHeader>
             <CardContent>
-              {lowStockProducts.length === 0 ? (
+              {metrics.data.inventory.lowStockItems === 0 ? (
                 <p className="text-muted-foreground text-sm py-4 text-center">
                   Nenhum produto com estoque baixo
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {lowStockProducts.map((product, index) => (
+                  {productsLowStock.map((product, index) => (
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, x: -10 }}
@@ -192,9 +212,6 @@ export function OverviewContent() {
                         >
                           {product.quantity} em estoque
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          Min: {product.minStock}
-                        </p>
                       </div>
                     </motion.div>
                   ))}

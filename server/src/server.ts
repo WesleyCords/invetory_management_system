@@ -104,6 +104,7 @@ server.register(fastifyJwt, {
 
 server.register(cors, {
   origin: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 });
 
 server.register(appRoutes, { prefix: '/api/v1' });
