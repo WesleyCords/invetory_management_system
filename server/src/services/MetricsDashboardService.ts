@@ -2,25 +2,32 @@ import { prisma } from '../lib/prisma';
 
 class MetricsDahboardService {
   async execute() {
-    const [totalProducts, productsWithMovements] = await Promise.all([
-      prisma.product.count(),
+    const [totalProducts, totalProductsDeleted, productsWithMovements] =
+      await Promise.all([
+        prisma.product.count({
+          where: { isActive: true },
+        }),
 
-      prisma.product.findMany({
-        where: { isActive: true },
-        select: {
-          id: true,
-          price: true,
-          costPrice: true,
+        prisma.product.count({
+          where: { isActive: false },
+        }),
 
-          movements: {
-            select: {
-              type: true,
-              quantity: true,
+        prisma.product.findMany({
+          where: { isActive: true },
+          select: {
+            id: true,
+            price: true,
+            costPrice: true,
+
+            movements: {
+              select: {
+                type: true,
+                quantity: true,
+              },
             },
           },
-        },
-      }),
-    ]);
+        }),
+      ]);
 
     let totalItems = 0;
     let lowStockItems = 0;
@@ -40,7 +47,7 @@ class MetricsDahboardService {
         lowStockItems++;
       }
 
-      patrimony += currentBalance * (product.costPrice || 0);
+      patrimony += currentBalance * Number(product.costPrice);
       potentialRevenue += currentBalance * Number(product.price);
     });
 
@@ -48,6 +55,35 @@ class MetricsDahboardService {
 
     const averageMargin =
       patrimony > 0 ? (expectedProfit / patrimony) * 100 : 0;
+
+    const [todayTotal, todayEntries, todayExits] = await Promise.all([
+      prisma.stockMovement.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            lte: new Date(new Date().setHours(23, 59, 59, 999)),
+          },
+        },
+      }),
+      prisma.stockMovement.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            lte: new Date(new Date().setHours(23, 59, 59, 999)),
+          },
+          type: 'IN',
+        },
+      }),
+      prisma.stockMovement.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            lte: new Date(new Date().setHours(23, 59, 59, 999)),
+          },
+          type: 'OUT',
+        },
+      }),
+    ]);
 
     return {
       financial: {
@@ -58,8 +94,14 @@ class MetricsDahboardService {
       },
       inventory: {
         totalProducts,
+        totalProductsDeleted,
         totalItems,
         lowStockItems,
+      },
+      movements: {
+        todayTotal,
+        todayEntries,
+        todayExits,
       },
     };
   }

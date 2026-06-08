@@ -1,5 +1,3 @@
-- Conectar a rota de metrics com a aba overview (As 4 tabelas)
-
-- Criar a logica de sair, aparecer um modal e confirmar a saida e excluir o token
-- Uma rota para mudar o produto vai pedir o id do produto e os campos que irá mudar. A logica vai ser no service/controller 
-- Analisar o que esta sendo retornado na rota metric/dashboard
+- Aba de sair (back e front)
+- Aba de configurações (back e front)
+- Aba de movimentações (back e front)
