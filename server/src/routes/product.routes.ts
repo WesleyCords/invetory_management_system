@@ -8,6 +8,8 @@ import {
   deleteProductSchema,
   getAllProductsResponseSchema,
   productResponseSchema,
+  updateProductBodySchema,
+  updateProductParamsSchema,
 } from '../schemas/product.schema';
 
 export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
@@ -51,5 +53,19 @@ export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     productController.delete,
+  );
+
+  fastify.patch(
+    '/product/:id',
+    {
+      schema: {
+        params: updateProductParamsSchema,
+        body: updateProductBodySchema,
+        response: {
+          200: productResponseSchema,
+        },
+      },
+    },
+    productController.update,
   );
 };

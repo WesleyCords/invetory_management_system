@@ -1,5 +1,3 @@
-- Refinar o modal de criar o produto
-- Conectar com as rotas de deletar e editar produto
 - Resolver a questão dos varios suppliers para colocar nos detalhes do produto
 - Conectar a rota de metrics com a aba overview (As 4 tabelas)
 

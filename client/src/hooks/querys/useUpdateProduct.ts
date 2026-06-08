@@ -9,7 +9,7 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: async (payload: UpdateProductDTO) => {
       const { id, ...data } = payload;
-      const response = await api.patch(`/api/v1/products/${id}`, data);
+      const response = await api.patch(`/product/${id}`, data);
       return response.data;
     },
     onSuccess: () => {

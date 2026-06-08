@@ -102,3 +102,18 @@ export const getAllProductsResponseSchema = z.object({
     }),
   ),
 });
+
+export const updateProductParamsSchema = z.object({
+  id: z.uuid('ID de produto inválido.'),
+});
+
+export const updateProductBodySchema = z.object({
+  name: z.string().min(1).optional(),
+  price: z.number().positive().optional(),
+  costPrice: z.number().positive().optional(),
+  description: z.string().nullable().optional(),
+  isActive: z.boolean().optional(),
+  categoryId: z.uuid().optional(),
+  brandId: z.uuid().optional(),
+  supplierIds: z.array(z.uuid()).optional(),
+});

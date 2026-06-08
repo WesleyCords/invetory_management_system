@@ -4,6 +4,8 @@ import CreateProductService, {
 } from '../services/CreateProductService';
 import GetAllProductService from '../services/GetAllProductService';
 import DeleteProductService from '../services/DeleteProductService';
+import { updateProductBodySchema } from '../schemas/product.schema';
+import UpdateProductService from '../services/UpdateProductService';
 
 class ProductController {
   async create(
@@ -44,6 +46,29 @@ class ProductController {
     reply.status(200).send({
       message: 'Product deleted successfully',
       data: product,
+    });
+  }
+
+  async update(
+    req: FastifyRequest<{
+      Params: { id: string };
+      Body: typeof updateProductBodySchema;
+    }>,
+    reply: FastifyReply,
+  ) {
+    const { id } = req.params;
+    const data = req.body;
+
+    const updateProduct = new UpdateProductService();
+
+    const updatedProduct = await updateProduct.execute({
+      id,
+      ...data,
+    });
+
+    reply.status(200).send({
+      message: 'Product updated successfully',
+      data: updatedProduct,
     });
   }
 }

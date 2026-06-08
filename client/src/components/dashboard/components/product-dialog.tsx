@@ -79,7 +79,7 @@ export function ProductDialog() {
 
     if (isEditMode) {
       const { sku, ...payloadWithoutSku } = basePayload;
-      console.log("Payload for update:", payloadWithoutSku);
+
       const updatePayload: UpdateProductDTO = {
         id: String(id),
         ...payloadWithoutSku,
