@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useProductForm } from "@/store/useProductForm";
+import { useDeleteProduct } from "@/hooks/querys/useDeleteProduct";
 
 interface ProductsListProps {
   products: IProduct[];
@@ -25,6 +26,8 @@ interface ProductsListProps {
 export function ProductsList({ products }: ProductsListProps) {
   const { currentPage, openDialog } = useUISectionProducts();
   const { loadProductForEdit } = useProductForm();
+  const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
+
   const ITEMS_PER_PAGE = 10;
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -117,7 +120,19 @@ export function ProductsList({ products }: ProductsListProps) {
                     <Pencil className="mr-2 h-4 w-4" />
                     Editar
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem
+                    disabled={isDeleting}
+                    className="text-destructive focus:text-destructive"
+                    onClick={() => {
+                      const confirmDelete = window.confirm(
+                        "Tem certeza que deseja excluir este produto?",
+                      );
+
+                      if (confirmDelete) {
+                        deleteProduct(product.id);
+                      }
+                    }}
+                  >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Excluir
                   </DropdownMenuItem>
