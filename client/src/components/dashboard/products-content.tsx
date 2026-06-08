@@ -8,11 +8,10 @@ import { SelectComponent } from "./components/select-content";
 import { TableProduct } from "./components/table-product";
 import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { useCategories } from "@/hooks/querys/useCategories";
-import { CreateProductDialog } from "./components/create-product-dialog";
+import { ProductDialog } from "./components/product-dialog";
 
 export function ProductsContent() {
-  const { onChangeSearch, search, openNewProductDialog } =
-    useUISectionProducts();
+  const { onChangeSearch, search, openDialog } = useUISectionProducts();
   const { data: dbCategories = [], isLoading } = useCategories();
   const categories = ["Todos", ...dbCategories.map((cat) => cat.name)];
   return (
@@ -27,7 +26,7 @@ export function ProductsContent() {
           title="Produtos"
           subtitle="Gerencie seu catalogo de produtos"
         >
-          <Button variant="outline" onClick={openNewProductDialog}>
+          <Button variant="outline" onClick={openDialog}>
             <Plus className="h-4 w-4" />
             Novo Produto
           </Button>
@@ -57,7 +56,7 @@ export function ProductsContent() {
 
         <TableProduct />
       </motion.div>
-      <CreateProductDialog />
+      <ProductDialog />
     </>
   );
 }

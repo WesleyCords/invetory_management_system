@@ -28,7 +28,8 @@ class GetAllProductService {
     });
 
     const productsFormatted = productsIsActive.map((product) => {
-      const { suppliers, price, movements, ...dataProduct } = product;
+      const { suppliers, price, movements, costPrice, ...dataProduct } =
+        product;
 
       const currentQuantity = movements.reduce((total, movement) => {
         if (movement.type === MovementType.IN) {
@@ -43,6 +44,7 @@ class GetAllProductService {
       return {
         ...dataProduct,
         price: Number(price),
+        costPrice: Number(costPrice),
         suppliers: suppliers.map((pivot) => pivot.supplier),
         quantity: currentQuantity,
         isLowStock,

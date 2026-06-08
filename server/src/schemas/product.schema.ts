@@ -98,6 +98,7 @@ export const getAllProductsResponseSchema = z.object({
       ),
       quantity: z.number(),
       isLowStock: z.boolean(),
+      costPrice: z.number().positive(),
     }),
   ),
 });

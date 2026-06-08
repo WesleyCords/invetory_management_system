@@ -54,13 +54,15 @@ export const useProductForm = create<UIProductsStore>((set) => ({
     set(() => ({
       productForm: {
         id: product.id,
-        name: product.name,
-        sku: product.sku,
-        categoryId: product.categoryId,
-        brandId: product.brandId,
-        costPrice: product.costPrice,
-        price: product.price,
-        description: product.description,
+        name: product.name || "",
+        sku: product.sku || "",
+        categoryId: product.categoryId || "",
+        brandId: product.brandId || "",
+        description: product.description || "",
+
+        costPrice: product.costPrice ?? 0,
+        price: product.price ?? 0,
+
         suppliers: product.suppliers ? product.suppliers.map((s) => s.id) : [],
       },
     })),

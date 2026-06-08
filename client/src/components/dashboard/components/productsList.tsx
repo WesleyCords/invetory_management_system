@@ -16,13 +16,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useProductForm } from "@/store/useProductForm";
 
 interface ProductsListProps {
   products: IProduct[];
 }
 
 export function ProductsList({ products }: ProductsListProps) {
-  const { currentPage, openEditProductDialog } = useUISectionProducts();
+  const { currentPage, openDialog } = useUISectionProducts();
+  const { loadProductForEdit } = useProductForm();
   const ITEMS_PER_PAGE = 10;
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -39,7 +41,7 @@ export function ProductsList({ products }: ProductsListProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
             className="border-border hover:bg-secondary/50"
           >
             <TableCell>
@@ -106,7 +108,12 @@ export function ProductsList({ products }: ProductsListProps) {
                   }
                 />
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => openEditProductDialog()}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      loadProductForEdit(product);
+                      openDialog();
+                    }}
+                  >
                     <Pencil className="mr-2 h-4 w-4" />
                     Editar
                   </DropdownMenuItem>

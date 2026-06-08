@@ -24,11 +24,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCreateProduct } from "@/hooks/querys/useCreateProduct";
 import { Loader2 } from "lucide-react";
-import { CreateProductDTO } from "@/dtos";
+import { CreateProductDTO, UpdateProductDTO } from "@/dtos";
 import { useSuppliers } from "@/hooks/querys/useSuppliers";
 import { useBrands } from "@/hooks/querys/useBrands";
+import { useUpdateProduct } from "@/hooks/querys/useUpdateProduct";
 
-export function CreateProductDialog() {
+export function ProductDialog() {
   const [categoryNameView, setCategoryNameView] = useState<string>("");
   const [brandViewName, setBrandViewName] = useState<string>("");
 
@@ -38,7 +39,19 @@ export function CreateProductDialog() {
 
   const { dialogOpen, closeDialog } = useUISectionProducts();
   const { productForm, setFormField, resetForm } = useProductForm();
-  const { mutate, isPending } = useCreateProduct();
+
+  const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
+  const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
+
+  const isEditMode = !!productForm.id;
+  const isPending = isCreating || isUpdating;
+
+  const handleClose = () => {
+    closeDialog();
+    setTimeout(() => {
+      resetForm();
+    }, 300);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +67,7 @@ export function CreateProductDialog() {
       ...dataRequired
     } = productForm;
 
-    const payloadToCreate = {
+    const basePayload = {
       ...dataRequired,
       supplierIds: suppliers,
       categoryId: categoryId || undefined,
@@ -64,21 +77,49 @@ export function CreateProductDialog() {
       description: description || undefined,
     } as CreateProductDTO;
 
-    mutate(payloadToCreate, {
-      onSuccess: () => {
-        closeDialog();
-        resetForm();
-      },
-    });
+    if (isEditMode) {
+      const { sku, ...payloadWithoutSku } = basePayload;
+      console.log("Payload for update:", payloadWithoutSku);
+      const updatePayload: UpdateProductDTO = {
+        id: String(id),
+        ...payloadWithoutSku,
+      };
+
+      updateProduct(updatePayload, { onSuccess: handleClose });
+    } else {
+      const createPayload = basePayload as CreateProductDTO;
+      createProduct(createPayload, { onSuccess: handleClose });
+    }
   };
 
+  const derivedCategoryName =
+    categories.find((c) => String(c.id) === productForm.categoryId)?.name ||
+    productForm.categoryName ||
+    categoryNameView;
+
+  const derivedBrandName =
+    brands.find((b) => String(b.id) === productForm.brandId)?.name ||
+    productForm.brandName ||
+    brandViewName;
+
   return (
-    <Dialog open={dialogOpen} onOpenChange={closeDialog}>
-      <DialogContent className="max-w-130 max-h-[90vh]">
+    <Dialog
+      open={dialogOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          handleClose();
+        }
+      }}
+    >
+      <DialogContent className="max-w-130 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Novo Produto</DialogTitle>
+          <DialogTitle>
+            {isEditMode ? "Editar Produto" : "Novo Produto"}
+          </DialogTitle>
           <DialogDescription>
-            Preencha as informações para cadastrar um novo produto no estoque.
+            {isEditMode
+              ? "Modifique os dados do produto abaixo."
+              : "Preencha as informações para cadastrar um novo produto no estoque."}
           </DialogDescription>
         </DialogHeader>
 
@@ -91,6 +132,7 @@ export function CreateProductDialog() {
                 </Label>
                 <Input
                   id="name"
+                  value={productForm.name}
                   onChange={(e) => setFormField("name", e.target.value)}
                   required
                 />
@@ -104,7 +146,7 @@ export function CreateProductDialog() {
                 </Label>
                 <Combobox
                   items={categories}
-                  value={categoryNameView}
+                  value={derivedCategoryName}
                   onValueChange={(selectedName) => {
                     setCategoryNameView(selectedName);
 
@@ -123,6 +165,7 @@ export function CreateProductDialog() {
                 >
                   <ComboboxInput
                     placeholder="Selecione a categoria"
+                    value={derivedCategoryName}
                     onChange={(e) => {
                       const text = e.target.value;
                       setCategoryNameView(text);
@@ -151,8 +194,8 @@ export function CreateProductDialog() {
                   Marca
                 </Label>
                 <Combobox
-                  value={brandViewName}
                   items={brands}
+                  value={derivedBrandName}
                   onValueChange={(selectedName) => {
                     setBrandViewName(selectedName);
 
@@ -171,6 +214,7 @@ export function CreateProductDialog() {
                 >
                   <ComboboxInput
                     placeholder="Selecione a marca"
+                    value={derivedBrandName}
                     onChange={(e) => {
                       const text = e.target.value;
                       setBrandViewName(text);
@@ -205,6 +249,7 @@ export function CreateProductDialog() {
                   id="costPrice"
                   type="number"
                   step="0.01"
+                  value={productForm.costPrice}
                   onChange={(e) =>
                     setFormField("costPrice", parseFloat(e.target.value) || 0)
                   }
@@ -219,6 +264,7 @@ export function CreateProductDialog() {
                   id="price"
                   type="number"
                   step="0.01"
+                  value={productForm.price}
                   onChange={(e) =>
                     setFormField("price", parseFloat(e.target.value) || 0)
                   }
@@ -243,13 +289,14 @@ export function CreateProductDialog() {
                     value = value.replace(/[^A-Z0-9-]/g, "");
                     setFormField("sku", value);
                   }}
+                  disabled={isEditMode}
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label className="text-foreground">Fornecedores</Label>
 
-                <div className="h-auto overflow-y-auto rounded-md border border-border bg-secondary p-3 space-y-3">
+                <div className="h-32 overflow-y-auto rounded-md border border-border bg-secondary p-3 space-y-3">
                   {suppliers.length === 0 && (
                     <p className="text-sm text-muted-foreground">
                       Nenhum fornecedor encontrado.
@@ -258,7 +305,7 @@ export function CreateProductDialog() {
 
                   {suppliers.map((supplier) => {
                     const isChecked = productForm.suppliers.includes(
-                      supplier.id,
+                      String(supplier.id),
                     );
 
                     return (
@@ -299,7 +346,8 @@ export function CreateProductDialog() {
             <div>
               <textarea
                 id="description"
-                placeholder="Descricao do produto"
+                placeholder="Descrição do produto"
+                value={productForm.description}
                 onChange={(e) => setFormField("description", e.target.value)}
                 className="w-full h-12 p-2 bg-secondary focus:outline-none focus:ring-2 focus:ring-border border rounded-md resize-none text-sm text-foreground"
               />
@@ -309,7 +357,7 @@ export function CreateProductDialog() {
             <Button
               type="button"
               variant="outline"
-              onClick={closeDialog}
+              onClick={handleClose}
               disabled={isPending}
             >
               Cancelar
@@ -317,6 +365,8 @@ export function CreateProductDialog() {
             <Button type="submit" disabled={isPending}>
               {isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : isEditMode ? (
+                "Salvar Alterações"
               ) : (
                 "Cadastrar Produto"
               )}
