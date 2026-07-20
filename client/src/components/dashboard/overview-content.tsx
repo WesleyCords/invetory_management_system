@@ -20,6 +20,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useProducts } from "@/hooks/querys/useProducts";
 import { useMetrics } from "@/hooks/querys/useMetrics";
+import { CardSkeleton } from "../skeletons/card-skeleton";
 
 export function OverviewContent() {
   const {
@@ -36,16 +37,6 @@ export function OverviewContent() {
 
   const recentMovements = mockMovements.slice(0, 5);
   const recentLogs = mockLogs.slice(0, 4);
-
-  if (isProductsLoading || isMetricsLoading) {
-    return (
-      <div className="flex items-center justify-center h-full min-h-100">
-        <p className="text-muted-foreground animate-pulse">
-          Carregando métricas do dashboard...
-        </p>
-      </div>
-    );
-  }
 
   if (isProductsError || isMetricsError || !products || !metrics) {
     return (
@@ -124,31 +115,35 @@ export function OverviewContent() {
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-        {statCards.map((card, index) => (
-          <motion.div
-            key={card.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <Card className="hover:border-accent">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle>{card.title}</CardTitle>
-                <div className={`rounded-lg p-2 ${card.color}`}>
-                  <card.icon className="h-4 w-4" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">
-                  {card.value}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {card.subtitle}
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
+        {!isMetricsLoading
+          ? Array.from({ length: 4 }).map((_, index) => (
+              <CardSkeleton key={index} />
+            ))
+          : statCards.map((card, index) => (
+              <motion.div
+                key={card.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="hover:border-accent">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle>{card.title}</CardTitle>
+                    <div className={`rounded-lg p-2 ${card.color}`}>
+                      <card.icon className="h-4 w-4" />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-foreground">
+                      {card.value}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {card.subtitle}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -175,7 +170,9 @@ export function OverviewContent() {
               </Button>
             </CardHeader>
             <CardContent>
-              {metrics.data.inventory.lowStockItems === 0 ? (
+              {!isProductsLoading ? (
+                <CardSkeleton className="border-none" />
+              ) : metrics.data.inventory.lowStockItems === 0 ? (
                 <p className="text-muted-foreground text-sm py-4 text-center">
                   Nenhum produto com estoque baixo
                 </p>

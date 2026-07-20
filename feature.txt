@@ -1,3 +1,4 @@
+- Skeleton da aba de Produtos (front)
 - Aba de sair (back e front)
 - Aba de configurações (back e front)
 - Aba de movimentações (back e front)
