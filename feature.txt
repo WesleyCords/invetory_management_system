@@ -1,4 +1,7 @@
-- Skeleton da aba de Produtos (front)
 - Aba de sair (back e front)
 - Aba de configurações (back e front)
 - Aba de movimentações (back e front)
+- Mudar os parametros da rota de movimentações, colocar o responsavel que fez (backend)
+- Alterou o preço ou quantidade do produto na aba produto, tambem conta como movimentação
+- Atualizar os dados quando faz o login, ficar salvo os dados do usuario
+- A seguir desse ponto anterior, atualizar o componente que recebe o nome e o avatar
