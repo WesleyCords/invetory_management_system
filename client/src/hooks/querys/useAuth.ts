@@ -2,9 +2,11 @@ import { setCookie } from "nookies";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { useAuthState } from "@/store/useAuthState";
+import { useRouter } from "next/navigation";
 
 export function useAuth() {
   const { user, setUser, logout } = useAuthState();
+  const router = useRouter();
 
   async function signIn({ username, password }: SignInCredentials) {
     try {
@@ -22,7 +24,7 @@ export function useAuth() {
       setUser(userData);
 
       toast.success("Bem-vindo de volta!");
-      window.location.reload();
+      router.refresh();
     } catch (error) {
       toast.error("Credenciais inválidas");
       throw error;

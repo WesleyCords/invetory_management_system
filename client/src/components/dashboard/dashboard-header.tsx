@@ -6,7 +6,6 @@ import {
   ChevronFirst,
   ChevronLast,
   Search,
-  User,
 } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -20,12 +19,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthState } from "@/store/useAuthState";
+import { AvatarProfile } from "./components/avatar-profile";
 
 export function DashboardHeader() {
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const isSideOpen = useUIStore((state) => state.isSidebarOpen);
   const toggleTab = useUIStore((state) => state.setAbartOpen);
   const user = useAuthState((state) => state.user);
+  console.log(user);
   return (
     <header className="flex h-16 items-center justify-between bg-card px-6 border-b-2 border-border">
       <div className="flex items-center gap-3">
@@ -72,9 +73,7 @@ export function DashboardHeader() {
                 variant="ghost"
                 className="group h-auto py-1 gap-2 text-muted-foreground"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-primary group-hover:text-primary-foreground bg-secondary">
-                  <User className="h-4 w-4" />
-                </div>
+                <AvatarProfile />
 
                 <div className="block text-left">
                   <p className="text-sm font-medium text-foreground">
@@ -105,10 +104,6 @@ export function DashboardHeader() {
                 Suporte
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:bg-destructive/30 ">
-              Sair
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

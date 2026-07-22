@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 enum UserRole {
   "ADMIN",
@@ -17,8 +18,15 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthState = create<AuthState>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  logout: () => set({ user: null }),
-}));
+export const useAuthState = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      logout: () => set({ user: null }),
+    }),
+    {
+      name: "auth-storage",
+    },
+  ),
+);
