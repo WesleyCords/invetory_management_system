@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { AuthPage } from "@/components/auth/auth-page";
 import { Dashboard } from "@/components/dashboard/dashboard";
+import { useAuthState } from "@/store/useAuthState";
 
 export default async function Home() {
   const cookieStore = await cookies();

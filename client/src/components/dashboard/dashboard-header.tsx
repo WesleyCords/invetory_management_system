@@ -19,11 +19,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuthState } from "@/store/useAuthState";
 
 export function DashboardHeader() {
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const isSideOpen = useUIStore((state) => state.isSidebarOpen);
   const toggleTab = useUIStore((state) => state.setAbartOpen);
+  const user = useAuthState((state) => state.user);
   return (
     <header className="flex h-16 items-center justify-between bg-card px-6 border-b-2 border-border">
       <div className="flex items-center gap-3">
@@ -76,9 +78,11 @@ export function DashboardHeader() {
 
                 <div className="block text-left">
                   <p className="text-sm font-medium text-foreground">
-                    Wesley Cordeiro
+                    {user?.name || "Carregando..."}
                   </p>
-                  <p className="text-xs text-muted-foreground">Admin</p>
+                  <p className="text-xs text-muted-foreground">
+                    {user?.role || ""}
+                  </p>
                 </div>
 
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />

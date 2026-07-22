@@ -37,16 +37,6 @@ export function OverviewContent() {
   const recentMovements = mockMovements.slice(0, 5);
   const recentLogs = mockLogs.slice(0, 4);
 
-  if (isProductsLoading || isMetricsLoading) {
-    return (
-      <div className="flex items-center justify-center h-full min-h-100">
-        <p className="text-muted-foreground animate-pulse">
-          Carregando métricas do dashboard...
-        </p>
-      </div>
-    );
-  }
-
   if (isProductsError || isMetricsError || !products || !metrics) {
     return (
       <div className="flex items-center justify-center h-full min-h-100 text-destructive">

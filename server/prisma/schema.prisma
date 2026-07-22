@@ -26,6 +26,7 @@ enum RolesProfile {
 model User {
   id          String        @id @default(uuid())
   name        String
+  avatarUrl   String?
   username    String        @unique
   password    String
   role        RolesProfile  @default(EMPLOYEE)

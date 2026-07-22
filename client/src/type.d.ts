@@ -36,3 +36,8 @@ interface IBrands {
   id: string;
   name: string;
 }
+
+interface SignInCredentials {
+  username: string;
+  password: string;
+}
