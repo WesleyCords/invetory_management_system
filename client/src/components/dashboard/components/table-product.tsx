@@ -15,11 +15,16 @@ import { ArrowUpDown, Package } from "lucide-react";
 import { ProductsList } from "./productsList";
 import { Pagination } from "./Pagination";
 import { ArrowTableHeader } from "./arrow-table-header";
+import { CardSkeleton } from "@/components/skeletons/card-skeleton";
 
 export function TableProduct() {
   const { categorySelected, sortField, handleSortChange, sortOrder, search } =
     useUISectionProducts();
-  const { data: products } = useProducts();
+  const {
+    data: products,
+    isLoading: isProductsLoading,
+    isError: isProductsError,
+  } = useProducts();
 
   const filteredProducts = products
     .filter((p) => {
@@ -52,6 +57,18 @@ export function TableProduct() {
       handleSortChange(field);
     }
   };
+
+  if (isProductsLoading) return <CardSkeleton />;
+
+  if (!isProductsError && products === undefined)
+    return (
+      <div className="py-12 text-center">
+        <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
+        <p className="mt-4 text-muted-foreground">
+          Ocorreu um erro ao carregar os produtos
+        </p>
+      </div>
+    );
 
   return (
     <>

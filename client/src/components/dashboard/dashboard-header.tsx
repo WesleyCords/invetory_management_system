@@ -95,13 +95,15 @@ export function DashboardHeader() {
                 Minha Conta
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => toggleTab("help")}>
+              <DropdownMenuItem onClick={() => toggleTab("settings")}>
                 Perfil
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => toggleTab("settings")}>
                 Configurações
               </DropdownMenuItem>
-              <DropdownMenuItem>Suporte</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toggleTab("help")}>
+                Suporte
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-destructive focus:bg-destructive/30 ">
