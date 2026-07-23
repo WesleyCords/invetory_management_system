@@ -6,6 +6,7 @@ import { MetricsRoutes } from './metrics.router.js';
 import { categoryRouter } from './category.router.js';
 import { supplierRouter } from './supplier.router.js';
 import { brandRouter } from './brand.router.js';
+import { logsRoutes } from './logs.router.js';
 
 export const appRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.register(productRoutes);
@@ -15,4 +16,5 @@ export const appRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.register(categoryRouter);
   fastify.register(supplierRouter);
   fastify.register(brandRouter);
+  fastify.register(logsRoutes);
 };
