@@ -61,7 +61,7 @@ export const loginUserSchemaResponse = z.object({
     name: z.string(),
     username: z.string(),
     role: z.enum(RolesProfile),
-    avatarUrl: z.url().optional(),
+    avatarUrl: z.url().nullable().optional(),
   }),
   message: z.string(),
 });

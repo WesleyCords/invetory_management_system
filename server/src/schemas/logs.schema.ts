@@ -18,9 +18,23 @@ export const logSchema = z.object({
   productId: z.uuid(),
 });
 
+const logFullSchema = logSchema.extend({
+  user: z.object({
+    id: z.uuid(),
+    name: z.string(),
+    avatarUrl: z.url().nullable().optional(),
+    role: z.enum(['ADMIN', 'EMPLOYEE']),
+  }),
+  product: z.object({
+    id: z.uuid(),
+    name: z.string(),
+    sku: z.string(),
+  }),
+});
+
 export const getLogSchemaResponse = z.object({
   message: z.string(),
-  data: z.array(logSchema),
+  data: z.array(logFullSchema),
 });
 
 export const getAuditLogsQuerySchema = z.object({

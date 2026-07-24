@@ -27,6 +27,23 @@ class GetLogsService {
           gte: new Date(Date.now() - period * 24 * 60 * 60 * 1000),
         },
       },
+      include: {
+        user: {
+          select: {
+            name: true,
+            avatarUrl: true,
+            role: true,
+            id: true,
+          },
+        },
+        product: {
+          select: {
+            name: true,
+            sku: true,
+            id: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -34,7 +51,12 @@ class GetLogsService {
       take: ITEMS_PER_PAGE,
     });
 
-    return logs;
+    const formattedLogs = logs.map((log) => {
+      const { userId, productId, ...rest } = log;
+      return rest;
+    });
+
+    return formattedLogs;
   }
 }
 
