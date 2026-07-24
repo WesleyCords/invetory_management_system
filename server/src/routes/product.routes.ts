@@ -7,6 +7,7 @@ import {
   deleteProductResponse,
   deleteProductSchema,
   getAllProductsResponseSchema,
+  getProductQueryParamsSchema,
   productResponseSchema,
   updateProductBodySchema,
   updateProductParamsSchema,
@@ -34,6 +35,7 @@ export const productRoutes: FastifyPluginAsyncZod = async (fastify) => {
     '/products',
     {
       schema: {
+        querystring: getProductQueryParamsSchema,
         response: {
           200: getAllProductsResponseSchema,
         },

@@ -1,31 +1,39 @@
 import { prisma } from '../lib/prisma';
 import { MovementType } from '@prisma/client';
+import { getAllProductsQueryParams } from '../controllers/ProductController';
 
 class GetAllProductService {
-  async execute() {
-    const productsIsActive = await prisma.product.findMany({
-      where: { isActive: true },
-      include: {
-        brand: {
-          select: {
-            name: true,
+  async execute({ page, limit }: getAllProductsQueryParams) {
+    const [productsIsActive, productsCount] = await prisma.$transaction([
+      prisma.product.findMany({
+        where: { isActive: true },
+        include: {
+          brand: {
+            select: {
+              name: true,
+            },
+          },
+          category: true,
+          suppliers: {
+            select: {
+              id: true,
+              supplier: true,
+            },
+          },
+          movements: {
+            select: {
+              type: true,
+              quantity: true,
+            },
           },
         },
-        category: true,
-        suppliers: {
-          select: {
-            id: true,
-            supplier: true,
-          },
-        },
-        movements: {
-          select: {
-            type: true,
-            quantity: true,
-          },
-        },
-      },
-    });
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.product.count({
+        where: { isActive: true },
+      }),
+    ]);
 
     const productsFormatted = productsIsActive.map((product) => {
       const { suppliers, price, movements, costPrice, ...dataProduct } =
@@ -51,7 +59,11 @@ class GetAllProductService {
       };
     });
 
-    return productsFormatted;
+    return {
+      products: productsFormatted,
+      totalCount: productsCount,
+      totalPages: Math.ceil(productsCount / 10),
+    };
   }
 }
 

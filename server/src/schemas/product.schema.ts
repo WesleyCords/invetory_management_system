@@ -71,36 +71,40 @@ export const deleteProductResponse = z.object({
 
 export const getAllProductsResponseSchema = z.object({
   message: z.string(),
-  data: z.array(
-    z.object({
-      id: z.uuid(),
-      sku: z.string(),
-      name: z.string(),
-      price: z.number().positive(),
-      description: z.string().nullable(),
-      isActive: z.boolean(),
-      categoryId: z.uuid(),
-      brandId: z.uuid(),
-      brand: z.object({
-        name: z.string(),
-      }),
-      category: z.object({
+  data: z.object({
+    products: z.array(
+      z.object({
         id: z.uuid(),
+        sku: z.string(),
         name: z.string(),
-      }),
-      suppliers: z.array(
-        z.object({
+        price: z.number().positive(),
+        description: z.string().nullable(),
+        isActive: z.boolean(),
+        categoryId: z.uuid(),
+        brandId: z.uuid(),
+        brand: z.object({
+          name: z.string(),
+        }),
+        category: z.object({
           id: z.uuid(),
           name: z.string(),
-          company: z.string(),
-          address: z.string(),
         }),
-      ),
-      quantity: z.number(),
-      isLowStock: z.boolean(),
-      costPrice: z.number().positive(),
-    }),
-  ),
+        suppliers: z.array(
+          z.object({
+            id: z.uuid(),
+            name: z.string(),
+            company: z.string(),
+            address: z.string(),
+          }),
+        ),
+        quantity: z.number(),
+        isLowStock: z.boolean(),
+        costPrice: z.number().positive(),
+      }),
+    ),
+    totalCount: z.number(),
+    totalPages: z.number(),
+  }),
 });
 
 export const updateProductParamsSchema = z.object({
@@ -116,4 +120,17 @@ export const updateProductBodySchema = z.object({
   categoryId: z.uuid().optional(),
   brandId: z.uuid().optional(),
   supplierIds: z.array(z.uuid()).optional(),
+});
+
+export const getProductQueryParamsSchema = z.object({
+  page: z.coerce
+    .number()
+    .min(1, 'Page must be at least 1')
+    .optional()
+    .default(1),
+  limit: z.coerce
+    .number()
+    .min(1, 'Limit must be at least 1')
+    .optional()
+    .default(10),
 });

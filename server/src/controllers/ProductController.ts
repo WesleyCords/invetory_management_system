@@ -4,9 +4,16 @@ import CreateProductService, {
 } from '../services/CreateProductService';
 import GetAllProductService from '../services/GetAllProductService';
 import DeleteProductService from '../services/DeleteProductService';
-import { updateProductBodySchema } from '../schemas/product.schema';
+import {
+  getProductQueryParamsSchema,
+  updateProductBodySchema,
+} from '../schemas/product.schema';
 import UpdateProductService from '../services/UpdateProductService';
+import z from 'zod';
 
+export type getAllProductsQueryParams = z.infer<
+  typeof getProductQueryParamsSchema
+>;
 class ProductController {
   async create(
     req: FastifyRequest<{ Body: IProductRequest }>,
@@ -23,14 +30,25 @@ class ProductController {
     });
   }
 
-  async getAllIsActive(req: FastifyRequest, reply: FastifyReply) {
+  async getAllIsActive(
+    req: FastifyRequest<{
+      Querystring: getAllProductsQueryParams;
+    }>,
+    reply: FastifyReply,
+  ) {
     const getAllProducts = new GetAllProductService();
 
-    const products = await getAllProducts.execute();
+    const { products, totalCount, totalPages } = await getAllProducts.execute(
+      req.query,
+    );
 
     return reply.status(200).send({
       message: 'Get all producst is ACTIVE',
-      data: products,
+      data: {
+        products,
+        totalCount,
+        totalPages,
+      },
     });
   }
 
