@@ -11,22 +11,28 @@ import {
 } from "@/components/ui/table";
 import { useProducts } from "@/hooks/querys/useProducts";
 import { useUISectionProducts } from "@/store/useUISectionProducts";
-import { ArrowUpDown, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import { ProductsList } from "./productsList";
-import { Pagination } from "./Pagination";
+import { Pagination } from "./pagination";
 import { ArrowTableHeader } from "./arrow-table-header";
 import { CardSkeleton } from "@/components/skeletons/card-skeleton";
 
 export function TableProduct() {
-  const { categorySelected, sortField, handleSortChange, sortOrder, search } =
-    useUISectionProducts();
   const {
-    data: products,
+    categorySelected,
+    sortField,
+    handleSortChange,
+    sortOrder,
+    search,
+    currentPage,
+  } = useUISectionProducts();
+  const {
+    data: productData,
     isLoading: isProductsLoading,
     isError: isProductsError,
-  } = useProducts();
+  } = useProducts({ page: currentPage, limit: 10, search });
 
-  const filteredProducts = products
+  const filteredProducts = productData?.products
     .filter((p) => {
       const matchesSearch =
         p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -60,7 +66,7 @@ export function TableProduct() {
 
   if (isProductsLoading) return <CardSkeleton />;
 
-  if (!isProductsError && products === undefined)
+  if (!isProductsError && productData === undefined)
     return (
       <div className="py-12 text-center">
         <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
@@ -128,7 +134,7 @@ export function TableProduct() {
               <ProductsList products={filteredProducts} />
             </TableBody>
           </Table>
-          {products.length === 0 && (
+          {productData?.products.length === 0 && (
             <div className="py-12 text-center">
               <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
               <p className="mt-4 text-muted-foreground">
@@ -138,7 +144,7 @@ export function TableProduct() {
           )}
         </CardContent>
       </Card>
-      <Pagination />
+      <Pagination data={productData} />
     </>
   );
 }

@@ -1,7 +1,8 @@
-- Aba de sair (back e front)
 - Aba de configurações (back e front)
 - Aba de movimentações (back e front)
-- Mudar os parametros da rota de movimentações, colocar o responsavel que fez (backend)
-- Alterou o preço ou quantidade do produto na aba produto, tambem conta como movimentação
-- Atualizar os dados quando faz o login, ficar salvo os dados do usuario
-- A seguir desse ponto anterior, atualizar o componente que recebe o nome e o avatar
+- Decidir onde vai ficar as url das imagens Supabase, Kube, aws...
+- Adaptar as novas mudanças de log, movimentação e produtos no front
+- Criar a rota de adicionar foto ao perfil
+- Criar logica para quando um produto for deletado, atualizado ou criado adicionar uma movimentação
+
+-> Um select com os dias para selecionar os logs e movimentações daquele periodo (1,7, 30 e 90 dias)

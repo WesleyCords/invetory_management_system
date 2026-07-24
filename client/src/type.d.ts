@@ -20,11 +20,23 @@ interface IProduct {
   isLowStock: boolean;
 }
 
+interface IProductGet {
+  products: IProduct[];
+  totalCount: number;
+  totalPages: number;
+}
+
 interface ISuppliers {
   id: string;
   name: string;
   company: string;
   address: string;
+}
+
+interface UseProductsParams {
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
 interface ICategories {

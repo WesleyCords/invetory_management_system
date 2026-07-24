@@ -133,4 +133,5 @@ export const getProductQueryParamsSchema = z.object({
     .min(1, 'Limit must be at least 1')
     .optional()
     .default(10),
+  search: z.string().optional().default(''),
 });

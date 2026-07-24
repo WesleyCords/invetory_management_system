@@ -3,14 +3,24 @@ import { api } from "@/lib/api";
 
 interface IProductsResponse {
   message: string;
-  data: IProduct[];
+  data: IProductGet;
 }
 
-export function useProducts() {
+export function useProducts({
+  page = 1,
+  limit = 10,
+  search,
+}: UseProductsParams = {}) {
   return useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", page, limit, search],
     queryFn: async () => {
-      const response = await api.get<IProductsResponse>("/products");
+      const response = await api.get<IProductsResponse>("/products", {
+        params: {
+          page,
+          limit,
+          search,
+        },
+      });
 
       return response.data.data;
     },

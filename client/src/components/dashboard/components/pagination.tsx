@@ -1,22 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { useProducts } from "@/hooks/querys/useProducts";
 import { cn } from "@/lib/utils";
 import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export function Pagination() {
-  const { currentPage, previusPage, nextPage, itemsPerPages } =
+export function Pagination({ data }: { data: IProductGet | undefined }) {
+  const { currentPage, previusPage, nextPage, selectPage } =
     useUISectionProducts();
-  const { data: products } = useProducts();
-  const totalPages = Math.ceil(products.length / itemsPerPages);
 
-  const numberPages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  console.log("products", data.totalPages);
+
+  const ArrayPages = Array.from(
+    { length: data?.totalPages || 0 },
+    (_, i) => i + 1,
+  );
 
   return (
     <div
       className={cn(
         "items-center justify-center mt-6 gap-2",
-        numberPages.length > 1 ? "flex" : "hidden",
+        ArrayPages.length > 0 ? "flex" : "hidden",
       )}
     >
       <Button
@@ -28,12 +30,13 @@ export function Pagination() {
         <ChevronLeft className="h-4 w-4" />
       </Button>
       <div className="flex items-center gap-2">
-        {numberPages.map((number) => (
+        {ArrayPages.map((number) => (
           <Button
             key={number}
             size="icon"
             variant={currentPage === number ? "default" : "ghost"}
             className="cursor-default"
+            onClick={() => selectPage(number)}
           >
             {number}
           </Button>
@@ -43,7 +46,7 @@ export function Pagination() {
         variant="outline"
         size="icon"
         onClick={() => nextPage()}
-        disabled={currentPage === totalPages}
+        disabled={currentPage === data?.totalPages}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

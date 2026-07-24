@@ -1,12 +1,22 @@
 import { prisma } from '../lib/prisma';
-import { MovementType } from '@prisma/client';
+import { MovementType, Prisma } from '@prisma/client';
 import { getAllProductsQueryParams } from '../controllers/ProductController';
 
 class GetAllProductService {
-  async execute({ page, limit }: getAllProductsQueryParams) {
+  async execute({ page, limit, search }: getAllProductsQueryParams) {
+    const whereClause: Prisma.ProductWhereInput = {
+      isActive: true,
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { sku: { contains: search, mode: 'insensitive' } },
+        ],
+      }),
+    };
+
     const [productsIsActive, productsCount] = await prisma.$transaction([
       prisma.product.findMany({
-        where: { isActive: true },
+        where: whereClause,
         include: {
           brand: {
             select: {
@@ -31,7 +41,7 @@ class GetAllProductService {
         take: limit,
       }),
       prisma.product.count({
-        where: { isActive: true },
+        where: whereClause,
       }),
     ]);
 
@@ -62,7 +72,7 @@ class GetAllProductService {
     return {
       products: productsFormatted,
       totalCount: productsCount,
-      totalPages: Math.ceil(productsCount / 10),
+      totalPages: Math.ceil(productsCount / limit),
     };
   }
 }

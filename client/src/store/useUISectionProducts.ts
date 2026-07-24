@@ -2,7 +2,6 @@ import { create } from "zustand";
 
 interface ProductsUIState {
   currentPage: number;
-  itemsPerPages: number;
   search: string;
   dialogOpen: boolean;
   categorySelected: string;
@@ -16,12 +15,12 @@ interface ProductsUIState {
   closeDialog: () => void;
   handleCategoryChange: (category: string) => void;
   handleSortChange: (field: keyof IProduct) => void;
+  selectPage: (page: number) => void;
 }
 
 export const useUISectionProducts = create<ProductsUIState>((set) => ({
   search: "",
   currentPage: 1,
-  itemsPerPages: 10,
   dialogOpen: false,
   categorySelected: "Todos",
   sortField: "name",
@@ -43,4 +42,5 @@ export const useUISectionProducts = create<ProductsUIState>((set) => ({
             : "asc"
           : "asc",
     })),
+  selectPage: (page) => set({ currentPage: page }),
 }));

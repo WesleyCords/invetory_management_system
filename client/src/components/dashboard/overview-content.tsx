@@ -47,7 +47,7 @@ export function OverviewContent() {
   const statCards = [
     {
       title: "Total de Produtos",
-      value: products.length.toString(),
+      value: products.products.length.toString(),
       subtitle: "SKUs cadastrados",
       icon: Package,
       color: "bg-primary/10 text-primary",
@@ -81,7 +81,9 @@ export function OverviewContent() {
     },
   ];
 
-  const productsLowStock = products.filter((p) => p.isLowStock).slice(0, 3);
+  const productsLowStock = products.products
+    .filter((p) => p.isLowStock)
+    .slice(0, 3);
 
   return (
     <motion.div

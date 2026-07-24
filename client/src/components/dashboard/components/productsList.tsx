@@ -29,16 +29,9 @@ export function ProductsList({ products }: ProductsListProps) {
   const { loadProductForEdit } = useProductForm();
   const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
 
-  const ITEMS_PER_PAGE = 10;
-
-  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
-  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-
-  const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
-
   return (
     <AnimatePresence>
-      {currentItems.map((product, index) => {
+      {products.map((product, index) => {
         return (
           <motion.tr
             key={product.id}
