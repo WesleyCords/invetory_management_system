@@ -34,7 +34,11 @@ const logFullSchema = logSchema.extend({
 
 export const getLogSchemaResponse = z.object({
   message: z.string(),
-  data: z.array(logFullSchema),
+  data: z.object({
+    logs: z.array(logFullSchema),
+    totalCount: z.number(),
+    totalPages: z.number(),
+  }),
 });
 
 export const getAuditLogsQuerySchema = z.object({

@@ -11,11 +11,15 @@ class LogsController {
     reply: FastifyReply,
   ) {
     const getLogs = new GetLogsService();
-    const logs = await getLogs.execute(req.query);
+    const { logs, totalCount, totalPages } = await getLogs.execute(req.query);
 
     reply.status(200).send({
       message: 'Audit logs retrieved successfully',
-      data: logs,
+      data: {
+        logs,
+        totalCount,
+        totalPages,
+      },
     });
   }
 }

@@ -1,5 +1,6 @@
 import z from 'zod';
 import { MovementType } from '@prisma/client';
+import { getAuditLogsQuerySchema } from './logs.schema';
 
 export const registerStockMovementSchema = z.object({
   productId: z.uuid('Format invalid ID'),
@@ -28,4 +29,33 @@ export const getProductBalanceSchema = z.object({
 export const getProductBalanceResponseSchema = z.object({
   message: z.string(),
   data: z.number(),
+});
+
+export const getMovementsQuerySchema = getAuditLogsQuerySchema;
+
+export const getMovementsResponseSchema = z.object({
+  message: z.string(),
+  data: z.object({
+    movements: z.array(
+      z.object({
+        id: z.uuid(),
+        type: z.enum(MovementType),
+        quantity: z.number().positive(),
+        createdAt: z.date(),
+        user: z.object({
+          name: z.string(),
+          avatarUrl: z.string().nullable(),
+          role: z.string(),
+          id: z.uuid(),
+        }),
+        product: z.object({
+          name: z.string(),
+          sku: z.string(),
+          id: z.uuid(),
+        }),
+      }),
+    ),
+    totalCount: z.number(),
+    totalPages: z.number(),
+  }),
 });

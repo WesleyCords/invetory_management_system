@@ -3,6 +3,11 @@ import StockMovementService, {
   IStockRequest,
 } from '../services/StockMovementService';
 import GetProductBalanceService from '../services/GetProductBalance';
+import GetStockMovementsService from '../services/GetAllStockMovementsService';
+import z from 'zod';
+import { getMovementsQuerySchema } from '../schemas/stockMovement.schema';
+
+export type GetMovementsQueryParams = z.infer<typeof getMovementsQuerySchema>;
 
 class StockMovementController {
   async register(
@@ -36,6 +41,27 @@ class StockMovementController {
     reply.status(200).send({
       message: 'Get total balance the product is succesely',
       data: currentBalance,
+    });
+  }
+
+  async getMovements(
+    req: FastifyRequest<{
+      Querystring: GetMovementsQueryParams;
+    }>,
+    reply: FastifyReply,
+  ) {
+    const stockMovementService = new GetStockMovementsService();
+
+    const { movements, totalCount, totalPages } =
+      await stockMovementService.execute(req.query);
+
+    reply.status(200).send({
+      message: 'Get all stock movements successfully',
+      data: {
+        movements,
+        totalCount,
+        totalPages,
+      },
     });
   }
 }

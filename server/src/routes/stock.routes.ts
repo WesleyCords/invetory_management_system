@@ -2,6 +2,8 @@ import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import StockMovementController from '../controllers/StockMovementController';
 import verifyJWT from '../middleware/verify-jwt';
 import {
+  getMovementsQuerySchema,
+  getMovementsResponseSchema,
   getProductBalanceResponseSchema,
   getProductBalanceSchema,
   registerStockMovementResponseSchema,
@@ -24,6 +26,19 @@ export const stockRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     stockController.register,
+  );
+
+  fastify.get(
+    '/movements',
+    {
+      schema: {
+        querystring: getMovementsQuerySchema,
+        response: {
+          200: getMovementsResponseSchema,
+        },
+      },
+    },
+    stockController.getMovements,
   );
 
   fastify.get(
