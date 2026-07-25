@@ -7,8 +7,6 @@ export function Pagination({ data }: { data: IProductGet | undefined }) {
   const { currentPage, previusPage, nextPage, selectPage } =
     useUISectionProducts();
 
-  console.log("products", data.totalPages);
-
   const ArrayPages = Array.from(
     { length: data?.totalPages || 0 },
     (_, i) => i + 1,

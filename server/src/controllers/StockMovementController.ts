@@ -22,8 +22,6 @@ class StockMovementController {
       userId: idUser,
     });
 
-    console.log('Stock movement registered successfully', movement);
-
     reply.status(201).send({
       message: 'Stock movement registered successfully',
       data: movement,

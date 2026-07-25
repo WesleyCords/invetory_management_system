@@ -9,8 +9,6 @@ class GetCategoriesService {
       },
     });
 
-    console.log(categories);
-
     return categories;
   }
 }
