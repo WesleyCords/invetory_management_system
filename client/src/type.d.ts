@@ -53,3 +53,33 @@ interface SignInCredentials {
   username: string;
   password: string;
 }
+
+interface IMovement {
+  id: string;
+  type: "IN" | "OUT";
+  quantity: number;
+  createdAt: Date;
+  user: {
+    name: string;
+    avatarUrl: string;
+    role: "ADMIN" | "EMPLOYEE";
+    id: string;
+  };
+  product: {
+    name: string;
+    sku: string;
+    id: string;
+  };
+}
+
+interface UseGetMovementParams {
+  period?: number;
+  page?: number;
+  productId?: string;
+}
+
+interface IMovementGet {
+  movements: IMovement[];
+  totalCount: number;
+  totalPages: number;
+}

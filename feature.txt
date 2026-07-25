@@ -5,4 +5,5 @@
 - Criar a rota de adicionar foto ao perfil
 - Criar logica para quando um produto for deletado, atualizado ou criado adicionar uma movimentação
 
+-> Modificar os nome da varivel dos produtos no front quando recebe do back (data.products...)
 -> Um select com os dias para selecionar os logs e movimentações daquele periodo (1,7, 30 e 90 dias)

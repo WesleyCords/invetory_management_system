@@ -26,7 +26,7 @@ export function DashboardHeader() {
   const isSideOpen = useUIStore((state) => state.isSidebarOpen);
   const toggleTab = useUIStore((state) => state.setAbartOpen);
   const user = useAuthState((state) => state.user);
-  console.log(user);
+
   return (
     <header className="flex h-16 items-center justify-between bg-card px-6 border-b-2 border-border">
       <div className="flex items-center gap-3">

@@ -58,13 +58,6 @@ class GetStockMovementsService {
       }),
     ]);
 
-    if (movements.length === 0) {
-      throw new AppError(
-        'No stock movements found for the given criteria',
-        404,
-      );
-    }
-
     const formattedMovements = movements.map((movement) => {
       const { userId, productId, ...rest } = movement;
       return rest;

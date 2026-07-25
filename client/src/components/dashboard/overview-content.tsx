@@ -1,4 +1,4 @@
-import { mockMovements, mockLogs } from "@/lib/state-mock";
+import { mockLogs } from "@/lib/state-mock";
 import { useUIStore } from "@/store/useUIStore";
 import { motion } from "framer-motion";
 import {
@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useProducts } from "@/hooks/querys/useProducts";
 import { useMetrics } from "@/hooks/querys/useMetrics";
 import { CardSkeleton } from "../skeletons/card-skeleton";
+import { useGetMovement } from "@/hooks/querys/useGetMovement";
 
 export function OverviewContent() {
   const {
@@ -29,20 +30,22 @@ export function OverviewContent() {
     isError: isMetricsError,
   } = useMetrics();
 
+  const {
+    data: movements,
+    isLoading: isMovementsLoading,
+    isError: isMovementsError,
+  } = useGetMovement({
+    period: 1,
+  });
+
   let isLogsLoading = false;
   const toggleTab = useUIStore((state) => state.setAbartOpen);
 
-  const recentMovements = mockMovements.slice(0, 5);
+  const justLastMoviments = movements?.movements.slice(0, 5) || [];
   const recentLogs = mockLogs.slice(0, 4);
-
-  if (isProductsError || isMetricsError || !products || !metrics) {
-    return (
-      <div className="flex items-center justify-center h-full min-h-100 text-destructive">
-        <AlertTriangle className="h-8 w-8 mb-2 mx-auto" />
-        <p>Erro ao carregar os dados do painel. Tente novamente.</p>
-      </div>
-    );
-  }
+  const productsLowStock = products.products
+    .filter((p) => p.isLowStock)
+    .slice(0, 3);
 
   const statCards = [
     {
@@ -81,9 +84,14 @@ export function OverviewContent() {
     },
   ];
 
-  const productsLowStock = products.products
-    .filter((p) => p.isLowStock)
-    .slice(0, 3);
+  if (isProductsError || isMetricsError || !products || !metrics) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-100 text-destructive">
+        <AlertTriangle className="h-8 w-8 mb-2 mx-auto" />
+        <p>Erro ao carregar os dados do painel. Tente novamente.</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -114,7 +122,7 @@ export function OverviewContent() {
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-        {isMetricsLoading
+        {isMetricsLoading && isProductsLoading
           ? Array.from({ length: 4 }).map((_, index) => (
               <CardSkeleton key={index} />
             ))
@@ -224,7 +232,7 @@ export function OverviewContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          {isLogsLoading ? (
+          {isMovementsLoading ? (
             <CardSkeleton />
           ) : (
             <Card className="border-border border">
@@ -242,38 +250,44 @@ export function OverviewContent() {
                 </Button>
               </CardHeader>
               <CardContent className="space-y-3">
-                {recentMovements.map((movement, index) => (
-                  <motion.div
-                    key={movement.id}
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 + index * 0.05 }}
-                    className="flex items-center gap-3"
-                  >
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                        movement.type === "entrada"
-                          ? "bg-emerald-500/10"
-                          : "bg-rose-500/10"
-                      }`}
+                {justLastMoviments.length === 0 ? (
+                  <p className="text-muted-foreground text-sm py-4 text-center">
+                    Nenhuma movimentacao encontrada
+                  </p>
+                ) : (
+                  justLastMoviments.map((movement, index) => (
+                    <motion.div
+                      key={movement.id}
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.6 + index * 0.05 }}
+                      className="flex items-center gap-3"
                     >
-                      {movement.type === "entrada" ? (
-                        <TrendingUp className="h-4 w-4 text-emerald-500" />
-                      ) : (
-                        <TrendingDown className="h-4 w-4 text-rose-500" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {movement.productName}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {movement.type === "entrada" ? "+" : "-"}
-                        {movement.quantity} un
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
+                      <div
+                        className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                          movement.type === "IN"
+                            ? "bg-emerald-500/10"
+                            : "bg-rose-500/10"
+                        }`}
+                      >
+                        {movement.type === "IN" ? (
+                          <TrendingUp className="h-4 w-4 text-emerald-500" />
+                        ) : (
+                          <TrendingDown className="h-4 w-4 text-rose-500" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {movement.product.name} - {movement.product.sku}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {movement.type === "IN" ? "+" : "-"}
+                          {movement.quantity} un
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
               </CardContent>
             </Card>
           )}
