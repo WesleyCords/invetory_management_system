@@ -83,3 +83,27 @@ interface IMovementGet {
   totalCount: number;
   totalPages: number;
 }
+
+interface IActivity {
+  id: string;
+  title: string;
+  description: string;
+  action: "Movimentação" | "Produto";
+  createdAt: Date;
+  user: {
+    name: string;
+    avatarUrl: string;
+    role: "MANAGER" | "EMPLOYEE";
+    id: string;
+  };
+  product: {
+    name: string;
+    sku: string;
+    id: string;
+  };
+}
+
+interface IActivityGet {
+  activities: IActivity[];
+  totalCount: number;
+}

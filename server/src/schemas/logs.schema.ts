@@ -46,6 +46,7 @@ export const getActivitysSchemaResponse = z.object({
   data: z.object({
     activities: z.array(
       z.object({
+        id: z.uuid(),
         title: z.string(),
         description: z.string(),
         action: z.enum(['Movimentação', 'Produto']),

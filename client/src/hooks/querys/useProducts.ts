@@ -22,8 +22,6 @@ export function useProducts({
         },
       });
 
-      console.log("RESPONSE: ", response.data.data);
-
       return response.data.data;
     },
   });

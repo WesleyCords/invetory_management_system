@@ -19,6 +19,7 @@ import { useProducts } from "@/hooks/querys/useProducts";
 import { useMetrics } from "@/hooks/querys/useMetrics";
 import { CardSkeleton } from "../skeletons/card-skeleton";
 import { useGetMovement } from "@/hooks/querys/useGetMovement";
+import { useActivitys } from "@/hooks/querys/useActivitys";
 
 export function OverviewContent() {
   const {
@@ -39,11 +40,15 @@ export function OverviewContent() {
     isError: isMovementsError,
   } = useGetMovement();
 
-  const toggleTab = useUIStore((state) => state.setAbartOpen);
-  let isLogsLoading = false;
+  const {
+    data: dataActivitys,
+    isLoading: isActivitysLoading,
+    isError: isActivitysError,
+  } = useActivitys();
 
+  const toggleTab = useUIStore((state) => state.setAbartOpen);
   const justLastMoviments = movements?.movements?.slice(0, 5) || [];
-  const recentLogs = mockLogs.slice(0, 4);
+  const recentLogs = dataActivitys?.activities?.slice(0, 5) || [];
 
   const productsLowStock =
     products?.products?.filter((p) => p.isLowStock)?.slice(0, 3) || [];
@@ -87,7 +92,12 @@ export function OverviewContent() {
     },
   ];
 
-  if (isProductsError || isMetricsError || isMovementsError) {
+  if (
+    isProductsError ||
+    isMetricsError ||
+    isMovementsError ||
+    isActivitysError
+  ) {
     return (
       <div className="flex items-center justify-center h-full min-h-100 text-destructive">
         <AlertTriangle className="h-8 w-8 mb-2 mx-auto" />
@@ -302,7 +312,7 @@ export function OverviewContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-        {isLogsLoading ? (
+        {isActivitysLoading ? (
           <CardSkeleton />
         ) : (
           <Card className="bg-card border-border">
@@ -323,20 +333,18 @@ export function OverviewContent() {
                   className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
-                    {log.userName
+                    {log.user.name
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-foreground">
-                      <span className="font-medium">{log.userName}</span>{" "}
-                      <span className="text-muted-foreground">
-                        {log.action}
-                      </span>
+                      <span className="font-medium">{log.user.name}</span>{" "}
+                      <span className="text-muted-foreground">{log.title}</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {log.details}
+                      {log.description}
                     </p>
                     <p className="text-xs text-muted-foreground/70 mt-1">
                       {new Date(log.createdAt).toLocaleString("pt-BR")}
