@@ -14,8 +14,13 @@ export interface IProductRequest {
   costPrice: number;
 }
 
+interface IProps {
+  infos: IProductRequest;
+  userId: string;
+}
+
 class CreateProductService {
-  async execute(infos: IProductRequest) {
+  async execute({ infos, userId }: IProps) {
     if (infos.price < 0) throw new AppError('Price cannot be negative', 400);
 
     if (infos.costPrice < 0 || infos.costPrice > infos.price) {
@@ -102,64 +107,91 @@ class CreateProductService {
       }
     }
 
-    const existingProduct = await prisma.product.findUnique({
-      where: { sku: infos.sku },
-    });
+    const result = await prisma.$transaction(async (tx) => {
+      const existingProduct = await tx.product.findUnique({
+        where: { sku: infos.sku },
+      });
 
-    if (existingProduct) {
-      if (existingProduct.isActive) {
-        throw new AppError(
-          'A product with this SKU already exists and is active.',
-          409,
-        );
+      if (existingProduct) {
+        if (existingProduct.isActive) {
+          throw new AppError(
+            'A product with this SKU already exists and is active.',
+            409,
+          );
+        }
+
+        const restoredProduct = await tx.product.update({
+          where: { id: existingProduct.id },
+          data: {
+            name: infos.name,
+            price: infos.price,
+            costPrice: infos.costPrice,
+            description: infos.description,
+            brandId: finalBrandId,
+            categoryId: finalCategoryId,
+            isActive: true,
+            suppliers: {
+              deleteMany: {},
+              create: uniqueSuppliersIds.map((id) => ({ supplierId: id })),
+            },
+          },
+          include: { suppliers: true },
+        });
+
+        await tx.auditLogs.create({
+          data: {
+            action: 'UPDATE',
+            description: `Restaurado e atualizado o produto com SKU: ${infos.sku}`,
+            newValue: restoredProduct,
+            oldValue: existingProduct,
+            userId,
+            productId: restoredProduct.id,
+          },
+        });
+
+        return { ...restoredProduct, price: Number(restoredProduct.price) };
       }
 
-      const restoredProduct = await prisma.product.update({
-        where: { id: existingProduct.id },
+      const {
+        supplierIds,
+        categoryName,
+        brandName,
+        categoryId,
+        brandId,
+        ...safeDataProduct
+      } = infos;
+
+      const product = await tx.product.create({
         data: {
-          name: infos.name,
-          price: infos.price,
+          ...safeDataProduct,
+          categoryId: finalCategoryId as string,
+          brandId: finalBrandId as string,
           costPrice: infos.costPrice,
-          description: infos.description,
-          brandId: finalBrandId,
-          categoryId: finalCategoryId,
-          isActive: true,
           suppliers: {
-            deleteMany: {},
             create: uniqueSuppliersIds.map((id) => ({ supplierId: id })),
           },
         },
         include: { suppliers: true },
       });
 
-      return { ...restoredProduct, price: Number(restoredProduct.price) };
-    }
-
-    const {
-      supplierIds,
-      categoryName,
-      brandName,
-      categoryId,
-      brandId,
-      ...safeDataProduct
-    } = infos;
-
-    const product = await prisma.product.create({
-      data: {
-        ...safeDataProduct,
-        categoryId: finalCategoryId as string,
-        brandId: finalBrandId as string,
-        costPrice: infos.costPrice,
-        suppliers: {
-          create: uniqueSuppliersIds.map((id) => ({ supplierId: id })),
+      await tx.auditLogs.create({
+        data: {
+          action: 'CREATE',
+          description: `Criado o produto com SKU: ${infos.sku}`,
+          newValue: product,
+          oldValue: {},
+          userId,
+          productId: product.id,
         },
-      },
-      include: { suppliers: true },
+      });
+
+      return product;
     });
+
     return {
-      ...product,
-      price: Number(product.price),
-      costPrice: Number(product.costPrice),
+      ...result,
+      price: Number(result.price),
+      costPrice: Number(result.costPrice),
     };
   }
 }

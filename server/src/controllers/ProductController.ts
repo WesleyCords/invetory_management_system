@@ -21,8 +21,9 @@ class ProductController {
   ) {
     const data = req.body;
     const createProduct = new CreateProductService();
+    const userId = req.user?.sub;
 
-    const product = await createProduct.execute(data);
+    const product = await createProduct.execute({ infos: data, userId });
 
     return reply.status(201).send({
       message: 'Product created with success!',
@@ -57,9 +58,10 @@ class ProductController {
     reply: FastifyReply,
   ) {
     const { id } = req.params;
+    const userId = req.user?.sub;
     const deleteProduct = new DeleteProductService();
 
-    const product = await deleteProduct.execute(id);
+    const product = await deleteProduct.execute(id, userId);
 
     reply.status(200).send({
       message: 'Product deleted successfully',
@@ -75,14 +77,18 @@ class ProductController {
     reply: FastifyReply,
   ) {
     const { id } = req.params;
+    const userId = req.user?.sub;
     const data = req.body;
 
     const updateProduct = new UpdateProductService();
 
-    const updatedProduct = await updateProduct.execute({
-      id,
-      ...data,
-    });
+    const updatedProduct = await updateProduct.execute(
+      {
+        id,
+        ...data,
+      },
+      userId,
+    );
 
     reply.status(200).send({
       message: 'Product updated successfully',

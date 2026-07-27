@@ -1,16 +1,11 @@
 import z from 'zod';
 
-enum ActionLog {
-  'CREATE',
-  'UPDATE',
-  'DELETE',
-}
-
 const jsonFieldSchema = z.record(z.string(), z.unknown()).nullable().optional();
 
 export const logSchema = z.object({
   id: z.uuid(),
-  action: z.enum(ActionLog),
+  action: z.enum(['CREATE', 'UPDATE', 'DELETE']),
+  description: z.string(),
   oldValue: jsonFieldSchema,
   newValue: jsonFieldSchema,
   createdAt: z.date(),
@@ -18,19 +13,24 @@ export const logSchema = z.object({
   productId: z.uuid(),
 });
 
-const logFullSchema = logSchema.extend({
-  user: z.object({
-    id: z.uuid(),
-    name: z.string(),
-    avatarUrl: z.url().nullable().optional(),
-    role: z.enum(['ADMIN', 'EMPLOYEE']),
-  }),
-  product: z.object({
-    id: z.uuid(),
-    name: z.string(),
-    sku: z.string(),
-  }),
-});
+const logFullSchema = logSchema
+  .omit({
+    userId: true,
+    productId: true,
+  })
+  .extend({
+    user: z.object({
+      id: z.uuid(),
+      name: z.string(),
+      avatarUrl: z.url().nullable().optional(),
+      role: z.enum(['MANAGER', 'EMPLOYEE']),
+    }),
+    product: z.object({
+      id: z.uuid(),
+      name: z.string(),
+      sku: z.string(),
+    }),
+  });
 
 export const getLogSchemaResponse = z.object({
   message: z.string(),

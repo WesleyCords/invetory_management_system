@@ -122,6 +122,7 @@ model StockMovement {
 
 model AuditLogs {
   id        String      @id @default(uuid())
+  description String
   action    ActionLog
   oldValue  Json?
   newValue  Json?

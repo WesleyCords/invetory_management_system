@@ -23,4 +23,16 @@ export const logsRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     logsController.getAuditLogs,
   );
+  /* fastify.get(
+    '/activitys',
+    {
+      schema: {
+        querystring: getAuditLogsQuerySchema,
+        response: {
+          200: getLogSchemaResponse,
+        },
+      },
+    },
+    logsController.getActivityLogs,
+  ); */
 };

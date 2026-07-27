@@ -58,14 +58,14 @@ export const deleteProductSchema = z.object({
 export const deleteProductResponse = z.object({
   message: z.string(),
   data: z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     sku: z.string(),
     name: z.string(),
     price: z.number().positive(),
-    description: z.string().optional(),
+    description: z.string().nullable().optional(),
     isActive: z.boolean(),
-    categoryId: z.string().uuid(),
-    brandId: z.string().uuid(),
+    categoryId: z.uuid(),
+    brandId: z.uuid(),
   }),
 });
 

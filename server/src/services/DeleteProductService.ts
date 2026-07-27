@@ -3,7 +3,7 @@ import { prisma } from '../lib/prisma';
 import GetProductBalanceService from './GetProductBalance';
 
 class DeleteProductService {
-  async execute(id: string) {
+  async execute(id: string, userId: string) {
     const existingProduct = await prisma.product.findUnique({
       where: { id },
     });
@@ -22,11 +22,24 @@ class DeleteProductService {
         400,
       );
 
-    const productDeleted = await prisma.product.update({
-      where: { id },
-      data: {
-        isActive: false,
-      },
+    const productDeleted = await prisma.$transaction(async (tx) => {
+      const deletedProduct = await tx.product.update({
+        where: { id },
+        data: { isActive: false },
+      });
+
+      await tx.auditLogs.create({
+        data: {
+          action: 'DELETE',
+          description: `Produto deletado com SKU: ${deletedProduct.sku}`,
+          oldValue: { isActive: true },
+          newValue: { isActive: false },
+          userId,
+          productId: deletedProduct.id,
+        },
+      });
+
+      return deletedProduct;
     });
 
     const productFormated = {
