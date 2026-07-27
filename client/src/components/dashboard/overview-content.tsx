@@ -1,3 +1,5 @@
+"use client";
+
 import { mockLogs } from "@/lib/state-mock";
 import { useUIStore } from "@/store/useUIStore";
 import { motion } from "framer-motion";
@@ -24,6 +26,7 @@ export function OverviewContent() {
     isLoading: isProductsLoading,
     isError: isProductsError,
   } = useProducts();
+
   const {
     data: metrics,
     isLoading: isMetricsLoading,
@@ -34,23 +37,21 @@ export function OverviewContent() {
     data: movements,
     isLoading: isMovementsLoading,
     isError: isMovementsError,
-  } = useGetMovement({
-    period: 1,
-  });
+  } = useGetMovement();
 
-  let isLogsLoading = false;
   const toggleTab = useUIStore((state) => state.setAbartOpen);
+  let isLogsLoading = false;
 
-  const justLastMoviments = movements?.movements.slice(0, 5) || [];
+  const justLastMoviments = movements?.movements?.slice(0, 5) || [];
   const recentLogs = mockLogs.slice(0, 4);
-  const productsLowStock = products.products
-    .filter((p) => p.isLowStock)
-    .slice(0, 3);
+
+  const productsLowStock =
+    products?.products?.filter((p) => p.isLowStock)?.slice(0, 3) || [];
 
   const statCards = [
     {
       title: "Total de Produtos",
-      value: products.products.length.toString(),
+      value: products?.products?.length?.toString() || "0",
       subtitle: "SKUs cadastrados",
       icon: Package,
       color: "bg-primary/10 text-primary",
@@ -60,31 +61,33 @@ export function OverviewContent() {
       value: new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL",
-      }).format(metrics.data.financial.patrimony),
+      }).format(metrics?.data?.financial?.patrimony || 0),
       subtitle: "Preço de venda",
       icon: DollarSign,
       color: "bg-emerald-500/10 text-emerald-500",
     },
     {
       title: "Estoque Baixo",
-      value: metrics.data.inventory.lowStockItems.toString(),
+      value: metrics?.data?.inventory?.lowStockItems?.toString() || "0",
       subtitle: "Itens para repor",
       icon: AlertTriangle,
       color:
-        metrics.data.inventory.lowStockItems > 0
+        (metrics?.data?.inventory?.lowStockItems || 0) > 0
           ? "bg-amber-500/10 text-amber-500"
           : "bg-muted text-muted-foreground",
     },
     {
       title: "Movimentações Hoje",
-      value: metrics.data.movements.todayTotal.toString(),
-      subtitle: `${metrics.data.movements.todayEntries} entradas / ${metrics.data.movements.todayExits} saídas (mês)`,
+      value: metrics?.data?.movements?.todayTotal?.toString() || "0",
+      subtitle: `${metrics?.data?.movements?.todayEntries || 0} entradas / ${
+        metrics?.data?.movements?.todayExits || 0
+      } saídas (mês)`,
       icon: ArrowDownCircle,
       color: "bg-blue-500/10 text-blue-500",
     },
   ];
 
-  if (isProductsError || isMetricsError || !products || !metrics) {
+  if (isProductsError || isMetricsError || isMovementsError) {
     return (
       <div className="flex items-center justify-center h-full min-h-100 text-destructive">
         <AlertTriangle className="h-8 w-8 mb-2 mx-auto" />
@@ -252,7 +255,7 @@ export function OverviewContent() {
               <CardContent className="space-y-3">
                 {justLastMoviments.length === 0 ? (
                   <p className="text-muted-foreground text-sm py-4 text-center">
-                    Nenhuma movimentacao encontrada
+                    Nenhuma movimentacao encontrada nesses últimos 7 dias
                   </p>
                 ) : (
                   justLastMoviments.map((movement, index) => (

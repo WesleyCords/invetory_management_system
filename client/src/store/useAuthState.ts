@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 enum UserRole {
-  "ADMIN",
+  "MANAGER",
   "EMPLOYEE",
 }
 

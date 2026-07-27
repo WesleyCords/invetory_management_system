@@ -6,11 +6,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 export function Pagination({ data }: { data: IProductGet | undefined }) {
   const { currentPage, previusPage, nextPage, selectPage } =
     useUISectionProducts();
+  const { totalPages } = data;
 
-  const ArrayPages = Array.from(
-    { length: data?.totalPages || 0 },
-    (_, i) => i + 1,
-  );
+  const ArrayPages = Array.from({ length: totalPages || 0 }, (_, i) => i + 1);
 
   return (
     <div
@@ -44,7 +42,7 @@ export function Pagination({ data }: { data: IProductGet | undefined }) {
         variant="outline"
         size="icon"
         onClick={() => nextPage()}
-        disabled={currentPage === data?.totalPages}
+        disabled={currentPage === totalPages}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

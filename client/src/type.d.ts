@@ -62,7 +62,7 @@ interface IMovement {
   user: {
     name: string;
     avatarUrl: string;
-    role: "ADMIN" | "EMPLOYEE";
+    role: "MANAGER" | "EMPLOYEE";
     id: string;
   };
   product: {
