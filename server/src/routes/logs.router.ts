@@ -1,6 +1,7 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import verifyJWT from '../middleware/verify-jwt';
 import {
+  getActivitysSchemaResponse,
   getAuditLogsQuerySchema,
   getLogSchemaResponse,
 } from '../schemas/logs.schema';
@@ -23,16 +24,16 @@ export const logsRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     logsController.getAuditLogs,
   );
-  /* fastify.get(
+  fastify.get(
     '/activitys',
     {
       schema: {
         querystring: getAuditLogsQuerySchema,
         response: {
-          200: getLogSchemaResponse,
+          200: getActivitysSchemaResponse,
         },
       },
     },
-    logsController.getActivityLogs,
-  ); */
+    logsController.getActivitys,
+  );
 };

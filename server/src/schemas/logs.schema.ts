@@ -41,6 +41,32 @@ export const getLogSchemaResponse = z.object({
   }),
 });
 
+export const getActivitysSchemaResponse = z.object({
+  message: z.string(),
+  data: z.object({
+    activities: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        action: z.enum(['Movimentação', 'Produto']),
+        createdAt: z.date(),
+        user: z.object({
+          id: z.uuid(),
+          name: z.string(),
+          avatarUrl: z.url().nullable().optional(),
+          role: z.enum(['MANAGER', 'EMPLOYEE']),
+        }),
+        product: z.object({
+          id: z.uuid(),
+          name: z.string(),
+          sku: z.string(),
+        }),
+      }),
+    ),
+    totalCount: z.number(),
+  }),
+});
+
 export const getAuditLogsQuerySchema = z.object({
   period: z.coerce
     .number()
