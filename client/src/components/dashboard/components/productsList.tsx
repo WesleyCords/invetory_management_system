@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   Package,
   Pencil,
+  Replace,
   Trash2,
 } from "lucide-react";
 import {
@@ -19,15 +20,17 @@ import { Button } from "@/components/ui/button";
 import { useProductForm } from "@/store/useProductForm";
 import { useDeleteProduct } from "@/hooks/querys/useDeleteProduct";
 import { ChipsSuppliers } from "./chips-suppliers";
+import { useUiMovement } from "@/store/useUiMovement";
 
 interface ProductsListProps {
   products: IProduct[];
 }
 
 export function ProductsList({ products }: ProductsListProps) {
-  const { currentPage, openDialog } = useUISectionProducts();
+  const { openDialog } = useUISectionProducts();
   const { loadProductForEdit } = useProductForm();
   const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
+  const { openModal } = useUiMovement();
 
   return (
     <AnimatePresence>
@@ -111,6 +114,14 @@ export function ProductsList({ products }: ProductsListProps) {
                   >
                     <Pencil className="mr-2 h-4 w-4" />
                     Editar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      openModal({ name: product.name, id: product.id });
+                    }}
+                  >
+                    <Replace />
+                    Movimentar
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     disabled={isDeleting}

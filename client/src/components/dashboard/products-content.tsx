@@ -9,6 +9,7 @@ import { TableProduct } from "./components/table-product";
 import { useUISectionProducts } from "@/store/useUISectionProducts";
 import { useCategories } from "@/hooks/querys/useCategories";
 import { ProductDialog } from "./components/product-dialog";
+import { MovementDialog } from "./components/movement-dialog";
 
 export function ProductsContent() {
   const { onChangeSearch, search, openDialog } = useUISectionProducts();
@@ -57,6 +58,7 @@ export function ProductsContent() {
         <TableProduct />
       </motion.div>
       <ProductDialog />
+      <MovementDialog />
     </>
   );
 }

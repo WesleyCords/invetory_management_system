@@ -1,20 +1,37 @@
-export function MovementsContent() {
-  return (
-    <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-      <h2 className="text-xl font-bold text-foreground">Movimentações</h2>
-      <p className="text-muted-foreground mt-2">
-        Aqui você pode acompanhar as movimentações recentes do seu estoque,
-        incluindo entradas, saídas e transferências.
-      </p>
+import { motion } from "framer-motion";
+import { Button } from "../ui/button";
+import { Replace } from "lucide-react";
+import { useUiMovement } from "@/store/useUiMovement";
+import { MovementDialog } from "./components/movement-dialog";
 
-      <div className="mt-6 flex gap-4">
-        <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition">
-          Adicionar Movimentação
-        </button>
-        <button className="rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-white hover:bg-secondary/90 transition">
-          Ver Histórico de Movimentações
-        </button>
-      </div>
-    </div>
+export function MovementsContent() {
+  const openModal = useUiMovement((state) => state.openModal);
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col gap-4"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Movimentações</h1>
+            <p className="text-md text-muted-foreground">
+              Registre entradas e saidas do estoque
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => openModal()}>
+            <Replace />
+            <span>Registar Movimentação</span>
+          </Button>
+        </div>
+      </motion.div>
+
+      <MovementDialog />
+    </>
   );
 }
