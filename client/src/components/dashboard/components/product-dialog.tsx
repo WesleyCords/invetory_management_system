@@ -28,6 +28,7 @@ import { CreateProductDTO, UpdateProductDTO } from "@/dtos";
 import { useSuppliers } from "@/hooks/querys/useSuppliers";
 import { useBrands } from "@/hooks/querys/useBrands";
 import { useUpdateProduct } from "@/hooks/querys/useUpdateProduct";
+import { Separator } from "@/components/ui/separator";
 
 export function ProductDialog() {
   const [categoryNameView, setCategoryNameView] = useState<string>("");
@@ -353,6 +354,8 @@ export function ProductDialog() {
               />
             </div>
           </div>
+
+          <Separator className="mb-2" />
           <DialogFooter>
             <Button
               type="button"

@@ -8,6 +8,11 @@ export const registerStockMovementSchema = z.object({
     message: 'Type must be either IN or OUT',
   }),
   quantity: z.number().positive('Quantity must be greater than zero'),
+  notes: z
+    .string()
+    .max(255, 'Notes must be at most 255 characters long')
+    .nullable()
+    .optional(),
 });
 
 export const registerStockMovementResponseSchema = z.object({
@@ -19,6 +24,7 @@ export const registerStockMovementResponseSchema = z.object({
     type: z.enum(MovementType),
     quantity: z.number().positive(),
     createdAt: z.date(),
+    notes: z.string().nullable().optional(),
   }),
 });
 
@@ -42,6 +48,7 @@ export const getMovementsResponseSchema = z.object({
         type: z.enum(MovementType),
         quantity: z.number().positive(),
         createdAt: z.date(),
+        notes: z.string().nullable().optional(),
         user: z.object({
           name: z.string(),
           avatarUrl: z.string().nullable(),

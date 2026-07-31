@@ -34,8 +34,8 @@ import {
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 
 import { useUiMovement } from "@/store/useUiMovement";
+import { Separator } from "@/components/ui/separator";
 
-// 1. O Contrato de Validação (Zod)
 const formSchema = z.object({
   productId: z.string().min(1, "Selecione um produto."),
   quantity: z.coerce.number().min(1, "A quantidade deve ser maior que zero."),
@@ -48,7 +48,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function MovementDialog() {
   const { closeModal, openModal, selectedProduct, isOpen } = useUiMovement();
 
-  const form = useForm<z.input<typeof formSchema>, any, FormValues>({
+  const form = useForm<any, FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       productId: "",
@@ -96,7 +96,7 @@ export function MovementDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
           <Field>
             <FieldLabel>Produto</FieldLabel>
             {selectedProduct ? (
@@ -182,7 +182,9 @@ export function MovementDialog() {
             <FieldError errors={[form.formState.errors.notes]} />
           </Field>
 
-          <DialogFooter className="pt-4">
+          <Separator />
+
+          <DialogFooter>
             <Button variant="default" type="submit">
               Registrar Movimentação
             </Button>

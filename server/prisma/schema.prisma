@@ -110,6 +110,7 @@ model StockMovement {
   quantity  Int
   type      MovementType
   createdAt DateTime     @default(now())
+  notes     String?
 
   userId    String
   user      User         @relation(fields: [userId], references: [id])

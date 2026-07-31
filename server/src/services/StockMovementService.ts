@@ -7,10 +7,11 @@ export interface IStockRequest {
   quantity: number;
   type: MovementType;
   userId: string;
+  notes?: string | null;
 }
 
 class StockMovementService {
-  async execute({ productId, quantity, type, userId }: IStockRequest) {
+  async execute({ productId, quantity, type, userId, notes }: IStockRequest) {
     if (quantity <= 0)
       throw new AppError('The quantity must be greater than zero', 400);
 
@@ -39,6 +40,7 @@ class StockMovementService {
         type,
         productId,
         userId,
+        notes,
       },
     });
 
