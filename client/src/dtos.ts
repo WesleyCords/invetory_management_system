@@ -11,6 +11,13 @@ export interface CreateProductDTO {
   description?: string;
 }
 
+export interface CreateMovementDTO {
+  productId: string;
+  quantity: number;
+  type: "IN" | "OUT";
+  description?: string;
+}
+
 export type UpdateProductDTO = Partial<Omit<CreateProductDTO, "sku">> & {
   id: string;
 };

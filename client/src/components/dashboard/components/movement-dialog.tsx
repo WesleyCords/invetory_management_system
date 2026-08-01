@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,6 +35,9 @@ import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 
 import { useUiMovement } from "@/store/useUiMovement";
 import { Separator } from "@/components/ui/separator";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useProducts } from "@/hooks/querys/useProducts";
+import { useCreateMovement } from "@/hooks/querys/useCreateMovement";
 
 const formSchema = z.object({
   productId: z.string().min(1, "Selecione um produto."),
@@ -47,6 +50,17 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function MovementDialog() {
   const { closeModal, openModal, selectedProduct, isOpen } = useUiMovement();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const debouncedSearch = useDebounce(searchTerm, 300);
+
+  const { data: productsData, isLoading: isSearchLoading } = useProducts({
+    page: 1,
+    limit: 5,
+    search: debouncedSearch,
+  });
+
+  const mutation = useCreateMovement();
 
   const form = useForm<any, FormValues>({
     resolver: zodResolver(formSchema),
@@ -67,9 +81,14 @@ export function MovementDialog() {
   }, [selectedProduct, form]);
 
   const onSubmit = (data: FormValues) => {
-    console.log("Payload aprovado e pronto:", data);
-    form.reset();
-    closeModal();
+    mutation.mutate(data, {
+      onSuccess: () => {
+        form.reset();
+        closeModal();
+      },
+
+      onError: () => {},
+    });
   };
 
   const handleClearSelection = () => {
@@ -116,14 +135,39 @@ export function MovementDialog() {
                 </Button>
               </div>
             ) : (
-              <Combobox items={["React", "Vue", "Angular", "Svelte"]}>
-                <ComboboxInput placeholder="Pesquise pelo nome ou SKU..." />
+              <Combobox
+                items={productsData?.products || []}
+                onValueChange={(selectedValue) => {
+                  if (selectedValue && productsData?.products) {
+                    const product = productsData.products.find(
+                      (p) => `${p.name} (${p.sku})` === selectedValue,
+                    );
+
+                    if (product) {
+                      form.setValue("productId", product.id);
+                      form.clearErrors("productId");
+                    }
+                  }
+                }}
+                onInputValueChange={(value) => setSearchTerm(value)}
+              >
+                <ComboboxInput
+                  placeholder="Pesquise pelo nome ou SKU..."
+                  className={isSearchLoading ? "animate-pulse" : ""}
+                />
                 <ComboboxContent>
-                  <ComboboxEmpty>Produto não encontrado.</ComboboxEmpty>
+                  <ComboboxEmpty>
+                    {isSearchLoading
+                      ? "Buscando produtos..."
+                      : "Nenhum produto encontrado."}
+                  </ComboboxEmpty>
                   <ComboboxList>
                     {(item) => (
-                      <ComboboxItem key={item} value={item}>
-                        {item}
+                      <ComboboxItem
+                        key={item.id}
+                        value={`${item.name} (${item.sku})`}
+                      >
+                        {item.name} ({item.sku})
                       </ComboboxItem>
                     )}
                   </ComboboxList>
