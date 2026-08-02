@@ -59,6 +59,7 @@ interface IMovement {
   type: "IN" | "OUT";
   quantity: number;
   createdAt: Date;
+  notes: string;
   user: {
     name: string;
     avatarUrl: string;
