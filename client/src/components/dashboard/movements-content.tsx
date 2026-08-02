@@ -16,11 +16,14 @@ import { CardSkeleton } from "../skeletons/card-skeleton";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { useState } from "react";
 import { Input } from "../ui/input";
+import { Pagination } from "./components/pagination";
 
 export function MovementsContent() {
   const openModal = useUiMovement((state) => state.openModal);
   const [activeTab, setActiveTab] = useState<"all" | "IN" | "OUT">("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { currentPage, onChangePage: onPageChange } = useUiMovement();
 
   const {
     data: movements,
@@ -28,6 +31,7 @@ export function MovementsContent() {
     isError,
   } = useGetMovement({
     period: 1,
+    page: currentPage,
   });
 
   const stats = {
@@ -306,6 +310,15 @@ export function MovementsContent() {
             </div>
           </CardContent>
         </Card>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={movements?.totalPages || 0}
+          onPageChange={onPageChange}
+        />
+        <div>
+          {currentPage} of {movements?.totalPages || 0}
+        </div>
       </motion.div>
 
       <MovementDialog />

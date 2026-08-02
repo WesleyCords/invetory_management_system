@@ -25,12 +25,13 @@ export function TableProduct() {
     sortOrder,
     search,
     currentPage,
+    selectPage,
   } = useUISectionProducts();
   const {
     data: productData,
     isLoading: isProductsLoading,
     isError: isProductsError,
-  } = useProducts({ page: currentPage, limit: 10, search });
+  } = useProducts({ page: currentPage, limit: 4, search });
 
   const filteredProducts = productData?.products
     .filter((p) => {
@@ -144,7 +145,11 @@ export function TableProduct() {
           )}
         </CardContent>
       </Card>
-      <Pagination data={productData} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={productData?.totalPages || 0}
+        onPageChange={selectPage}
+      />
     </>
   );
 }
