@@ -17,11 +17,24 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { Pagination } from "./components/pagination";
+import { useDebounce } from "@/hooks/use-debounce";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export function MovementsContent() {
   const openModal = useUiMovement((state) => state.openModal);
   const [activeTab, setActiveTab] = useState<"all" | "IN" | "OUT">("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [period, setPeriod] = useState(1);
+
+  const debounceSearch = useDebounce(searchQuery, 500);
 
   const { currentPage, onChangePage: onPageChange } = useUiMovement();
 
@@ -30,36 +43,36 @@ export function MovementsContent() {
     isLoading,
     isError,
   } = useGetMovement({
-    period: 1,
+    period: period,
     page: currentPage,
+    type: activeTab,
+    search: debounceSearch,
   });
 
+  const movementsList = movements?.movements || [];
+  const periods = [
+    { value: 1, label: "Último dia" },
+    { value: 7, label: "Últimos 7 dias" },
+    { value: 30, label: "Últimos 30 dias" },
+    { value: 90, label: "Últimos 90 dias" },
+    { value: 180, label: "Últimos 180 dias" },
+  ];
+
   const stats = {
-    totalMovements: movements?.movements.length || 0,
-    totalEntries: movements?.movements.reduce((acc, movement) => {
+    totalMovements: movementsList.length || 0,
+    totalEntries: movementsList.reduce((acc, movement) => {
       if (movement.type === "IN") {
         return acc + movement.quantity;
       }
       return acc;
     }, 0),
-    totalExits: movements?.movements.reduce((acc, movement) => {
+    totalExits: movementsList.reduce((acc, movement) => {
       if (movement.type === "OUT") {
         return acc + movement.quantity;
       }
       return acc;
     }, 0),
   };
-
-  const movementsFiltered = movements?.movements.filter((movement) => {
-    const matchesSearch =
-      movement.product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      movement.product.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTab =
-      activeTab === "all" ||
-      (activeTab === "IN" && movement.type === "IN") ||
-      (activeTab === "OUT" && movement.type === "OUT");
-    return matchesSearch && matchesTab;
-  });
 
   if (isError) {
     return (
@@ -184,10 +197,13 @@ export function MovementsContent() {
         {/* Filters */}
         <Card className="bg-card border-border">
           <CardContent className="p-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center justify-between">
               <Tabs
                 value={activeTab}
-                onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+                onValueChange={(v) => {
+                  setActiveTab(v as typeof activeTab);
+                  onPageChange(1);
+                }}
                 className="w-full sm:w-auto"
               >
                 <TabsList className="bg-secondary">
@@ -206,14 +222,34 @@ export function MovementsContent() {
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
-              <div className="relative w-full sm:w-75">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por nome ou SKU do produto..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 bg-secondary border-border"
-                />
+              <div className="flex flex-col gap-2 items-end">
+                <div className="relative w-full sm:w-75">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por nome ou SKU do produto..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 bg-secondary border-border"
+                  />
+                </div>
+                <Select
+                  items={periods}
+                  onValueChange={(value) => setPeriod(Number(value))}
+                >
+                  <SelectTrigger className="w-full max-w-48 border border-border">
+                    <SelectValue placeholder="Selecione um período" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Fruits</SelectLabel>
+                      {periods.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </CardContent>
@@ -227,7 +263,7 @@ export function MovementsContent() {
           <CardContent>
             <div className="space-y-3">
               <AnimatePresence>
-                {movementsFiltered?.length === 0 && !isLoading ? (
+                {movementsList.length === 0 && !isLoading ? (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -241,7 +277,7 @@ export function MovementsContent() {
                     </p>
                   </motion.div>
                 ) : (
-                  movementsFiltered?.map((m, index) => (
+                  movementsList.map((m, index) => (
                     <motion.div
                       key={m.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -316,9 +352,6 @@ export function MovementsContent() {
           totalPages={movements?.totalPages || 0}
           onPageChange={onPageChange}
         />
-        <div>
-          {currentPage} of {movements?.totalPages || 0}
-        </div>
       </motion.div>
 
       <MovementDialog />

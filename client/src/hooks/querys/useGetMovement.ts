@@ -10,15 +10,21 @@ export function useGetMovement({
   period,
   page,
   productId,
+  limit,
+  type,
+  search,
 }: UseGetMovementParams = {}) {
   return useQuery({
-    queryKey: ["movements", period, page, productId],
+    queryKey: ["movements", period, page, productId, limit, type, search],
     queryFn: async () => {
       const response = await api.get<IGetMovementResponse>("/movements", {
         params: {
           period,
           page,
           productId,
+          limit,
+          type,
+          search,
         },
       });
 

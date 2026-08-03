@@ -5,8 +5,6 @@
 - Criar logica para quando um produto for deletado, atualizado ou criado adicionar uma movimentação
 
 -> Um select com os dias para selecionar os logs e movimentações daquele periodo (1,7, 30 e 90 dias)
+-> Paginação dos logs e movimentações
 
--> Criar a logica de receber os dados para enviar a req
--> Criar a logica para quando o usuario preencher(bucar) o produto no chombobox e enviar a req de busca
--> SE precisar, mudar a rota de get do produto para buscar atraves do nome
 -> Criar o resto da aba e implementar o Select

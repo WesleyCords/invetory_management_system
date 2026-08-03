@@ -77,6 +77,9 @@ interface UseGetMovementParams {
   period?: number;
   page?: number;
   productId?: string;
+  limit?: number;
+  type?: "IN" | "OUT" | "all";
+  search?: string;
 }
 
 interface IMovementGet {

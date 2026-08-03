@@ -75,5 +75,8 @@ export const getAuditLogsQuerySchema = z.object({
     .optional()
     .default(7),
   page: z.coerce.number().min(1, 'A página mínima é 1').optional().default(1),
+  limit: z.coerce.number().min(1, 'O limite mínimo é 1').optional().default(10),
   productId: z.uuid().optional(),
+  type: z.enum(['IN', 'OUT', 'all']).optional().default('all'),
+  search: z.string().optional().default(''),
 });
