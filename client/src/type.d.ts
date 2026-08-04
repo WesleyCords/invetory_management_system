@@ -86,6 +86,11 @@ interface IMovementGet {
   movements: IMovement[];
   totalCount: number;
   totalPages: number;
+  summary: {
+    totalMovements: number;
+    totalEntries: number;
+    totalExits: number;
+  };
 }
 
 interface IActivity {

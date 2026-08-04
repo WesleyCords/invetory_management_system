@@ -43,36 +43,55 @@ class GetStockMovementsService {
       ...(type && type !== 'all' ? { type } : {}),
     };
 
-    const [movements, totalCount] = await Promise.all([
-      prisma.stockMovement.findMany({
-        where: whereClause,
-        include: {
-          user: {
-            select: {
-              name: true,
-              avatarUrl: true,
-              role: true,
-              id: true,
+    const statsWhereClause: Prisma.StockMovementWhereInput = {
+      createdAt: {
+        gte: new Date(Date.now() - period * 24 * 60 * 60 * 1000),
+      },
+      ...(productId && { productId }),
+    };
+
+    const [movements, totalCount, statsIn, statsOut, totalMovementsCount] =
+      await Promise.all([
+        prisma.stockMovement.findMany({
+          where: whereClause,
+          include: {
+            user: {
+              select: {
+                name: true,
+                avatarUrl: true,
+                role: true,
+                id: true,
+              },
+            },
+            product: {
+              select: {
+                name: true,
+                sku: true,
+                id: true,
+              },
             },
           },
-          product: {
-            select: {
-              name: true,
-              sku: true,
-              id: true,
-            },
+          orderBy: {
+            createdAt: 'desc',
           },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.stockMovement.count({
-        where: whereClause,
-      }),
-    ]);
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.stockMovement.count({
+          where: whereClause,
+        }),
+        prisma.stockMovement.aggregate({
+          where: { ...statsWhereClause, type: 'IN' },
+          _sum: { quantity: true },
+        }),
+        prisma.stockMovement.aggregate({
+          where: { ...statsWhereClause, type: 'OUT' },
+          _sum: { quantity: true },
+        }),
+        prisma.stockMovement.count({
+          where: statsWhereClause,
+        }),
+      ]);
 
     const formattedMovements = movements.map((movement) => {
       const { userId, productId, ...rest } = movement;
@@ -83,6 +102,11 @@ class GetStockMovementsService {
       movements: formattedMovements,
       totalCount,
       totalPages: Math.ceil(totalCount / limit),
+      summary: {
+        totalMovements: totalMovementsCount,
+        totalEntries: statsIn._sum.quantity || 0,
+        totalExits: statsOut._sum.quantity || 0,
+      },
     };
   }
 }

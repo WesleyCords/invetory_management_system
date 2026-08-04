@@ -64,5 +64,10 @@ export const getMovementsResponseSchema = z.object({
     ),
     totalCount: z.number(),
     totalPages: z.number(),
+    summary: z.object({
+      totalMovements: z.number(),
+      totalEntries: z.number(),
+      totalExits: z.number(),
+    }),
   }),
 });

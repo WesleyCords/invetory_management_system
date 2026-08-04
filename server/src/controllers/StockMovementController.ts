@@ -50,7 +50,7 @@ class StockMovementController {
   ) {
     const stockMovementService = new GetStockMovementsService();
 
-    const { movements, totalCount, totalPages } =
+    const { movements, totalCount, totalPages, summary } =
       await stockMovementService.execute(req.query);
 
     reply.status(200).send({
@@ -59,6 +59,7 @@ class StockMovementController {
         movements,
         totalCount,
         totalPages,
+        summary,
       },
     });
   }

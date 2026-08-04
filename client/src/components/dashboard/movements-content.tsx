@@ -59,19 +59,9 @@ export function MovementsContent() {
   ];
 
   const stats = {
-    totalMovements: movementsList.length || 0,
-    totalEntries: movementsList.reduce((acc, movement) => {
-      if (movement.type === "IN") {
-        return acc + movement.quantity;
-      }
-      return acc;
-    }, 0),
-    totalExits: movementsList.reduce((acc, movement) => {
-      if (movement.type === "OUT") {
-        return acc + movement.quantity;
-      }
-      return acc;
-    }, 0),
+    totalMovements: movements?.summary.totalMovements || 0,
+    totalEntries: movements?.summary.totalEntries || 0,
+    totalExits: movements?.summary.totalExits || 0,
   };
 
   if (isError) {
@@ -134,7 +124,7 @@ export function MovementsContent() {
                   <CardContent className="flex items-center justify-between py-5">
                     <div>
                       <h2 className="text-md text-muted-foreground">
-                        Movimentações Hoje
+                        Movimentações
                       </h2>
                       <span className="text-2xl font-bold text-foreground">
                         {stats.totalMovements}
@@ -156,7 +146,7 @@ export function MovementsContent() {
                   <CardContent className="flex items-center justify-between py-5">
                     <div>
                       <h2 className="text-md text-muted-foreground">
-                        Entradas Hoje
+                        Entradas
                       </h2>
                       <span className="text-2xl font-bold text-emerald-500">
                         +{stats.totalEntries}un
@@ -177,9 +167,7 @@ export function MovementsContent() {
                 <Card>
                   <CardContent className="flex items-center justify-between py-5">
                     <div>
-                      <h2 className="text-md text-muted-foreground">
-                        Saídas Hoje
-                      </h2>
+                      <h2 className="text-md text-muted-foreground">Saídas</h2>
                       <span className="text-2xl font-bold text-rose-500">
                         -{stats.totalExits}un
                       </span>
