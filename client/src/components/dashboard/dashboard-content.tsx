@@ -6,6 +6,7 @@ import { MovementsContent } from "./movements-content";
 import { AnalyticsContent } from "./analytics-content";
 import { LogsContent } from "./logs-content";
 import { useUIStore } from "@/store/useUIStore";
+import { SettingsContent } from "./settings-content";
 
 export function DashboardContent() {
   const activeSection = useUIStore((state) => state.abartOpen);
@@ -21,12 +22,7 @@ export function DashboardContent() {
     case "logs":
       return <LogsContent />;
     case "settings":
-      return (
-        <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-          <h2 className="text-xl font-bold text-foreground">Configuracoes</h2>
-          <p className="text-muted-foreground mt-2">Em desenvolvimento</p>
-        </div>
-      );
+      return <SettingsContent />;
     case "help":
       return (
         <div className="flex flex-col items-center justify-center h-[60vh] text-center">
