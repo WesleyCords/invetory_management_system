@@ -65,3 +65,41 @@ export const loginUserSchemaResponse = z.object({
   }),
   message: z.string(),
 });
+
+export const updatePasswordSchema = z.object({
+  currentPassword: z
+    .string()
+    .regex(/^\d+$/, 'The password must contain only numbers')
+    .min(6, 'The password must be more than 6 characters long')
+    .max(8, 'The password must be no more than 8 characters long'),
+  newPassword: z
+    .string()
+    .regex(/^\d+$/, 'The password must contain only numbers')
+    .min(6, 'The password must be more than 6 characters long')
+    .max(8, 'The password must be no more than 8 characters long'),
+});
+
+export const updateUserSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(5, 'The name must be more than 5 characters long')
+    .max(50, 'The name must be no more than 50 characters long')
+    .regex(
+      /^[a-zA-ZÀ-ÿ]+(?:\s[a-zA-ZÀ-ÿ]+)+$/,
+      'It is must be a full name (first and last name)',
+    ),
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(
+      /^[a-z0-9.-]+$/,
+      'Invalid username format (use only lowercase letters, dots, or hyphens)',
+    )
+    .min(5, 'The username must be more than 5 characters long'),
+});
+
+export const updateUserResponseSchema = z.object({
+  message: z.string(),
+});

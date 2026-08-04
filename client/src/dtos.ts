@@ -21,3 +21,8 @@ export interface CreateMovementDTO {
 export type UpdateProductDTO = Partial<Omit<CreateProductDTO, "sku">> & {
   id: string;
 };
+
+export interface ChangePasswordDTO {
+  currentPassword: string;
+  newPassword: string;
+}

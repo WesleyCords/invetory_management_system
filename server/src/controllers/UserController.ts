@@ -3,6 +3,11 @@ import CreateUserService, { IUserRequest } from '../services/CreateUserService';
 import AuthenticateUserService, {
   ILoginUserRequest,
 } from '../services/AuthenticateUserService';
+import z from 'zod';
+import { updatePasswordSchema } from '../schemas/user.schema';
+import UpdatePasswordService from '../services/UpdatePasswordService';
+
+type IChangePasswordRequest = z.infer<typeof updatePasswordSchema>;
 
 class UserController {
   async register(
@@ -47,6 +52,26 @@ class UserController {
       user,
       message: 'Login successful',
     });
+  }
+
+  async updatePassword(
+    req: FastifyRequest<{ Body: IChangePasswordRequest }>,
+    reply: FastifyReply,
+  ) {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.sub;
+
+    console.log('dados: ', { currentPassword, newPassword, userId });
+
+    const updatePasswordService = new UpdatePasswordService();
+
+    const result = await updatePasswordService.execute({
+      userId,
+      currentPassword,
+      newPassword,
+    });
+
+    reply.status(200).send(result);
   }
 }
 

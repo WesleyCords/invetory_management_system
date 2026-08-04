@@ -4,8 +4,11 @@ import {
   registerUserSchema,
   loginUserSchema,
   loginUserSchemaResponse,
+  updatePasswordSchema,
+  updateUserResponseSchema,
 } from '../schemas/user.schema';
 import UserController from '../controllers/UserController';
+import VerifyJWT from '../middleware/verify-jwt';
 
 export const userRoutes: FastifyPluginAsyncZod = async (fastify) => {
   const userController = new UserController();
@@ -34,5 +37,19 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     userController.login,
+  );
+
+  fastify.patch(
+    '/user/change-password',
+    {
+      schema: {
+        body: updatePasswordSchema,
+        response: {
+          200: updateUserResponseSchema,
+        },
+      },
+      preHandler: [VerifyJWT],
+    },
+    userController.updatePassword,
   );
 };
