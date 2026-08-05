@@ -19,7 +19,7 @@ class GetLogsService {
     }
 
     const [logs, totalCount] = await Promise.all([
-      prisma.auditLogs.findMany({
+      prisma.auditLog.findMany({
         where: {
           ...(productId && { productId }),
           createdAt: {
@@ -49,7 +49,7 @@ class GetLogsService {
         skip: (page - 1) * 10,
         take: 10,
       }),
-      prisma.auditLogs.count({
+      prisma.auditLog.count({
         where: {
           ...(productId && { productId }),
           createdAt: {

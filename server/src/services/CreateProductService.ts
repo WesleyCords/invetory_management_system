@@ -138,12 +138,15 @@ class CreateProductService {
           include: { suppliers: true },
         });
 
-        await tx.auditLogs.create({
+        await tx.auditLog.create({
           data: {
             action: 'UPDATE',
             description: `Restaurado e atualizado o produto com SKU: ${infos.sku}`,
-            newValue: restoredProduct,
-            oldValue: existingProduct,
+            metadata: {
+              oldValues: existingProduct,
+              newValues: restoredProduct,
+            },
+            category: 'PRODUCT',
             userId,
             productId: restoredProduct.id,
           },
@@ -174,12 +177,15 @@ class CreateProductService {
         include: { suppliers: true },
       });
 
-      await tx.auditLogs.create({
+      await tx.auditLog.create({
         data: {
           action: 'CREATE',
           description: `Criado o produto com SKU: ${infos.sku}`,
-          newValue: product,
-          oldValue: {},
+          metadata: {
+            newValues: product,
+            oldValues: null,
+          },
+          category: 'PRODUCT',
           userId,
           productId: product.id,
         },

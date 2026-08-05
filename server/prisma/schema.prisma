@@ -22,10 +22,11 @@ enum RolesProfile {
   MANAGER
 }
 
-enum ActionLog {
-  UPDATE
-  DELETE
-  CREATE
+enum LogCategory {
+  SECURITY
+  INVENTORY
+  PRODUCT
+  SYSTEM
 }
 
 // ENTITIES
@@ -40,7 +41,7 @@ model User {
   updatedAt   DateTime      @updatedAt
 
   moviment    StockMovement[]
-  logs        AuditLogs[]
+  logs        AuditLog[]
 
   @@map("users")
 }
@@ -88,7 +89,7 @@ model Product {
 
   suppliers   ProductSupplier[]
   movements   StockMovement[]
-  logs        AuditLogs[]
+  logs        AuditLog[]
 
   @@map("products")
 }
@@ -121,19 +122,22 @@ model StockMovement {
   @@map("stock_movements")
 }
 
-model AuditLogs {
+model AuditLog {
   id        String      @id @default(uuid())
+
   description String
-  action    ActionLog
-  oldValue  Json?
-  newValue  Json?
+  action    String
+  category  String
+
+  metadata  Json?
+
   createdAt DateTime    @default(now())
 
   userId    String
   user      User        @relation(fields: [userId], references: [id])
 
-  productId String
-  product   Product     @relation(fields: [productId], references: [id])
+  productId String?
+  product   Product?     @relation(fields: [productId], references: [id])
 
   @@map("audit_logs")
 }

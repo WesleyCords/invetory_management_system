@@ -122,12 +122,15 @@ class UpdateProductService {
             dynamicDescription = `O produto "${updatedProduct.name}" teve os seguintes campos alterados: ${translatedKeys}.`;
           }
 
-          await tx.auditLogs.create({
+          await tx.auditLog.create({
             data: {
               action: 'UPDATE',
               description: dynamicDescription,
-              oldValue: changedOldValues as Prisma.InputJsonObject,
-              newValue: changedNewValues as Prisma.InputJsonObject,
+              metadata: {
+                oldValues: changedOldValues,
+                newValues: changedNewValues,
+              } as Prisma.JsonObject,
+              category: 'PRODUCT',
               userId: userId,
               productId: updatedProduct.id,
             },

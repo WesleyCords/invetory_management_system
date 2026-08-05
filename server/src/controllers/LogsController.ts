@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getAuditLogsQuerySchema } from '../schemas/logs.schema';
-import GetActivitysService from '../services/GetActivitysService';
+import GetActivitiesService from '../services/GetActivitiesService';
 import GetLogsService from '../services/GetLogsService';
 import z from 'zod';
 
@@ -25,7 +25,7 @@ class LogsController {
   }
 
   async getActivitys(req: FastifyRequest, reply: FastifyReply) {
-    const getActivitys = new GetActivitysService();
+    const getActivitys = new GetActivitiesService();
     const activitys = await getActivitys.execute();
 
     reply.status(200).send({

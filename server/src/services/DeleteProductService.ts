@@ -28,12 +28,15 @@ class DeleteProductService {
         data: { isActive: false },
       });
 
-      await tx.auditLogs.create({
+      await tx.auditLog.create({
         data: {
           action: 'DELETE',
           description: `Produto deletado com SKU: ${deletedProduct.sku}`,
-          oldValue: { isActive: true },
-          newValue: { isActive: false },
+          metadata: {
+            newValues: { isActive: false },
+            oldValues: { isActive: true },
+          },
+          category: 'PRODUCT',
           userId,
           productId: deletedProduct.id,
         },

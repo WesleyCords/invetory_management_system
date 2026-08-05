@@ -41,6 +41,15 @@ class UpdatePasswordService {
       },
     });
 
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        action: 'PASSWORD_CHANGED',
+        category: 'SECURITY',
+        description: 'Atualizou sua propria senha com sucesso.',
+      },
+    });
+
     return { message: 'Password updated successfully' };
   }
 }
