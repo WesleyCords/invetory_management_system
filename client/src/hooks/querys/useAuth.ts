@@ -24,8 +24,9 @@ export function useAuth() {
       setUser(userData);
 
       router.refresh();
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Adiciona um atraso de 1 segundo antes de exibir a mensagem de sucesso
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success("Bem-vindo de volta!");
+      console.log("User data after signIn:", userData);
     } catch (error) {
       toast.error("Credenciais inválidas");
       throw error;

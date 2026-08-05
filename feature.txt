@@ -2,9 +2,9 @@
 - Aba de movimentações (back e front)
 - Decidir onde vai ficar as url das imagens Supabase, Kube, aws...
 - Criar a rota de adicionar foto ao perfil
-- Criar logica para quando um produto for deletado, atualizado ou criado adicionar uma movimentação
 
 -> Um select com os dias para selecionar os logs e movimentações daquele periodo (1,7, 30 e 90 dias)
--> Paginação dos logs e movimentações
 
--> Criar o resto da aba e implementar o Select
+-> Colocar para quando alterar a senha, colocar no log
+-> Colocar tambem quand alterar o nome ou user ou foto
+-> Criar o Supabase para guardar as URL das fotos

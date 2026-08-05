@@ -19,7 +19,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthState } from "@/store/useAuthState";
-import { AvatarProfile } from "./components/avatar-profile";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { avatarWithName } from "@/lib/utils";
 
 export function DashboardHeader() {
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
@@ -73,7 +74,10 @@ export function DashboardHeader() {
                 variant="ghost"
                 className="group h-auto py-1 gap-2 text-muted-foreground"
               >
-                <AvatarProfile />
+                <Avatar>
+                  <AvatarImage src={user?.avatarUrl} alt="Foto do Perfil" />
+                  <AvatarFallback>{avatarWithName(user?.name)}</AvatarFallback>
+                </Avatar>
 
                 <div className="block text-left">
                   <p className="text-sm font-medium text-foreground">

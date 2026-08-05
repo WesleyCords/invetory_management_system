@@ -17,6 +17,7 @@ import rateLimit from '@fastify/rate-limit';
 import fastifyJwt from '@fastify/jwt';
 import z from 'zod';
 import cors from '@fastify/cors';
+import fastifyMultipart from '@fastify/multipart';
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
@@ -54,6 +55,12 @@ server.register(rateLimit, {
       apiLimit: context.max,
       message: `Hold on! Request limit exceeded. Please try again in 1 minute.`,
     };
+  },
+});
+
+server.register(fastifyMultipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Limite de 5MB
   },
 });
 

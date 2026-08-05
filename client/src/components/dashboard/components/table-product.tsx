@@ -31,7 +31,7 @@ export function TableProduct() {
     data: productData,
     isLoading: isProductsLoading,
     isError: isProductsError,
-  } = useProducts({ page: currentPage, limit: 4, search });
+  } = useProducts({ page: currentPage, limit: 10, search });
 
   const filteredProducts = productData?.products
     .filter((p) => {

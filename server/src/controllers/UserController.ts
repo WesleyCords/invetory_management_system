@@ -6,6 +6,7 @@ import AuthenticateUserService, {
 import z from 'zod';
 import { updatePasswordSchema } from '../schemas/user.schema';
 import UpdatePasswordService from '../services/UpdatePasswordService';
+import UploadAvatarService from '../services/UploadAvatarService';
 
 type IChangePasswordRequest = z.infer<typeof updatePasswordSchema>;
 
@@ -61,8 +62,6 @@ class UserController {
     const { currentPassword, newPassword } = req.body;
     const userId = req.user.sub;
 
-    console.log('dados: ', { currentPassword, newPassword, userId });
-
     const updatePasswordService = new UpdatePasswordService();
 
     const result = await updatePasswordService.execute({
@@ -72,6 +71,29 @@ class UserController {
     });
 
     reply.status(200).send(result);
+  }
+
+  async uploadAvatar(req: FastifyRequest, reply: FastifyReply) {
+    const data = await req.file();
+
+    if (!data) {
+      return reply.status(400).send({ message: 'No file uploaded' });
+    }
+
+    const userId = req.user.sub;
+
+    const fileBuffer = await data.toBuffer();
+
+    const service = new UploadAvatarService();
+
+    const result = await service.execute(
+      userId,
+      fileBuffer,
+      data.mimetype,
+      data.filename,
+    );
+
+    return reply.status(200).send(result);
   }
 }
 

@@ -52,4 +52,12 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     userController.updatePassword,
   );
+
+  fastify.patch(
+    '/user/upload-avatar',
+    {
+      preHandler: [VerifyJWT],
+    },
+    userController.uploadAvatar,
+  );
 };
