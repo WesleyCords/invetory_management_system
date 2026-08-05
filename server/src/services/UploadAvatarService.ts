@@ -3,8 +3,6 @@ import { randomUUID } from 'crypto';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../errors/appError';
 
-console.log('CHAVE ATUAL:', process.env.SUPABASE_KEY?.substring(0, 30));
-
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_KEY!,
@@ -46,6 +44,15 @@ class UploadAvatarService {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: { avatarUrl },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'UPDATE_AVATAR',
+        userId: userId,
+        description: `Atualizou seu avatar.'}`,
+        category: 'SYSTEM',
+      },
     });
 
     return {

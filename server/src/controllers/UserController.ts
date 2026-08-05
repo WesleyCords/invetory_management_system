@@ -4,11 +4,13 @@ import AuthenticateUserService, {
   ILoginUserRequest,
 } from '../services/AuthenticateUserService';
 import z from 'zod';
-import { updatePasswordSchema } from '../schemas/user.schema';
+import { updatePasswordSchema, updateUserSchema } from '../schemas/user.schema';
 import UpdatePasswordService from '../services/UpdatePasswordService';
 import UploadAvatarService from '../services/UploadAvatarService';
+import UpdateProfileService from '../services/UpdateProfileService';
 
 type IChangePasswordRequest = z.infer<typeof updatePasswordSchema>;
+type IChangeProfileRequest = z.infer<typeof updateUserSchema>;
 
 class UserController {
   async register(
@@ -94,6 +96,23 @@ class UserController {
     );
 
     return reply.status(200).send(result);
+  }
+
+  async updateProfile(
+    req: FastifyRequest<{ Body: IChangeProfileRequest }>,
+    reply: FastifyReply,
+  ) {
+    const { name, username } = req.body;
+    const userId = req.user.sub;
+
+    const updateProfileService = new UpdateProfileService();
+
+    const result = await updateProfileService.execute(userId, name, username);
+
+    reply.status(200).send({
+      message: result.message,
+      data: result.user,
+    });
   }
 }
 

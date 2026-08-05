@@ -116,3 +116,8 @@ interface IActivityGet {
   activities: IActivity[];
   totalCount: number;
 }
+
+interface PatchUserProfile {
+  name?: string;
+  username?: string;
+}

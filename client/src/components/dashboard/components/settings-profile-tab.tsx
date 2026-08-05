@@ -4,11 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useUpdateProfile } from "@/hooks/querys/useUpdateProfile";
 import { useUploadAvatar } from "@/hooks/querys/useUploadAvatar";
 import { avatarWithName } from "@/lib/utils";
 import { useAuthState } from "@/store/useAuthState";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Check, Trash2, Loader2 } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -27,10 +28,8 @@ export function SettingsProfileTab() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     user?.avatarUrl || null,
   );
-  const [selectedFile, setSelectedFile] = useState<File | null>(null); // 🎯 SEGURA O ARQUIVO AQUI!
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  console.log("User data in SettingsProfileTab:", user);
 
   const {
     register,
@@ -47,6 +46,8 @@ export function SettingsProfileTab() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: uploadAvatar, isPending } = useUploadAvatar();
+  const { mutate: updateProfile, isPending: isUpdatingProfile } =
+    useUpdateProfile();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -71,16 +72,10 @@ export function SettingsProfileTab() {
         await uploadAvatar(selectedFile);
       }
 
-      /*
       if (isDirty) {
-        await api.patch("/user/profile", {
-          name: data.name,
-          username: data.username,
-        });
+        updateProfile(data);
       }
-        */
 
-      toast.success("Perfil atualizado com sucesso!");
       setSelectedFile(null);
     } catch (error) {
       toast.error("Ocorreu um erro ao salvar as alterações.");

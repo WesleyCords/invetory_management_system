@@ -6,6 +6,8 @@ import {
   loginUserSchemaResponse,
   updatePasswordSchema,
   updateUserResponseSchema,
+  updateAvatarResponseSchema,
+  updateUserSchema,
 } from '../schemas/user.schema';
 import UserController from '../controllers/UserController';
 import VerifyJWT from '../middleware/verify-jwt';
@@ -45,7 +47,7 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify) => {
       schema: {
         body: updatePasswordSchema,
         response: {
-          200: updateUserResponseSchema,
+          200: updateAvatarResponseSchema,
         },
       },
       preHandler: [VerifyJWT],
@@ -59,5 +61,19 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify) => {
       preHandler: [VerifyJWT],
     },
     userController.uploadAvatar,
+  );
+
+  fastify.patch(
+    '/user/profile',
+    {
+      schema: {
+        body: updateUserSchema,
+        response: {
+          200: updateUserResponseSchema,
+        },
+      },
+      preHandler: [VerifyJWT],
+    },
+    userController.updateProfile,
   );
 };

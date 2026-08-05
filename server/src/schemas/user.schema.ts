@@ -79,27 +79,45 @@ export const updatePasswordSchema = z.object({
     .max(8, 'The password must be no more than 8 characters long'),
 });
 
-export const updateUserSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(5, 'The name must be more than 5 characters long')
-    .max(50, 'The name must be no more than 50 characters long')
-    .regex(
-      /^[a-zA-ZÀ-ÿ]+(?:\s[a-zA-ZÀ-ÿ]+)+$/,
-      'It is must be a full name (first and last name)',
-    ),
-  username: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .regex(
-      /^[a-z0-9.-]+$/,
-      'Invalid username format (use only lowercase letters, dots, or hyphens)',
-    )
-    .min(5, 'The username must be more than 5 characters long'),
-});
+export const updateUserSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(5, 'The name must be more than 5 characters long')
+      .max(50, 'The name must be no more than 50 characters long')
+      .regex(
+        /^[a-zA-ZÀ-ÿ]+(?:\s[a-zA-ZÀ-ÿ]+)+$/,
+        'It is must be a full name (first and last name)',
+      )
+      .optional(),
+    username: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .regex(
+        /^[a-z0-9.-]+$/,
+        'Invalid username format (use only lowercase letters, dots, or hyphens)',
+      )
+      .min(5, 'The username must be more than 5 characters long')
+      .optional(),
+  })
+  .refine((data) => data.name !== undefined || data.username !== undefined, {
+    message: 'At least one field (name or username) must be provided',
+    path: ['root'],
+  });
 
 export const updateUserResponseSchema = z.object({
+  message: z.string(),
+  data: z.object({
+    id: z.string(),
+    name: z.string(),
+    username: z.string(),
+    role: z.enum(RolesProfile),
+    avatarUrl: z.string().nullable().optional(),
+  }),
+});
+
+export const updateAvatarResponseSchema = z.object({
   message: z.string(),
 });
