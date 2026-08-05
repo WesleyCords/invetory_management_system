@@ -18,6 +18,21 @@ class UploadAvatarService {
     const userExists = await prisma.user.findUnique({ where: { id: userId } });
     if (!userExists) throw new AppError('User not found', 404);
 
+    if (userExists.avatarUrl) {
+      const fileNameToDelete = userExists.avatarUrl.split('/').pop();
+
+      if (fileNameToDelete) {
+        const { error: deleteError } = await supabase.storage
+          .from('avatars')
+          .remove([fileNameToDelete!]);
+
+        if (deleteError) {
+          console.error(deleteError);
+          console.log('Failed to delete old avatar: ', deleteError.message);
+        }
+      }
+    }
+
     const fileExtension = originalName.split('.').pop();
     const fileName = `avatar-${randomUUID()}.${fileExtension}`;
 
