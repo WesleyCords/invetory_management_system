@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { useState } from "react";
 import { useUISectionProducts } from "@/store/useUISectionProducts";
 
 interface SelectProps {
