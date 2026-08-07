@@ -175,7 +175,7 @@ export function AnalyticsContent() {
             <TabsTrigger value="prices">Preços</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="workflow">
+          <TabsContent value="workflow" className="grid grid-cols-3 gap-6 mt-4">
             <AnalyticsWorkflowTab />
           </TabsContent>
 
@@ -183,7 +183,7 @@ export function AnalyticsContent() {
             <AnalyticsProductsTab />
           </TabsContent>
 
-          <TabsContent value="prices">
+          <TabsContent value="prices" className="mt-4">
             <AnalyticsPriceTab />
           </TabsContent>
         </Tabs>

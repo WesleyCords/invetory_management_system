@@ -36,9 +36,7 @@ export function AnalyticsPriceTab() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-card-foreground">
-          Evolução de Preços
-        </CardTitle>
+        <CardTitle>Evolução de Preços</CardTitle>
         <CardDescription>
           Visualize a variação dos preços ao longo do tempo
         </CardDescription>
