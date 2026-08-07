@@ -1,10 +1,7 @@
-- Aba de configurações (back e front)
-- Aba de movimentações (back e front)
-- Decidir onde vai ficar as url das imagens Supabase, Kube, aws...
-- Criar a rota de adicionar foto ao perfil
+Section Analytics:
+    -> Criar rota que retorne os dados para o cards do Stats
+    -> Criar rota ou complementar dados da rota do Stats para dos Insights
+    -> Criar os graficos com dados mocados
+    -> Implementar os dados do backend com o grafico 
 
--> Um select com os dias para selecionar os logs e movimentações daquele periodo (1,7, 30 e 90 dias)
-
--> Colocar para quando alterar a senha, colocar no log
--> Colocar tambem quand alterar o nome ou user ou foto
--> Criar o Supabase para guardar as URL das fotos
+Section Logs:
