@@ -179,7 +179,7 @@ export function AnalyticsContent() {
             <AnalyticsWorkflowTab />
           </TabsContent>
 
-          <TabsContent value="products">
+          <TabsContent value="products" className="grid grid-cols-2 gap-6 mt-4">
             <AnalyticsProductsTab />
           </TabsContent>
 

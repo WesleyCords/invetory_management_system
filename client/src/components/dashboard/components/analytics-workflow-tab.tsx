@@ -42,7 +42,7 @@ export function AnalyticsWorkflowTab() {
 
   return (
     <>
-      <Card className="col-span-2 flex flex-col h-[400px]">
+      <Card className="col-span-2 flex flex-col h-100">
         <CardHeader>
           <CardTitle>Entradas vs Saídas</CardTitle>
           <CardDescription>
@@ -109,7 +109,7 @@ export function AnalyticsWorkflowTab() {
           </ChartContainer>
         </CardContent>
       </Card>
-      <Card className="fflex flex-col h-[400px]">
+      <Card className="fflex flex-col h-100">
         <CardHeader>
           <CardTitle>Valor por Categoria</CardTitle>
           <CardDescription>Participação no valor total</CardDescription>
