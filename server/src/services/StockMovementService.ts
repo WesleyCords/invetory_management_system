@@ -1,7 +1,7 @@
 import { AppError } from '../errors/appError';
 import { prisma } from '../lib/prisma';
 import { MovementType } from '@prisma/client';
-import GetProductBalanceService from './GetProductBalance';
+
 export interface IStockRequest {
   productId: string;
   quantity: number;
@@ -23,28 +23,38 @@ class StockMovementService {
       throw new AppError('Product does not exist or is inactive.', 404);
 
     if (type === MovementType.OUT) {
-      const currentBalance = await new GetProductBalanceService().execute(
-        productId,
-      );
-
-      if (quantity > currentBalance)
+      if (quantity > existingProduct.currentStock)
         throw new AppError(
-          `Insufficient stock. Current balance is ${currentBalance}, but you tried to remove ${quantity}.`,
+          `Insufficient stock. Current balance is ${existingProduct.currentStock}, but you tried to remove ${quantity}.`,
           400,
         );
     }
 
-    const movementCreated = await prisma.stockMovement.create({
-      data: {
-        quantity,
-        type,
-        productId,
-        userId,
-        notes,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const movementCreated = await tx.stockMovement.create({
+        data: {
+          quantity,
+          type,
+          productId,
+          userId,
+          notes,
+        },
+      });
+
+      const stockOperation =
+        type === MovementType.IN
+          ? { increment: quantity }
+          : { decrement: quantity };
+
+      await tx.product.update({
+        where: { id: productId },
+        data: { currentStock: stockOperation },
+      });
+
+      return movementCreated;
     });
 
-    return movementCreated;
+    return result;
   }
 }
 

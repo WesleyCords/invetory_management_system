@@ -80,6 +80,7 @@ model Product {
   costPrice   Decimal           @db.Decimal(10, 2)
   description String?           @db.Text
   isActive    Boolean           @default(true)
+  currentStock  Int             @default(0)
 
   categoryId  String
   category    Category          @relation(fields: [categoryId], references: [id])

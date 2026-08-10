@@ -12,6 +12,7 @@ export interface IProductRequest {
   categoryName?: string;
   supplierIds: string[];
   costPrice: number;
+  currentStock: number;
 }
 
 interface IProps {

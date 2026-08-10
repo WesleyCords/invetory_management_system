@@ -4,8 +4,6 @@ import verifyJWT from '../middleware/verify-jwt';
 import {
   getMovementsQuerySchema,
   getMovementsResponseSchema,
-  getProductBalanceResponseSchema,
-  getProductBalanceSchema,
   registerStockMovementResponseSchema,
   registerStockMovementSchema,
 } from '../schemas/stockMovement.schema';
@@ -39,18 +37,5 @@ export const stockRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     stockController.getMovements,
-  );
-
-  fastify.get(
-    '/product/:id/balance',
-    {
-      schema: {
-        params: getProductBalanceSchema,
-        response: {
-          200: getProductBalanceResponseSchema,
-        },
-      },
-    },
-    stockController.getBalance,
   );
 };
