@@ -1,3 +1,4 @@
+import { CardSkeleton } from "@/components/skeletons/card-skeleton";
 import {
   Card,
   CardHeader,
@@ -16,29 +17,19 @@ import { currency } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-export function AnalyticsWorkflowTab() {
+type WorkflowTabProps = {
+  categories: ICategoryStat[];
+  movements: WorkflowChartData[];
+};
+
+export function AnalyticsWorkflowTab({
+  categories,
+  movements,
+}: WorkflowTabProps) {
   const productsConfig = {
     out: { label: "Saídas", color: "var(--chart-2)" },
     in: { label: "Entradas", color: "var(--destructive)" },
   };
-
-  const productsData = [
-    { month: "Jan", in: 120, out: 85 },
-    { month: "Fev", in: 150, out: 110 },
-    { month: "Mar", in: 120, out: 140 },
-    { month: "Abr", in: 160, out: 125 },
-    { month: "Mai", in: 200, out: 165 },
-    { month: "Jun", in: 175, out: 150 },
-  ];
-
-  const statsCategoriesMock = [
-    { name: "Vestiario", value: 10, pct: 80 },
-    { name: "Calçados", value: 15, pct: 76 },
-    { name: "Acessórios", value: 5, pct: 54 },
-    { name: "Eletrônicos", value: 20, pct: 40 },
-    { name: "Móveis", value: 8, pct: 32 },
-    { name: "Brinquedos", value: 12, pct: 10 },
-  ];
 
   return (
     <>
@@ -52,12 +43,12 @@ export function AnalyticsWorkflowTab() {
         <CardContent className="flex-1 min-h-0 pb-4">
           <ChartContainer config={productsConfig} className="h-full w-full">
             <AreaChart
-              data={productsData}
+              data={movements ?? []}
               margin={{ left: -20, right: 10, top: 10, bottom: 0 }}
             >
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis
-                dataKey="month"
+                dataKey="label"
                 tickLine={false}
                 axisLine={false}
                 fontSize={12}
@@ -109,13 +100,14 @@ export function AnalyticsWorkflowTab() {
           </ChartContainer>
         </CardContent>
       </Card>
+
       <Card className="fflex flex-col h-100">
         <CardHeader>
           <CardTitle>Valor por Categoria</CardTitle>
           <CardDescription>Participação no valor total</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto space-y-4 pr-2">
-          {statsCategoriesMock.map((c, i) => (
+          {categories.map((c, i) => (
             <div key={i}>
               <div className="mb-1 flex items-center justify-between text-sm">
                 <span className="font-medium text-foreground">{c.name}</span>

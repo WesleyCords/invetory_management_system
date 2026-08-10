@@ -121,3 +121,67 @@ interface PatchUserProfile {
   name?: string;
   username?: string;
 }
+
+interface ICategoryStat {
+  name: string;
+  value: number;
+  pct: number;
+}
+
+interface IRankingStat {
+  name: string;
+  sku: string;
+  valueTotal: number;
+  quantityTotal: number;
+  quantityDelta: number;
+}
+
+interface IMarginStat {
+  name: string;
+  fullName: string;
+  margin: number;
+}
+
+interface ILowStockProduct {
+  id: string;
+  name: string;
+  sku: string;
+  price: number;
+  costPrice: number;
+  currentStock: number;
+  category: {
+    id: string;
+    name: string;
+  };
+}
+interface AnalyticsResponse {
+  totalStockValue: number;
+  stockValueDelta: number;
+  totalCostValue: number;
+  costValueDelta: number;
+  totalProfit: number;
+  profitDelta: number;
+  avgMargin: number;
+  avgMarginDelta: number;
+  categories: ICategoryStat[];
+  ranking: IRankingStat[];
+  margins: IMarginStat[];
+  bestMargin: IMarginStat | null;
+  lowStock: ILowStockProduct[];
+  totalIn: number;
+  totalOut: number;
+  priceData: PriceChartData[];
+  workflowData: WorkflowChartData[];
+}
+
+interface PriceChartData {
+  date: string;
+  mid: number;
+  min: number;
+  max: number;
+}
+interface WorkflowChartData {
+  in: number;
+  out: number;
+  label: string;
+}

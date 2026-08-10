@@ -48,6 +48,7 @@ export const productResponseSchema = z.object({
       }),
     ),
     costPrice: z.number().positive(),
+    currentStock: z.number().nonnegative(),
   }),
 });
 

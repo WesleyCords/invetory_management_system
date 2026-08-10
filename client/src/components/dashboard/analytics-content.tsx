@@ -9,7 +9,7 @@ import {
   SelectItem,
 } from "../ui/select";
 
-import { Card, CardHeader, CardContent } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import {
   AlertTriangle,
@@ -22,35 +22,44 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { AnalyticsWorkflowTab } from "./components/analytics-workflow-tab";
 import { AnalyticsProductsTab } from "./components/analytics-products-tab";
 import { AnalyticsPriceTab } from "./components/analytics-price-tab";
+import { useGetAnalytics } from "@/hooks/querys/useGetAnalytics";
+import { currency } from "@/lib/utils";
+import { useState } from "react";
+import { CardSkeleton } from "../skeletons/card-skeleton";
 
 export function AnalyticsContent() {
-  const itemsMock = [
+  const [period, setPeriod] = useState(7);
+  const { data: stats, isLoading } = useGetAnalytics({ periodInDays: period });
+
+  const periods = [
+    { label: "Último 7 dias", value: 7 },
     { label: "Últimos 30 dias", value: 30 },
     { label: "Ultimo 3 meses", value: 90 },
     { label: "Ultimo 6 meses", value: 180 },
     { label: "Ultimo ano", value: 365 },
   ];
 
-  const statsMock = [
+  const kpi = [
     {
       label: "Valor em Estoque",
-      value: "R$ 12.345,67",
-      percentage: 8.2,
+      value: currency(stats?.totalStockValue),
+      percentage: stats?.stockValueDelta,
     },
     {
       label: "Custo Total",
-      value: "8.534,78",
-      percentage: 3.1,
+      value: currency(stats?.totalCostValue),
+      percentage: stats?.costValueDelta,
     },
     {
       label: "Lucro Potencial",
-      value: "24.278,70",
-      percentage: 11.4,
+      value: currency(stats?.totalProfit),
+      percentage: stats?.profitDelta,
     },
     {
       label: "Margem Media",
-      value: "59.6",
-      percentage: -0.8,
+      value: stats?.avgMargin.toFixed(2) + "%",
+      percentage: stats?.avgMarginDelta,
+      avg: true,
     },
   ];
 
@@ -58,17 +67,17 @@ export function AnalyticsContent() {
     {
       icon: Crown,
       title: "Maior margem",
-      text: "Boné Trucker lidera com 69.9% de margem.",
+      text: `${stats?.bestMargin?.fullName} lidera com ${stats?.bestMargin?.margin?.toFixed(2)}% de margem.`,
     },
     {
       icon: AlertTriangle,
       title: "Atenção ao estoque",
-      text: "3 produtos abaixo do estoque mínimo: Tênis Esportivo Runner, Mochila Urban…",
+      text: `${stats?.lowStock?.length} produtos com estoque baixo, verifique o estoque e reponha os produtos.`,
     },
     {
       icon: Lightbulb,
       title: "Fluxo do período",
-      text: "985 entradas vs 775 saídas — saldo positivo de 210 unidades.",
+      text: `${stats?.totalIn} entradas vs ${stats?.totalOut} saídas — saldo ${stats?.totalIn - stats?.totalOut > 0 ? "positivo" : "negativo"} de ${stats?.totalIn - stats?.totalOut} unidades.`,
     },
   ];
 
@@ -87,14 +96,18 @@ export function AnalyticsContent() {
             Inteligência sobre estoque, preços e movimentações
           </p>
         </span>
-        <Select items={itemsMock} defaultValue={itemsMock[0].label}>
+        <Select
+          items={periods}
+          defaultValue={periods[0].label}
+          onValueChange={(value) => setPeriod(Number(value))}
+        >
           <SelectTrigger className="w-45">
             <SelectValue placeholder="Selecione um período" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Periodo</SelectLabel>
-              {itemsMock.map((item) => (
+              {periods.map((item) => (
                 <SelectItem key={item.value} value={item.value}>
                   {item.label}
                 </SelectItem>
@@ -106,34 +119,42 @@ export function AnalyticsContent() {
 
       {/*Cards*/}
       <div className="grid grid-cols-4 gap-3">
-        {statsMock.map((stat, index) => (
+        {kpi.map((stat, index) => (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             key={index}
           >
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="text-md text-muted-foreground">{stat.label}</h3>
-                <span className="flex items-baseline justify-between mt-1 gap-2">
-                  <p className="text-xl font-bold text-foreground">
-                    {stat.value}
-                  </p>
-                  <Badge
-                    variant="secondary"
-                    className={`gap-0.5 p-3 text-md font-semibold ${stat.percentage > 0 ? "text-emerald-500" : "text-destructive"}`}
-                  >
-                    {stat.percentage > 0 ? (
-                      <ArrowUpRight className="h-3 w-3" />
-                    ) : (
-                      <ArrowDownRight className="h-3 w-3" />
-                    )}
-                    {stat.percentage}%
-                  </Badge>
-                </span>
-              </CardContent>
-            </Card>
+            {isLoading ? (
+              <CardSkeleton />
+            ) : (
+              <Card>
+                <CardContent className="p-4">
+                  <h3 className="text-md text-muted-foreground">
+                    {stat.label}
+                  </h3>
+                  <span className="flex items-baseline justify-between mt-1 gap-2">
+                    <p className="text-xl font-bold text-foreground text-nowrap">
+                      {stat.value}
+                    </p>
+                    <Badge
+                      variant="secondary"
+                      className={`gap-0.5 p-1.5 text-sm font-medium ${stat.percentage > 0 ? "text-emerald-500" : "text-destructive"}`}
+                    >
+                      {stat.percentage > 0 ? (
+                        <ArrowUpRight className="h-3 w-3" />
+                      ) : (
+                        <ArrowDownRight className="h-3 w-3" />
+                      )}
+                      {"avg" in stat && stat.avg
+                        ? `${stat.percentage?.toFixed(2)}pp`
+                        : `${stat.percentage?.toFixed(2)}%`}
+                    </Badge>
+                  </span>
+                </CardContent>
+              </Card>
+            )}
           </motion.div>
         ))}
       </div>
@@ -174,18 +195,35 @@ export function AnalyticsContent() {
             <TabsTrigger value="products">Produtos</TabsTrigger>
             <TabsTrigger value="prices">Preços</TabsTrigger>
           </TabsList>
+          {isLoading ? (
+            <CardSkeleton />
+          ) : (
+            <>
+              <TabsContent
+                value="workflow"
+                className="grid grid-cols-3 gap-6 mt-4"
+              >
+                <AnalyticsWorkflowTab
+                  movements={stats?.workflowData || []}
+                  categories={stats?.categories || []}
+                />
+              </TabsContent>
 
-          <TabsContent value="workflow" className="grid grid-cols-3 gap-6 mt-4">
-            <AnalyticsWorkflowTab />
-          </TabsContent>
+              <TabsContent
+                value="products"
+                className="grid grid-cols-2 gap-6 mt-4"
+              >
+                <AnalyticsProductsTab
+                  ranking={stats?.ranking}
+                  products={stats?.margins}
+                />
+              </TabsContent>
 
-          <TabsContent value="products" className="grid grid-cols-2 gap-6 mt-4">
-            <AnalyticsProductsTab />
-          </TabsContent>
-
-          <TabsContent value="prices" className="mt-4">
-            <AnalyticsPriceTab />
-          </TabsContent>
+              <TabsContent value="prices" className="mt-4">
+                <AnalyticsPriceTab prices={stats?.priceData || []} />
+              </TabsContent>
+            </>
+          )}
         </Tabs>
       </motion.div>
     </motion.div>

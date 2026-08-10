@@ -3,7 +3,6 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
   CardContent,
 } from "@/components/ui/card";
 
@@ -17,21 +16,16 @@ import {
 import { AreaChart, YAxis } from "recharts";
 import { Area, CartesianGrid, XAxis } from "recharts";
 
-export function AnalyticsPriceTab() {
+type PriceTabProps = {
+  prices: PriceChartData[];
+};
+
+export function AnalyticsPriceTab({ prices }: PriceTabProps) {
   const priceConfig = {
     max: { label: "Maximo", color: "var(--chart-3)" },
     mid: { label: "Médio", color: "var(--chart-1)" },
     min: { label: "Mínimo", color: "var(--chart-2)" },
   };
-
-  const priceData = [
-    { date: "01/03", mid: 125.5, min: 39.9, max: 299.9 },
-    { date: "05/03", mid: 128.3, min: 39.9, max: 299.9 },
-    { date: "10/03", mid: 132.1, min: 39.9, max: 309.9 },
-    { date: "15/03", mid: 135.8, min: 44.9, max: 309.9 },
-    { date: "20/03", mid: 138.5, min: 44.9, max: 319.9 },
-    { date: "25/03", mid: 142.2, min: 49.9, max: 319.9 },
-  ];
 
   return (
     <Card>
@@ -43,7 +37,7 @@ export function AnalyticsPriceTab() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={priceConfig} className="h-80 w-full">
-          <AreaChart data={priceData} margin={{ left: -10 }}>
+          <AreaChart data={prices} margin={{ left: -10 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="date"
