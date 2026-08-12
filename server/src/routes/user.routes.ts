@@ -8,6 +8,7 @@ import {
   updateUserResponseSchema,
   updateAvatarResponseSchema,
   updateUserSchema,
+  getUserSchemaResponse,
 } from '../schemas/user.schema';
 import UserController from '../controllers/UserController';
 import VerifyJWT from '../middleware/verify-jwt';
@@ -75,5 +76,18 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify) => {
       preHandler: [VerifyJWT],
     },
     userController.updateProfile,
+  );
+
+  fastify.get(
+    '/users',
+    {
+      preHandler: [VerifyJWT],
+      schema: {
+        response: {
+          200: getUserSchemaResponse,
+        },
+      },
+    },
+    userController.getAllUsers,
   );
 };

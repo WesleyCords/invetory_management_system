@@ -114,6 +114,17 @@ class UserController {
       data: result.user,
     });
   }
+
+  async getAllUsers(req: FastifyRequest, reply: FastifyReply) {
+    const getAllUsersService = new CreateUserService();
+
+    const users = await getAllUsersService.getAllUsers();
+
+    reply.status(200).send({
+      message: 'Users retrieved successfully',
+      data: users,
+    });
+  }
 }
 
 export default UserController;

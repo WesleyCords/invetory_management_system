@@ -14,8 +14,6 @@ export function Pagination({
   totalPages,
   onPageChange,
 }: PaginationProps) {
-  const { previusPage, nextPage, selectPage } = useUISectionProducts();
-
   const ArrayPages = Array.from(
     { length: Math.max(totalPages || 0, 0) },
     (_, i) => i + 1,

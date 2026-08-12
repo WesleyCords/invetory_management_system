@@ -54,15 +54,22 @@ export const loginUserSchema = z.object({
     .max(8, 'The password must be no more than 8 characters long'),
 });
 
+export const userSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  username: z.string(),
+  role: z.enum(RolesProfile),
+  avatarUrl: z.url().nullable().optional(),
+});
+
+export const getUserSchemaResponse = z.object({
+  message: z.string(),
+  data: z.array(userSchema),
+});
+
 export const loginUserSchemaResponse = z.object({
   token: z.string(),
-  user: z.object({
-    id: z.uuid(),
-    name: z.string(),
-    username: z.string(),
-    role: z.enum(RolesProfile),
-    avatarUrl: z.url().nullable().optional(),
-  }),
+  user: userSchema,
   message: z.string(),
 });
 
