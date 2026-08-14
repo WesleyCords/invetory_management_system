@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: PropsRootLayout) {
   return (
-    <html lang="pt-BR" className="bg-background">
+    <html lang="pt-BR" className="bg-background suppressHydrationWarning">
       <body className={`${inter.variable} font-sans antialiased`}>
         <QueryProvider>{children}</QueryProvider>
 

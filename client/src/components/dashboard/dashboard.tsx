@@ -4,14 +4,12 @@ import { DashboardSideBar } from "./dashboard-siderbar";
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardContent } from "./dashboard-content";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { DashboardMobile } from "../test-mobile";
+import { DashboardMobile } from "../dashboard-mobile";
 
 export function Dashboard() {
   const isMobile = useIsMobile();
 
-  if (isMobile) {
-    return <DashboardMobile />;
-  }
+  if (isMobile) return <DashboardMobile />;
 
   return (
     <motion.div
