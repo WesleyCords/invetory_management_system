@@ -22,7 +22,7 @@ export function DashboardMobile() {
 
       <div className="flex items-center gap-4 mt-8 w-full justify-center">
         <a
-          href="https://linkedin.com/in/wesley-cordeiro-dev"
+          href=""
           target="_blank"
           rel="noopener noreferrer"
         >
