@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getAuditLogsQuerySchema } from '../schemas/logs.schema';
 import GetActivitiesService from '../services/GetActivitiesService';
-import GetLogsService from '../services/GetLogsService';
+import GetLogsService from '../services/GetLogsStatsService';
 import z from 'zod';
 
 export type AuditLogs = z.infer<typeof getAuditLogsQuerySchema>;
@@ -11,16 +11,20 @@ class LogsController {
     req: FastifyRequest<{ Querystring: AuditLogs }>,
     reply: FastifyReply,
   ) {
+    const { period, search, userId, limit, page } = req.query;
+
     const getLogs = new GetLogsService();
-    const { logs, totalCount, totalPages } = await getLogs.execute(req.query);
+    const logsStats = await getLogs.execute({
+      periodInDays: period,
+      search,
+      userId,
+      limit,
+      page,
+    });
 
     reply.status(200).send({
       message: 'Audit logs retrieved successfully',
-      data: {
-        logs,
-        totalCount,
-        totalPages,
-      },
+      data: logsStats,
     });
   }
 

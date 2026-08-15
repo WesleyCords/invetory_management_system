@@ -16,7 +16,7 @@ export function AuthPage() {
 
       <div className="relative z-10 flex min-h-screen">
         <motion.div
-          className="lg:flex lg:w-1/2 items-center justify-center p-12"
+          className="lg:flex hidden lg:w-1/2 items-center justify-center p-12"
           initial={{
             opacity: 0,
             x: -50,

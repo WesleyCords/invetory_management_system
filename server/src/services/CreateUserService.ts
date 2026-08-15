@@ -28,6 +28,24 @@ class CreateUserService {
 
     return user;
   }
+
+  async getAllUsers() {
+    const users = await prisma.user.findMany({
+      where: {
+        role: {
+          not: 'MANAGER',
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        role: true,
+        avatarUrl: true,
+      },
+    });
+    return users;
+  }
 }
 
 export default CreateUserService;

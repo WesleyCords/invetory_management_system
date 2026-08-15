@@ -97,7 +97,8 @@ interface IActivity {
   id: string;
   title: string;
   description: string;
-  action: "Movimentação" | "Produto";
+  category: string;
+  action: string;
   createdAt: Date;
   user: {
     name: string;
@@ -184,4 +185,15 @@ interface WorkflowChartData {
   in: number;
   out: number;
   label: string;
+}
+
+interface LogsStatsResponse {
+  totalLogs: number;
+  criticalLogsCount: number;
+  topUser: {
+    name: string;
+    actionsCount: number;
+  } | null;
+  logs: IActivity[];
+  totalPages: number;
 }

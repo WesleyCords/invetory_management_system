@@ -39,8 +39,16 @@ const logFullSchema = logSchema
 export const getLogSchemaResponse = z.object({
   message: z.string(),
   data: z.object({
+    totalLogs: z.number(),
+    criticalLogsCount: z.number(),
+    topUser: z
+      .object({
+        name: z.string(),
+        actionsCount: z.number(),
+      })
+      .nullable()
+      .optional(),
     logs: z.array(logFullSchema),
-    totalCount: z.number(),
     totalPages: z.number(),
   }),
 });
@@ -86,4 +94,5 @@ export const getAuditLogsQuerySchema = z.object({
   productId: z.uuid().optional(),
   type: z.enum(['IN', 'OUT', 'all']).optional().default('all'),
   search: z.string().optional().default(''),
+  userId: z.uuid().optional(),
 });
