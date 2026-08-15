@@ -66,11 +66,10 @@ export function MovementsContent() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Ops! Algo deu errado</h1>
-        <p className="text-md text-muted-foreground">
-          Não foi possível carregar as movimentações. Tente novamente mais
-          tarde.
+      <div className="py-12 text-center">
+        <Replace className="mx-auto h-12 w-12 text-muted-foreground/50" />
+        <p className="mt-4 text-muted-foreground">
+          Ocorreu um erro ao carregar os produtos
         </p>
       </div>
     );

@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   ArrowDownRight,
   ArrowUpRight,
+  BarChart3,
   Crown,
   Lightbulb,
 } from "lucide-react";
@@ -29,7 +30,11 @@ import { CardSkeleton } from "../skeletons/card-skeleton";
 
 export function AnalyticsContent() {
   const [period, setPeriod] = useState(7);
-  const { data: stats, isLoading } = useGetAnalytics({ periodInDays: period });
+  const {
+    data: stats,
+    isLoading,
+    isError,
+  } = useGetAnalytics({ periodInDays: period });
 
   const periods = [
     { label: "Último 7 dias", value: 7 },
@@ -80,6 +85,17 @@ export function AnalyticsContent() {
       text: `${stats?.totalIn} entradas vs ${stats?.totalOut} saídas — saldo ${stats?.totalIn - stats?.totalOut > 0 ? "positivo" : "negativo"} de ${stats?.totalIn - stats?.totalOut} unidades.`,
     },
   ];
+
+  if (isError) {
+    return (
+      <div className="py-12 text-center">
+        <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground/50" />
+        <p className="mt-4 text-muted-foreground">
+          Ocorreu um erro ao carregar os dados para analise!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <motion.div

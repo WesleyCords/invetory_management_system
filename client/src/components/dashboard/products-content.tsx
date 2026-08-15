@@ -13,7 +13,7 @@ import { MovementDialog } from "./components/movement-dialog";
 
 export function ProductsContent() {
   const { onChangeSearch, search, openDialog } = useUISectionProducts();
-  const { data: dbCategories = [], isLoading } = useCategories();
+  const { data: dbCategories = [], isLoading, isError } = useCategories();
   const categories = ["Todos", ...dbCategories.map((cat) => cat.name)];
   return (
     <>
@@ -48,7 +48,13 @@ export function ProductsContent() {
               <div className="flex gap-2">
                 <SelectComponent
                   list={categories}
-                  title={isLoading ? "Carregando..." : "Categorias"}
+                  title={
+                    isLoading
+                      ? "Carregando..."
+                      : isError
+                        ? "Erro ao carregar"
+                        : "Categorias"
+                  }
                 />
               </div>
             </div>

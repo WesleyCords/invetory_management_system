@@ -10,6 +10,7 @@ import {
   User,
   Package,
   ChevronDown,
+  HistoryIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { AnimatePresence, motion } from "framer-motion";
@@ -77,7 +78,11 @@ export function LogsContent() {
   const debounceSearch = useDebounce(searchQuery, 500);
   const { currentPage, setCurrentPage } = usePaginationLog((state) => state);
 
-  const { data: logsStats, isLoading } = useGetLogsStats({
+  const {
+    data: logsStats,
+    isLoading,
+    isError,
+  } = useGetLogsStats({
     periodInDays: selectedPeriod,
     search: debounceSearch,
     userId: selectedUser,
@@ -144,6 +149,17 @@ export function LogsContent() {
     }
     setExpandedLogs(newExpanded);
   };
+
+  if (isError) {
+    return (
+      <div className="py-12 text-center">
+        <HistoryIcon className="mx-auto h-12 w-12 text-muted-foreground/50" />
+        <p className="mt-4 text-muted-foreground">
+          Ocorreu um erro ao carregar os logs!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <motion.div

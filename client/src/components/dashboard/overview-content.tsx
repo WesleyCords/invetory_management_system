@@ -1,6 +1,5 @@
 "use client";
 
-import { mockLogs } from "@/lib/state-mock";
 import { useUIStore } from "@/store/useUIStore";
 import { motion } from "framer-motion";
 import {
@@ -9,6 +8,7 @@ import {
   ArrowRight,
   ArrowUpCircle,
   DollarSign,
+  LayoutDashboard,
   Package,
   TrendingDown,
   TrendingUp,
@@ -99,9 +99,11 @@ export function OverviewContent() {
     isActivitysError
   ) {
     return (
-      <div className="flex items-center justify-center h-full min-h-100 text-destructive">
-        <AlertTriangle className="h-8 w-8 mb-2 mx-auto" />
-        <p>Erro ao carregar os dados do painel. Tente novamente.</p>
+      <div className="py-12 text-center">
+        <LayoutDashboard className="mx-auto h-12 w-12 text-muted-foreground/50" />
+        <p className="mt-4 text-muted-foreground">
+          Ocorreu um erro ao carregar os dadsos para Overview!
+        </p>
       </div>
     );
   }

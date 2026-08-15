@@ -67,7 +67,7 @@ export function TableProduct() {
 
   if (isProductsLoading) return <CardSkeleton />;
 
-  if (!isProductsError && productData === undefined)
+  if (isProductsError && productData === undefined)
     return (
       <div className="py-12 text-center">
         <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
