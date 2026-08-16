@@ -15,11 +15,8 @@ export type getAllProductsQueryParams = z.infer<
   typeof getProductQueryParamsSchema
 >;
 class ProductController {
-  async create(
-    req: FastifyRequest<{ Body: IProductRequest }>,
-    reply: FastifyReply,
-  ) {
-    const data = req.body;
+  async create(req: FastifyRequest, reply: FastifyReply) {
+    const data = req.body as IProductRequest;
     const createProduct = new CreateProductService();
     const userId = req.user?.sub;
 
@@ -31,16 +28,11 @@ class ProductController {
     });
   }
 
-  async getAllIsActive(
-    req: FastifyRequest<{
-      Querystring: getAllProductsQueryParams;
-    }>,
-    reply: FastifyReply,
-  ) {
+  async getAllIsActive(req: FastifyRequest, reply: FastifyReply) {
     const getAllProducts = new GetAllProductService();
 
     const { products, totalCount, totalPages } = await getAllProducts.execute(
-      req.query,
+      req.query as getAllProductsQueryParams,
     );
 
     return reply.status(200).send({
@@ -53,11 +45,8 @@ class ProductController {
     });
   }
 
-  async delete(
-    req: FastifyRequest<{ Params: { id: string } }>,
-    reply: FastifyReply,
-  ) {
-    const { id } = req.params;
+  async delete(req: FastifyRequest, reply: FastifyReply) {
+    const { id } = req.params as { id: string };
     const userId = req.user?.sub;
     const deleteProduct = new DeleteProductService();
 
@@ -69,16 +58,10 @@ class ProductController {
     });
   }
 
-  async update(
-    req: FastifyRequest<{
-      Params: { id: string };
-      Body: typeof updateProductBodySchema;
-    }>,
-    reply: FastifyReply,
-  ) {
-    const { id } = req.params;
+  async update(req: FastifyRequest, reply: FastifyReply) {
+    const { id } = req.params as { id: string };
     const userId = req.user?.sub;
-    const data = req.body;
+    const data = req.body as typeof updateProductBodySchema;
 
     const updateProduct = new UpdateProductService();
 

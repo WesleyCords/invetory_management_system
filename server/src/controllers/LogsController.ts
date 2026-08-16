@@ -7,11 +7,8 @@ import z from 'zod';
 export type AuditLogs = z.infer<typeof getAuditLogsQuerySchema>;
 
 class LogsController {
-  async getAuditLogs(
-    req: FastifyRequest<{ Querystring: AuditLogs }>,
-    reply: FastifyReply,
-  ) {
-    const { period, search, userId, limit, page } = req.query;
+  async getAuditLogs(req: FastifyRequest, reply: FastifyReply) {
+    const { period, search, userId, limit, page } = req.query as AuditLogs;
 
     const getLogs = new GetLogsService();
     const logsStats = await getLogs.execute({

@@ -9,15 +9,12 @@ import { getMovementsQuerySchema } from '../schemas/stockMovement.schema';
 export type GetMovementsQueryParams = z.infer<typeof getMovementsQuerySchema>;
 
 class StockMovementController {
-  async register(
-    req: FastifyRequest<{ Body: Omit<IStockRequest, 'userId'> }>,
-    reply: FastifyReply,
-  ) {
+  async register(req: FastifyRequest, reply: FastifyReply) {
     const registerStock = new StockMovementService();
     const idUser = req.user.sub; // Pegando o ID do usuário logado a partir do token
 
     const movement = await registerStock.execute({
-      ...req.body,
+      ...(req.body as Omit<IStockRequest, 'userId'>),
       userId: idUser,
     });
 
@@ -27,16 +24,11 @@ class StockMovementController {
     });
   }
 
-  async getMovements(
-    req: FastifyRequest<{
-      Querystring: GetMovementsQueryParams;
-    }>,
-    reply: FastifyReply,
-  ) {
+  async getMovements(req: FastifyRequest, reply: FastifyReply) {
     const stockMovementService = new GetStockMovementsService();
 
     const { movements, totalCount, totalPages, summary } =
-      await stockMovementService.execute(req.query);
+      await stockMovementService.execute(req.query as GetMovementsQueryParams);
 
     reply.status(200).send({
       message: 'Get all stock movements successfully',

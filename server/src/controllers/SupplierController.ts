@@ -5,11 +5,8 @@ import CreateSupplierService, {
 } from '../services/CreateSupplierService';
 
 class ControllerSupplier {
-  async create(
-    req: FastifyRequest<{ Body: ICreateSupplierRequest }>,
-    reply: FastifyReply,
-  ) {
-    const data = req.body;
+  async create(req: FastifyRequest, reply: FastifyReply) {
+    const data = req.body as ICreateSupplierRequest;
     const createSupplier = new CreateSupplierService();
 
     const supplier = await createSupplier.execute(data);

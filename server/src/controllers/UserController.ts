@@ -57,11 +57,8 @@ class UserController {
     });
   }
 
-  async updatePassword(
-    req: FastifyRequest<{ Body: IChangePasswordRequest }>,
-    reply: FastifyReply,
-  ) {
-    const { currentPassword, newPassword } = req.body;
+  async updatePassword(req: FastifyRequest, reply: FastifyReply) {
+    const { currentPassword, newPassword } = req.body as IChangePasswordRequest;
     const userId = req.user.sub;
 
     const updatePasswordService = new UpdatePasswordService();
@@ -98,11 +95,8 @@ class UserController {
     return reply.status(200).send(result);
   }
 
-  async updateProfile(
-    req: FastifyRequest<{ Body: IChangeProfileRequest }>,
-    reply: FastifyReply,
-  ) {
-    const { name, username } = req.body;
+  async updateProfile(req: FastifyRequest, reply: FastifyReply) {
+    const { name, username } = req.body as IChangeProfileRequest;
     const userId = req.user.sub;
 
     const updateProfileService = new UpdateProfileService();
