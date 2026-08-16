@@ -122,8 +122,7 @@ const start = async () => {
     console.log('BANCO DE DADOS CONECTADO COM SUCESSO!');
 
     await server.listen({ port: _env.PORT, host: '0.0.0.0' });
-    console.log(`SERVIDOR SUBIU: http://localhost:${_env.PORT}/api/v1`);
-    console.log(`DOC DO SERVIDOR : http://localhost:${_env.PORT}/docs`);
+    console.log('Servidor ja esta rodando!');
   } catch (err) {
     server.log.error(err);
     process.exit(1);
