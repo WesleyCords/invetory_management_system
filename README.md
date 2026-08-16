@@ -13,7 +13,7 @@ Uma plataforma de gerenciamento inteligente projetada para controle de estoque, 
 > **Test Credentials:**
 >
 > - **Username:** `admin`
-> - **Password:** `123456`
+> - **Password:** `200305`
 
 ---
 
