@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "dev": "pnpm dlx tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsup src/server.ts",
     "start": "node dist/server.js"
   },
   "keywords": [],
