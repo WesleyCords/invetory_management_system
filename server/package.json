@@ -8,7 +8,7 @@
     "lint": "eslint . --ext .ts",
     "dev": "pnpm dlx tsx watch src/server.ts",
     "build": "prisma generate && tsup src/server.ts",
-    "start": "node dist/server.js"
+    "start": "node dist/server.cjs"
   },
   "keywords": [],
   "author": "",
